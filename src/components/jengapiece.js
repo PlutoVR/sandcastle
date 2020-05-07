@@ -1,4 +1,4 @@
-import { TextureLoader, RepeatWrapping, Object3D, BoxGeometry, MeshLambertMaterial, Mesh } from "three";
+import { TextureLoader, RepeatWrapping, Object3D, BoxGeometry, MeshLambertMaterial, MeshNormalMaterial, Mesh } from "three";
 import { physics } from './engine/physics';
 
 
@@ -9,15 +9,17 @@ wood.wrapT = RepeatWrapping;
 export default class JP extends Object3D 
 {
 
-    constructor(position) 
+    constructor(position, rotation) 
     {
-        super(position)
+        super(position, rotation)
 
         const geometry = new BoxGeometry(.5, .5, 1.5);
-        const material = new MeshLambertMaterial({ map: wood });
+        // const material = new MeshLambertMaterial({ map: wood });
+        const material = new MeshNormalMaterial();
         const mesh = new Mesh(geometry, material);
         mesh.position.copy(position);
-        physics.addBody(mesh);
+        mesh.hasPhysics = true;
+
         this.add(mesh);
     }
 

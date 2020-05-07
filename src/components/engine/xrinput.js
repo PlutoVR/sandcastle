@@ -1,19 +1,15 @@
 import { renderer } from './renderer';
-import { scene } from '../scene';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
-
-console.log(scene);
-let controller1, controller2;
 
 
 // controllers
 
-onSelectStart = () =>
+const onSelectStart = () =>
 {
     this.userData.isSelecting = true;
 }
 
-onSelectEnd = () =>
+const onSelectEnd = () =>
 {
     this.userData.isSelecting = false;
 }
@@ -60,13 +56,15 @@ onSelectEnd = () =>
 
 const controllerModelFactory = new XRControllerModelFactory();
 
-controllerGrip1 = renderer.xr.getControllerGrip(0);
-controllerGrip1.add(controllerModelFactory.createControllerModel(controllerGrip1));
-scene.add(controllerGrip1);
+const controller1 = renderer.xr.getControllerGrip(0);
+controller1.add(controllerModelFactory.createControllerModel(controller1));
+// scene.add(controller1);
 
-controllerGrip2 = renderer.xr.getControllerGrip(1);
-controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
-scene.add(controllerGrip2);
+const controller2 = renderer.xr.getControllerGrip(1);
+controller2.add(controllerModelFactory.createControllerModel(controller2));
+
+console.log("XR Controllers Loaded");
+// scene.add(controller2);
 
 // function buildController(data)
 // {
@@ -103,3 +101,10 @@ function handleController(controller)
     }
 
 }
+
+controller1.update = () => 
+{
+    console.log(controller1.position + " " + controller2.position);
+}
+
+export { controller1, controller2 }

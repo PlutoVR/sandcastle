@@ -38,6 +38,9 @@ module.exports = {
             }
         ]
     },
+    watchOptions: {
+        ignored: /node_modules/
+    },
     plugins: [
         new HtmlWebPackPlugin({
             template: "./src/index.html",
@@ -49,9 +52,10 @@ module.exports = {
         extensions: ['.js', '.es6'],
     },
     devServer: {
-        contentBase: path.join(BUILD_DIR, 'assets'),
+        contentBase: path.join(APP_DIR, 'assets'),
+        // writeToDisk: true,
         // host: '192.168.0.180',
-        port: 1234,
         // disableHostCheck: true
+        port: 1234,
     }
 };
