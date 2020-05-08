@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --env.dev",
+    "start": "webpack-dev-server --hot --env.dev --open",
     "build:dev": "webpack --env.dev --progress --profile --colors",
     "build:prod": "webpack --env.prod --progress --profile --colors"
   },

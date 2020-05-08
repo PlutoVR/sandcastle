@@ -3,10 +3,9 @@ import { PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene } from "../scene";
+import { scene } from "../scenes/scene-postprocessing";
 import { physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-
 
 const screenCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 screenCamera.position.z = 13;
@@ -24,10 +23,9 @@ renderer.setAnimationLoop(() =>
         physics.updatePhysics();
     }
 
-    // TODO: INPUT
-
     OC.update();
 });
+
 // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
 scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
 
