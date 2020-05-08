@@ -1,5 +1,5 @@
 import { TextureLoader, RepeatWrapping, Object3D, BoxGeometry, MeshLambertMaterial, MeshNormalMaterial, Mesh } from "three";
-import { physics } from './engine/physics';
+import { physics } from '../engine/physics';
 
 
 const wood = new TextureLoader().load("./placeholderwood.jpg");

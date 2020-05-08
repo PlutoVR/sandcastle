@@ -1,8 +1,8 @@
-import { state } from './engine/state';
+import { state } from '../engine/state';
 import { Scene, DirectionalLight, AxesHelper, Vector3, Euler, Object3D } from "three";
-import Piece from './jengapiece';
-import { physics, rigidbodies } from './engine/physics';
-import { controller1, controller2 } from './engine/xrinput';
+import Piece from '../assets/jengapiece';
+import { physics, rigidbodies } from '../engine/physics';
+import { controller1, controller2 } from '../engine/xrinput';
 
 export const scene = new Scene();
 

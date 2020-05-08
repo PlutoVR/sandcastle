@@ -1,22 +1,51 @@
 import { state } from "./state";
-import { PerspectiveCamera } from "three";
+import { PerspectiveCamera, Clock } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene } from "../scene";
+import { scene } from "../scenes/scene-postprocessing";
 import { physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
 
+import * as POSTPROCESSING from 'postprocessing';
 
 const screenCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 screenCamera.position.z = 13;
 const OC = new OrbitControls(screenCamera, renderer.domElement);
+
+const clock = new Clock();
+
+
+const {
+    EffectComposer,
+    EffectPass,
+    RenderPass,
+    BloomEffect,
+    NoiseEffect
+} = POSTPROCESSING;
+
+const bloomEffect = new BloomEffect();
+const noiseEffect = new NoiseEffect();
+
+noiseEffect.blendMode.opacity.value = 0.6;
+
+const composer = new EffectComposer(renderer);
+
+const renderPass = new RenderPass(scene, screenCamera);
+const effectPass = new EffectPass(
+    screenCamera,
+    noiseEffect
+);
+composer.addPass(renderPass);
+composer.addPass(effectPass);
+
 
 // main app render loop
 renderer.setAnimationLoop(() =>
 {
     // RENDERING
     renderer.render(scene, screenCamera);
+    composer.render(clock.getDelta());
 
     // PHYSICS
     if (!state.isPaused)
