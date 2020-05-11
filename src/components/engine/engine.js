@@ -7,8 +7,6 @@ import { scene } from "../scenes/scene-postprocessing";
 import { physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
 
-import * as POSTPROCESSING from 'postprocessing';
-
 const screenCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 screenCamera.position.z = 13;
 const OC = new OrbitControls(screenCamera, renderer.domElement);
@@ -53,10 +51,9 @@ renderer.setAnimationLoop(() =>
         physics.updatePhysics();
     }
 
-    // TODO: INPUT
-
     OC.update();
 });
+
 // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
 scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
 
