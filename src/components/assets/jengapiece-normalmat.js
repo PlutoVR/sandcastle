@@ -17,7 +17,7 @@ export default class JP extends Object3D
         // const material = new MeshLambertMaterial({ map: wood });
         const material = new MeshNormalMaterial();
         const mesh = new Mesh(geometry, material);
-        mesh.position.copy(position);
+        if (position) mesh.position.copy(position);
         mesh.hasPhysics = true;
 
         this.add(mesh);

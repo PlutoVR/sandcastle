@@ -14,6 +14,7 @@
   "dependencies": {
     "babel-preset-es2015": "^6.24.1",
     "cannon": "^0.6.2",
+    "peerjs": "^1.2.0",
     "three": "^0.116.1"
   },
   "devDependencies": {

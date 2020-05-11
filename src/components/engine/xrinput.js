@@ -104,7 +104,7 @@ function handleController(controller)
 
 controller1.update = () => 
 {
-    console.log(controller1.position + " " + controller2.position);
+    // console.log(controller1.position + " " + controller2.position);
 }
 
 export { controller1, controller2 }

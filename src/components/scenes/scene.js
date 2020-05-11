@@ -36,8 +36,8 @@ const ResetGame = () =>
 
     const axesHelper = new AxesHelper(5);
     scene.add(axesHelper)
-    // var light = new DirectionalLight(0xffffff, 1.0);
-    // scene.add(light);
+    const light = new DirectionalLight(0xffffff, 1.0);
+    scene.add(light);
     // physics.addTrigger(controller1);
     // physics.addTrigger(controller2);
     scene.add(controller1);

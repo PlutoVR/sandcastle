@@ -75,8 +75,8 @@ physics.addControllerPhysics = () =>
     physics.cannonWorld = new World();
     physics.cannonWorld.broadphase = new NaiveBroadphase();
     physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
-    physics.cannonWorld.solver.iterations = 50;
-    physics.cannonWorld.solver.tolerance = 0.0001;
+    physics.cannonWorld.solver.iterations = 12; //50
+    physics.cannonWorld.solver.tolerance = 0.00001;
     console.log("CannonJS world created");
 
 
