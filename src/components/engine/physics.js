@@ -1,11 +1,6 @@
 import { World, NaiveBroadphase, Plane, Body, Box, Vec3 } from "cannon";
-
-import { Vector3 } from "three";
+import { Vector3, Quaternion } from "three";
 import { controller1, controller2 } from './xrinput';
-
-// import * as THREE from "three";
-// const CannonDebugRenderer = require("cannon/tools/threejs/CannonDebugRenderer")(THREE)
-// import { scene } from "../scene";
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;
@@ -14,10 +9,6 @@ const YGRAVITY = -5;
 const physics = { rigidbodies: new Array() }
 
 let controller1RB, controller2RB;
-
-// console.log(THREE);
-// console.log(CannonDebugRenderer);
-
 
 // TODO: FIGURE OUT IF WEBWORKER IS DOABLE
 // const physicsSolver = new PhysicsSolver();
@@ -53,6 +44,7 @@ physics.addControllerPhysics = () =>
     // controller1RB.addEventListener("collide", function (e) { console.log("controller 1 collided!"); });
     controller1RB.addShape(new Box(new Vec3(.2, .2, .2)));
     physics.cannonWorld.add(controller1RB);
+    physics.rigidbodies.push(controller1RB);
 
     controller2RB = new Body({
         mass: 0,
@@ -63,6 +55,7 @@ physics.addControllerPhysics = () =>
     // controller2RB.addEventListener("collide", function (e) { console.log("controller 2 collided!"); });
     controller2RB.addShape(new Box(new Vec3(.2, .2, .2)));
     physics.cannonWorld.add(controller2RB);
+    physics.rigidbodies.push(controller2RB);
 
     //init elsewhere to avoid false collisions
     controller2RB.position.copy(new Vec3(0, 100, 0));
@@ -75,7 +68,7 @@ physics.addControllerPhysics = () =>
     physics.cannonWorld = new World();
     physics.cannonWorld.broadphase = new NaiveBroadphase();
     physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
-    physics.cannonWorld.solver.iterations = 12; //50
+    physics.cannonWorld.solver.iterations = 50; //50
     physics.cannonWorld.solver.tolerance = 0.00001;
     console.log("CannonJS world created");
 
@@ -86,6 +79,7 @@ physics.addControllerPhysics = () =>
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
     physics.cannonWorld.add(groundBody);
+    physics.rigidbodies.push(groundBody);
 
     // controllers. Move this.
     physics.addControllerPhysics();
@@ -115,15 +109,15 @@ physics.updatePhysics = () =>
 
     physics.updateControllers();
 
-    physics.rigidbodies.forEach((rb, i) =>
+    physics.cannonWorld.bodies.forEach((body, i) =>
     {
-        rb.position.copy(physics.cannonWorld.bodies[i + 3].position);
-        rb.quaternion.copy(physics.cannonWorld.bodies[i + 3].quaternion);
+        if (physics.cannonWorld.bodies[i].type == Body.KINEMATIC) return;
+        physics.rigidbodies[i].quaternion.copy(physics.cannonWorld.bodies[i].quaternion);
+        physics.rigidbodies[i].position.copy(physics.cannonWorld.bodies[i].position);
     });
-
 }
 
-physics.addBody = (mesh) => 
+physics.addBody = (mesh, position, rotation) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();
@@ -132,7 +126,10 @@ physics.addBody = (mesh) =>
     const shape = new Box(new Vec3(bbSize.x, bbSize.y, bbSize.z));
     const body = new Body({ mass: 1 });
     body.addShape(shape);
-    body.position.copy(mesh.position);
+
+    body.position.copy(position);
+    body.quaternion.copy(rotation);
+
     physics.cannonWorld.addBody(body);
     physics.rigidbodies.push(mesh);
 }

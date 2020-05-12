@@ -29,8 +29,10 @@ const ResetGame = () =>
     scene.add(tower);
     // tower.position.x += 2;
 
+
     scene.traverse(e =>
     {
+
         if (e.hasPhysics) physics.addBody(e);
     });
 

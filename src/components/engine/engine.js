@@ -5,8 +5,12 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
 import { scene, screenCamera } from "../scenes/networkedJenga";
 import { physics } from "./physics";
+import CannonDebugRenderer from "./util/CannonDebugRenderer";
+
 // import PhysicsSolver from './physics.worker.js';
 const OC = new OrbitControls(screenCamera, renderer.domElement);
+
+const PhysicsDebug = new CannonDebugRenderer(scene, physics.cannonWorld);
 
 // main app render loop
 renderer.setAnimationLoop(() =>
@@ -19,6 +23,7 @@ renderer.setAnimationLoop(() =>
     {
         physics.updatePhysics();
     }
+    if (state.debugPhysics) PhysicsDebug.update();
 
     OC.update();
 });
@@ -36,9 +41,9 @@ const onWindowResize = () =>
 window.addEventListener('resize', onWindowResize, false);
 
 // DOM append
-document.body.appendChild(renderer.domElement);
+document.querySelector(".app").appendChild(renderer.domElement);
 // webxr button
-document.body.appendChild(VRButton.createButton(renderer));
+document.querySelector(".app").appendChild(VRButton.createButton(renderer));
 
 
 
