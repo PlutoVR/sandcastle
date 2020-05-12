@@ -29,7 +29,7 @@ renderer.setAnimationLoop(() =>
 });
 
 // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
-scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
+// scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
 
 const onWindowResize = () =>
 {

@@ -6,7 +6,7 @@ import Piece from '../assets/jengapiece-normalmat';
 import { physics, rigidbodies } from '../engine/physics';
 import { controller1, controller2 } from '../engine/xrinput';
 
-import RemoteSync from "../engine/networking/RemoteSync";
+import RS from "../engine/networking/RemoteSync";
 import PeerJSClient from "../engine/networking/PeerJSClient";
 
 let testSphere;
@@ -19,61 +19,35 @@ const scene = new Scene();
 
 const ResetGame = () =>
 {
-    // scene.traverse(e =>
-    // {
-    //     scene.remove(e);
-    // });
+    scene.traverse(e =>
+    {
+        scene.remove(e);
+    });
 
     const tower = new Group();
     for (let y = 1; y < 10; y++)
     {
-        const group = new Group();
-        // group.position.y = y / 1.9;
+        const level = new Group();
         for (let x = 0; x < 3; x++)
         {
             const piece = new Piece(new Vector3((-1 + x) / 2 + x * .01, y / 1.9, 0));
-            group.add(piece);
+            level.add(piece);
         }
-
-        if (y % 2 == 0) { group.rotateOnAxis(new Vector3(0, 1, 0), 1.5708); }
-        group.updateWorldMatrix(true, true);
-
-        let _meshWorldPos = new Vector3();
-        let _meshWorldRot = new Quaternion();
-
-        tower.add(group);
-        // tower.updateWorldMatrix(true, true);
-        for (const group of tower.children)
+        if (y % 2 == 0) { level.rotateOnAxis(new Vector3(0, 1, 0), 1.5708); }
+        tower.add(level);
+        tower.children.forEach(e =>
         {
-            for (const e of group.children)
+            level.children.forEach(e =>
             {
                 //remove from groups due to physics constraints
                 tower.attach(e);
-                if (!e.hasPhysics) return;
-                e.getWorldPosition(_meshWorldPos);
-                e.getWorldQuaternion(_meshWorldRot);
-                physics.addBody(e, _meshWorldPos, _meshWorldRot);
-            }
-        }
+                // if (!e.hasPhysics) return;
+                physics.addBody(e, e.position, e.quaternion);
+            });
+        });
     }
 
-
-
-    // const tempPieces = [];
-    // tower.traverse(e =>
-    // {
-    //     if (e.parent && e.parent.name == "group")
-    //     {
-    //         tempPieces.push(e);
-    //     }
-    // });
-    // physics group bugfix
-    // tempPieces.forEach(e => scene.attach(e));
-    // remoteSync.addSharedObject(tower, 0);
     scene.add(tower);
-    // tower.position.x += 2;
-
-
 
     const axesHelper = new AxesHelper(5);
     scene.add(axesHelper)
@@ -91,7 +65,7 @@ ResetGame();
 //networking
 let clientId;
 
-const remoteSync = new RemoteSync.RemoteSync(
+const remoteSync = new RS.RemoteSync(
     new PeerJSClient({
         // key: 'lwjd5qra8257b9',
         debugLevel: 0,
@@ -175,30 +149,12 @@ window.addEventListener('keydown', e =>
 
 function onAdd(destId, objectId, info)
 {
-    console.log("users connected!");
+    console.log("onAdd: connected to " + destId);
 
     // testSphere = new Mesh(new SphereGeometry(1.3, 16, 16), new MeshNormalMaterial);
     // testSphere.position.set(0, 0, 1);
     // remoteSync.addSharedObject(testSphere, 11);
     // scene.add(testSphere);
-
-    // var mesh;
-
-    // switch (info.type)
-    // {
-
-    //     case 'camera':
-    //         mesh = createModel(destId);
-    //         break;
-
-    //     case 'box':
-    //         mesh = createBox();
-    //         break;
-
-    //     default:
-    //         return;
-
-    // }
 
     // scene.add(mesh);
 
@@ -208,7 +164,6 @@ function onAdd(destId, objectId, info)
 
 function onRemove(destId, objectId, object)
 {
-
     if (object.parent !== null) object.parent.remove(object);
 
 }
@@ -216,9 +171,7 @@ function onRemove(destId, objectId, object)
 
 function onClose(destId)
 {
-
-    showMessage('Disconnected with ' + destId);
-
+    showMessage('Disconnected to ' + destId);
 }
 
 function onError(error)
@@ -231,7 +184,7 @@ function onError(error)
 function onConnect(destId)
 {
 
-    showMessage('Connected with ' + destId);
+    showMessage('onConnect: Connected with ' + destId);
 
 }
 
@@ -295,16 +248,7 @@ function connectFromForm()
 
 function showMessage(str)
 {
-
-    var message = document.getElementById('message');
     console.log(str);
-
 }
-
-
-
-
-// ---------------------------------------------------
-///---------------------
 
 export { scene, screenCamera }
