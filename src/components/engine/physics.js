@@ -1,4 +1,4 @@
-import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
+import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3, Material, ContactMaterial } from "cannon";
 import CannonDebugRenderer from "./util/CannonDebugRenderer";
 
 import { Vector3, Quaternion } from "three";
@@ -55,7 +55,7 @@ Physics.addControllerPhysics = () =>
     controller1RB.name = "Controller 1";
     controller1RB.collisionResponse = 1;
     // controller1RB.addEventListener("collide", function (e) { console.log("controller 1 collided!"); });
-    controller1RB.addShape(new Sphere(new Vec3(.05, .05, .05)));
+    controller1RB.addShape(new Sphere(0.075));
     Physics.cannonWorld.add(controller1RB);
     Physics.rigidbodies.push(controller1RB);
 
@@ -66,13 +66,13 @@ Physics.addControllerPhysics = () =>
     controller2RB.name = "Controller 2";
     controller2RB.collisionResponse = 1;
     // controller2RB.addEventListener("collide", function (e) { console.log("controller 2 collided!"); });
-    controller2RB.addShape(new Sphere(new Vec3(.05, .05, .05)));
+    controller2RB.addShape(new Sphere(0.075));
     Physics.cannonWorld.add(controller2RB);
     Physics.rigidbodies.push(controller2RB);
 
     //init elsewhere to avoid false collisions
-    controller2RB.position.copy(new Vec3(0, 100, 0));
-    controller1RB.position.copy(new Vec3(0, 100, 0));
+    // controller2RB.position.copy(new Vec3(0, 0, 0));
+    // controller1RB.position.copy(new Vec3(0, 0, 0));
 }
 
 Physics.enableDebugger = (scene) =>
@@ -91,10 +91,34 @@ Physics.enableDebugger = (scene) =>
     Physics.cannonWorld.solver.tolerance = 0.00001;
     console.log("CannonJS world created");
 
+    //materials
+    // Physics.materials = {
+    //     SlipperyMaterial: new Material("slipperyMaterial"),
+    //     StickyMaterial: new Material("stickyMaterial")
+    // }
+    // const slippery_slippery_cm = new ContactMaterial(Physics.materials.SlipperyMaterial, Physics.materials.SlipperyMaterial, {
+    //     friction: 0.3,
+    //     restitution: 0.3,
+    //     contactEquationStiffness: 1e8,
+    //     contactEquationRelaxation: 3
+    // });
+    // const slippery_ground_cm = new ContactMaterial(Physics.materials.StickyMaterial, Physics.materials.SlipperyMaterial, {
+    //     friction: 1,
+    //     restitution: 0.3,
+    //     contactEquationStiffness: 1e8,
+    //     contactEquationRelaxation: 3
+    // });
+    // Physics.cannonWorld.addContactMaterial(slippery_ground_cm);
+    // Physics.cannonWorld.addContactMaterial(slippery_slippery_cm);
+
+
 
     //Plane. TODO: RELO TO SCENE!
     const groundShape = new Plane();
-    const groundBody = new Body({ mass: 0 });
+    const groundBody = new Body({
+        mass: 0
+        // material: Physics.materials.StickyMaterial
+    });
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
     Physics.cannonWorld.add(groundBody);
@@ -186,9 +210,11 @@ Physics.addBody = (mesh, rbShape) =>
             break;
     }
 
-    const body = new Body({ mass: 1 });
+    const body = new Body({
+        mass: 5
+        // material: Physics.materials.SlipperyMaterial 
+    });
     body.addShape(shape);
-
     body.position.copy(mesh.position);
     body.quaternion.copy(mesh.quaternion);
 
