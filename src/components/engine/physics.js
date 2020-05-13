@@ -3,6 +3,7 @@ import CannonDebugRenderer from "./util/CannonDebugRenderer";
 
 import { Vector3, Quaternion } from "three";
 import { controller1, controller2 } from './xrinput';
+import { PeerConnection } from "./networking/PeerConnection"
 import { state } from "./state";
 
 const TIMESTEP = 1 / 60;
@@ -54,7 +55,7 @@ Physics.addControllerPhysics = () =>
     controller1RB.name = "Controller 1";
     controller1RB.collisionResponse = 1;
     // controller1RB.addEventListener("collide", function (e) { console.log("controller 1 collided!"); });
-    controller1RB.addShape(new Box(new Vec3(.2, .2, .2)));
+    controller1RB.addShape(new Sphere(new Vec3(.05, .05, .05)));
     Physics.cannonWorld.add(controller1RB);
     Physics.rigidbodies.push(controller1RB);
 
@@ -65,7 +66,7 @@ Physics.addControllerPhysics = () =>
     controller2RB.name = "Controller 2";
     controller2RB.collisionResponse = 1;
     // controller2RB.addEventListener("collide", function (e) { console.log("controller 2 collided!"); });
-    controller2RB.addShape(new Box(new Vec3(.2, .2, .2)));
+    controller2RB.addShape(new Sphere(new Vec3(.05, .05, .05)));
     Physics.cannonWorld.add(controller2RB);
     Physics.rigidbodies.push(controller2RB);
 
@@ -83,6 +84,7 @@ Physics.enableDebugger = (scene) =>
 {
     // Init Physics
     Physics.cannonWorld = new World();
+
     Physics.cannonWorld.broadphase = new NaiveBroadphase();
     Physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
     Physics.cannonWorld.solver.iterations = 50; //50

@@ -78,7 +78,7 @@ scene.initGame = () =>
                 //remove from groups due to physics constraints
                 scene.attach(e);
                 // if (!e.hasPhysics) return;
-                Physics.addBody(e, Physics.RigidBody.Cylinder);
+                Physics.addBody(e, Physics.RigidBody.Box);
                 // tower.attach(e);
             });
         });
@@ -98,4 +98,4 @@ scene.initGame = () =>
     PeerConnection.addSharedObject(controller2, 20);
 }
 
-export { scene, screenCamera, PeerConnection }
+export { scene, screenCamera }

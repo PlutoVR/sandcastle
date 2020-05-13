@@ -3,8 +3,9 @@ import { PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, screenCamera, PeerConnection } from "../scenes/networkedJengaScene";
+import { scene, screenCamera } from "../scenes/networkedJengaScene";
 import { Physics } from "./physics";
+import { PeerConnection } from "./networking/PeerConnection"
 
 const Engine = { scene: scene };
 // import PhysicsSolver from './physics.worker.js';
