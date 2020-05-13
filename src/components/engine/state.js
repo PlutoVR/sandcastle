@@ -11,6 +11,8 @@ class State
     {
         document.addEventListener('keydown', (e) =>
         {
+            if (!e.shiftKey) return;
+
             switch (e.keyCode)
             {
                 case 68: //"d"

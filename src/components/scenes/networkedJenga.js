@@ -1,5 +1,5 @@
 import { state } from '../engine/state';
-import { Scene, DirectionalLight, AxesHelper, Vector3, Euler, Object3D, Group, PerspectiveCamera, Quaternion, Position } from "three";
+import { Scene, DirectionalLight, AxesHelper, Vector3, Euler, Object3D, Group, PerspectiveCamera, Quaternion, Position, Mesh, SphereGeometry, MeshNormalMaterial } from "three";
 
 
 import Piece from '../assets/jengapiece-normalmat';
@@ -46,7 +46,7 @@ const ResetGame = () =>
             });
         });
     }
-
+    PeerConnection.addSharedObject(tower, '0');
     scene.add(tower);
 
     const axesHelper = new AxesHelper(5);
@@ -58,27 +58,28 @@ const ResetGame = () =>
     scene.add(controller1);
     scene.add(controller2);
 }
-ResetGame();
+
 
 
 
 //networking
 let clientId;
 
-const remoteSync = new RS.RemoteSync(
+const PeerConnection = new RS.RemoteSync(
     new PeerJSClient({
         // key: 'lwjd5qra8257b9',
         debugLevel: 0,
     })
 );
-remoteSync.addEventListener('open', onOpen);
-remoteSync.addEventListener('close', onClose);
-remoteSync.addEventListener('error', onError);
-remoteSync.addEventListener('connect', onConnect);
-remoteSync.addEventListener('disconnect', onDisconnect);
-remoteSync.addEventListener('receive', onReceive);
-remoteSync.addEventListener('add', onAdd);
-remoteSync.addEventListener('remove', onRemove);
+PeerConnection.addEventListener('open', onOpen);
+PeerConnection.addEventListener('close', onClose);
+PeerConnection.addEventListener('error', onError);
+PeerConnection.addEventListener('connect', onConnect);
+PeerConnection.addEventListener('disconnect', onDisconnect);
+PeerConnection.addEventListener('receive', onReceive);
+PeerConnection.addEventListener('add', onAdd);
+PeerConnection.addEventListener('remove', onRemove);
+
 
 function onOpen(id)
 {
@@ -92,7 +93,7 @@ function onOpen(id)
     document.querySelector(".info").appendChild(a);
     // document.getElementById('link').appendChild(createLink());
 
-    remoteSync.addLocalObject(screenCamera, { type: 'camera' });
+    PeerConnection.addLocalObject(screenCamera, { type: 'camera' });
 
     /*
         var box = createBox();
@@ -101,7 +102,7 @@ function onOpen(id)
     
         transformControls.attach( box );
     
-        remoteSync.addLocalObject( box, { type: 'box' } );
+        PeerConnection.addLocalObject( box, { type: 'box' } );
     */
 
     // var sphere = createSphere();
@@ -110,7 +111,7 @@ function onOpen(id)
 
     // transformControls.attach(sphere);
 
-    // remoteSync.addSharedObject(sphere, 0);
+    // PeerConnection.addSharedObject(sphere, 0);
 
     // scene.add(transformControls);
 
@@ -126,20 +127,20 @@ function onReceive(data)
 window.addEventListener('keydown', e =>
 {
     if (!testSphere) return;
-    console.log(e.keyCode);
+
     switch (e.keyCode)
     {
         case 87:
-            testSphere.position.y += .5;
+            testSphere.position.y += 0.05;
             break;
         case 65:
-            testSphere.position.x -= .5;
+            testSphere.position.x -= 0.05;
             break;
         case 83:
-            testSphere.position.y -= .5;
+            testSphere.position.y -= 0.05;
             break;
         case 68:
-            testSphere.position.x += .5;
+            testSphere.position.x += 0.05;
             break;
         default:
             break;
@@ -150,15 +151,6 @@ window.addEventListener('keydown', e =>
 function onAdd(destId, objectId, info)
 {
     console.log("onAdd: connected to " + destId);
-
-    // testSphere = new Mesh(new SphereGeometry(1.3, 16, 16), new MeshNormalMaterial);
-    // testSphere.position.set(0, 0, 1);
-    // remoteSync.addSharedObject(testSphere, 11);
-    // scene.add(testSphere);
-
-    // scene.add(mesh);
-
-    // remoteSync.addRemoteObject(destId, objectId, mesh);
 
 }
 
@@ -186,6 +178,16 @@ function onConnect(destId)
 
     showMessage('onConnect: Connected with ' + destId);
 
+    // ResetGame();
+
+    testSphere = new Mesh(new SphereGeometry(1.3, 16, 16), new MeshNormalMaterial);
+    testSphere.position.set(0, 0, 1);
+    PeerConnection.addSharedObject(testSphere, 11);
+    scene.add(testSphere);
+
+    // PeerConnection.addRemoteObject(destId, objectId, mesh);
+
+
 }
 
 function onDisconnect(destId, object)
@@ -211,7 +213,7 @@ function connect(id)
 
     showMessage('Connecting with ' + id);
 
-    remoteSync.connect(id);
+    PeerConnection.connect(id);
 
 }
 
@@ -251,4 +253,4 @@ function showMessage(str)
     console.log(str);
 }
 
-export { scene, screenCamera }
+export { scene, screenCamera, PeerConnection }

@@ -3,7 +3,7 @@ import { PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, screenCamera } from "../scenes/networkedJenga";
+import { scene, screenCamera, PeerConnection } from "../scenes/networkedJenga";
 import { physics } from "./physics";
 import CannonDebugRenderer from "./util/CannonDebugRenderer";
 
@@ -25,6 +25,10 @@ renderer.setAnimationLoop(() =>
     }
     if (state.debugPhysics) PhysicsDebug.update();
 
+    // Networking
+    PeerConnection.sync();
+
+    // Screen cam orbitcontrols
     OC.update();
 });
 
