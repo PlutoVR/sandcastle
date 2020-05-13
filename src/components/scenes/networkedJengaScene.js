@@ -95,7 +95,11 @@ scene.initGame = () =>
     scene.add(controller1);
     scene.add(controller2);
     PeerConnection.addSharedObject(controller1, 10);
+<<<<<<< HEAD
     PeerConnection.addSharedObject(controller2, 20);
+=======
+    PeerConnection.addSharedObject(controller2, 11);
+>>>>>>> tmp
 }
 
 export { scene, screenCamera }

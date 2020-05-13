@@ -3,20 +3,27 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 
 
 // controllers
-
-const onSelectStart = () =>
+//trigger
+const onSelectStart = (e) =>
 {
-    this.userData.isSelecting = true;
+    console.log("select start!");
+    console.log(e);
 }
 
-const onSelectEnd = () =>
+const onSelectEnd = () => { }
+
+const onSqueezeStart = (e) =>
 {
-    this.userData.isSelecting = false;
+    console.log("squeezestart!");
+}
+const onSqueezeEnd = () => { }
+
+const onSqueeze = (e) =>
+{
+    console.log("squeeze!")
 }
 
 // controller1 = renderer.xr.getController(0);
-// controller1.addEventListener('selectstart', onSelectStart);
-// controller1.addEventListener('selectend', onSelectEnd);
 
 // controller1.addEventListener('connected', (event) =>    
 // {
@@ -30,81 +37,37 @@ const onSelectEnd = () =>
 //     // this.remove(this.children[0]);
 // });
 
-// scene.add(controller1);
-
-// controller2 = renderer.xr.getController(1);
-
-// controller2.addEventListener('selectstart', onSelectStart);
-// controller2.addEventListener('selectend', onSelectEnd);
-
 // controller2.addEventListener('connected', function (event)
 // {
 //     // this.add(buildController(event.data));
 // });
 
-// controller2.addEventListener('disconnected', function ()
-// {
-//     // this.remove(this.children[0]);
-// });
 
-// scene.add(controller2);
-
-// The XRControllerModelFactory will automatically fetch controller models
-// that match what the user is holding as closely as possible. The models
-// should be attached to the object returned from getControllerGrip in
-// order to match the orientation of the held device.
 
 const controllerModelFactory = new XRControllerModelFactory();
 
 const controller1 = renderer.xr.getControllerGrip(0);
 controller1.add(controllerModelFactory.createControllerModel(controller1));
-// scene.add(controller1);
+controller1.addEventListener('selectstart', onSelectStart);
+controller1.addEventListener('selectend', onSelectEnd);
+// controller1.addEventListener('squeezestart', onSqueezeStart);
+// controller1.addEventListener('squeezeend', onSqueezeEnd);
+// controller1.addEventListener('squeeze', onSqueeze);
 
 const controller2 = renderer.xr.getControllerGrip(1);
 controller2.add(controllerModelFactory.createControllerModel(controller2));
+controller2.addEventListener('selectstart', onSelectStart);
+controller2.addEventListener('selectend', onSelectEnd);
+// controller2.addEventListener('squeezestart', onSqueezeStart);
+// controller2.addEventListener('squeezeend', onSqueezeEnd);
+// controller2.addEventListener('squeeze', onSqueeze);
 
 console.log("XR Controllers Loaded");
-// scene.add(controller2);
 
-// function buildController(data)
-// {
-
-//     switch (data.targetRayMode)
-//     {
-
-//         case 'tracked-pointer':
-
-//             var geometry = new THREE.BufferGeometry();
-//             geometry.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, - 1], 3));
-//             geometry.setAttribute('color', new THREE.Float32BufferAttribute([0.5, 0.5, 0.5, 0, 0, 0], 3));
-
-//             var material = new THREE.LineBasicMaterial({ vertexColors: true, blending: THREE.AdditiveBlending });
-
-//             return new THREE.Line(geometry, material);
-
-//         case 'gaze':
-
-//             var geometry = new THREE.RingBufferGeometry(0.02, 0.04, 32).translate(0, 0, - 1);
-//             var material = new THREE.MeshBasicMaterial({ opacity: 0.5, transparent: true });
-//             return new THREE.Mesh(geometry, material);
-
-//     }
-
-// }
 
 function handleController(controller)
 {
 
-    if (controller.userData.isSelecting)
-    {
-        console.log("selecting!");
-    }
-
-}
-
-controller1.update = () => 
-{
-    // console.log(controller1.position + " " + controller2.position);
 }
 
 export { controller1, controller2 }
