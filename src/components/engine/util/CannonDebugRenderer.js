@@ -4,6 +4,8 @@ import
 } from "three"
 import { Vec3, Shape, Sphere, Box, Plane, ConvexPolyhedron, Trimesh, Heightfield, World } from "cannon"
 
+import { state } from "../state"
+
 /* global CANNON,THREE,Detector */
 
 /**
@@ -40,7 +42,6 @@ export default class CannonDebugRenderer
 
     update()
     {
-
         var bodies = this.world.bodies;
         var meshes = this._meshes;
         var shapeWorldPosition = this.tmpVec0;

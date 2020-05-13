@@ -3,7 +3,7 @@ class State
     constructor()
     {
         this.isPaused = false;
-        this.debugPhysics = false;
+        this.debugPhysics = true;
         this.bindDebugKeys();
     }
 

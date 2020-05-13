@@ -3,14 +3,14 @@ import { PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, screenCamera, PeerConnection } from "../scenes/networkedJenga";
-import { physics } from "./physics";
-import CannonDebugRenderer from "./util/CannonDebugRenderer";
+import { scene, screenCamera, PeerConnection } from "../scenes/networkedJengaScene";
+import { Physics } from "./physics";
 
+const Engine = { scene: scene };
 // import PhysicsSolver from './physics.worker.js';
 const OC = new OrbitControls(screenCamera, renderer.domElement);
 
-const PhysicsDebug = new CannonDebugRenderer(scene, physics.cannonWorld);
+
 
 // main app render loop
 renderer.setAnimationLoop(() =>
@@ -21,9 +21,8 @@ renderer.setAnimationLoop(() =>
     // PHYSICS
     if (!state.isPaused)
     {
-        physics.updatePhysics();
+        Physics.updatePhysics();
     }
-    if (state.debugPhysics) PhysicsDebug.update();
 
     // Networking
     PeerConnection.sync();
