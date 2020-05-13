@@ -94,6 +94,8 @@ scene.initGame = () =>
     // physics.addTrigger(controller2);
     scene.add(controller1);
     scene.add(controller2);
+    PeerConnection.addSharedObject(controller1, 10);
+    PeerConnection.addSharedObject(controller2, 20);
 }
 
 export { scene, screenCamera, PeerConnection }

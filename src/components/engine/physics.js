@@ -111,11 +111,11 @@ document.addEventListener('keydown', (e) =>
 
 Physics.updateControllers = () =>
 {
-    if (controller1.position.y != 0)
-    {
-        controller1RB.position.copy(controller1.position);
-        controller2RB.position.copy(controller2.position);
-    }
+    // if (controller1.position.y != 0)
+    // {
+    controller1RB.position.copy(controller1.position);
+    controller2RB.position.copy(controller2.position);
+    // }
 }
 
 Physics.updatePhysics = () =>
