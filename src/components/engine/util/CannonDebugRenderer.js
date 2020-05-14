@@ -40,56 +40,70 @@ export default class CannonDebugRenderer
     }
 
 
-    update()
+    update(debugPhysics)
     {
-        var bodies = this.world.bodies;
-        var meshes = this._meshes;
-        var shapeWorldPosition = this.tmpVec0;
-        var shapeWorldQuaternion = this.tmpQuat0;
-
-        var meshIndex = 0;
-
-        for (var i = 0; i !== bodies.length; i++)
+        if (!debugPhysics)
         {
-            var body = bodies[i];
-
-            for (var j = 0; j !== body.shapes.length; j++)
+            if (this._meshes.length > 0)
             {
-                var shape = body.shapes[j];
+                this._meshes.forEach(e =>
+                {
+                    this.scene.remove(e);
+                });
+                this._meshes.length = 0;
+            }
+        }
+        else
+        {
+            var bodies = this.world.bodies;
+            var meshes = this._meshes;
+            var shapeWorldPosition = this.tmpVec0;
+            var shapeWorldQuaternion = this.tmpQuat0;
 
-                this._updateMesh(meshIndex, body, shape);
+            var meshIndex = 0;
 
-                var mesh = meshes[meshIndex];
+            for (var i = 0; i !== bodies.length; i++)
+            {
+                var body = bodies[i];
 
+                for (var j = 0; j !== body.shapes.length; j++)
+                {
+                    var shape = body.shapes[j];
+
+                    this._updateMesh(meshIndex, body, shape);
+
+                    var mesh = meshes[meshIndex];
+
+                    if (mesh)
+                    {
+
+                        // Get world position
+                        body.quaternion.vmult(body.shapeOffsets[j], shapeWorldPosition);
+                        body.position.vadd(shapeWorldPosition, shapeWorldPosition);
+
+                        // Get world quaternion
+                        body.quaternion.mult(body.shapeOrientations[j], shapeWorldQuaternion);
+
+                        // Copy to meshes
+                        mesh.position.copy(shapeWorldPosition);
+                        mesh.quaternion.copy(shapeWorldQuaternion);
+                    }
+
+                    meshIndex++;
+                }
+            }
+
+            for (var i = meshIndex; i < meshes.length; i++)
+            {
+                var mesh = meshes[i];
                 if (mesh)
                 {
-
-                    // Get world position
-                    body.quaternion.vmult(body.shapeOffsets[j], shapeWorldPosition);
-                    body.position.vadd(shapeWorldPosition, shapeWorldPosition);
-
-                    // Get world quaternion
-                    body.quaternion.mult(body.shapeOrientations[j], shapeWorldQuaternion);
-
-                    // Copy to meshes
-                    mesh.position.copy(shapeWorldPosition);
-                    mesh.quaternion.copy(shapeWorldQuaternion);
+                    this.scene.remove(mesh);
                 }
-
-                meshIndex++;
             }
-        }
 
-        for (var i = meshIndex; i < meshes.length; i++)
-        {
-            var mesh = meshes[i];
-            if (mesh)
-            {
-                this.scene.remove(mesh);
-            }
+            meshes.length = meshIndex;
         }
-
-        meshes.length = meshIndex;
     }
 
     _updateMesh(index, body, shape)

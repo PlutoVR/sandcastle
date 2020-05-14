@@ -37,29 +37,24 @@ const shaderArr = [
         fragmentShader: fs_bloomFireflies
     })
 ]
+const selectRandomShader = () =>
+{
+    return shaderArr[Math.floor(Math.random() * shaderArr.length)];
+}
 
 export default class JP 
 {
-    constructor(position, rotation) 
+    constructor(position, material) 
     {
-        const mesh = new Mesh(geometry, this.selectRandomShader());
-        // const mesh = new Mesh(geometry, shaderArr[4])
+        const mesh = new Mesh(geometry, shaderArr[material]);
+
         //hook into render update method
         mesh.update = () => { mesh.material.uniforms.time.value = 6. * (Date.now() - startTime) / 100.; }
         const startTime = Date.now();
         if (position) mesh.position.copy(position);
-        if (rotation) mesh.rotation.copy(rotation);
+        // if (rotation) mesh.rotation.copy(rotation);
         mesh.hasPhysics = true;
         return (mesh);
     }
-
-
-    selectRandomShader()
-    {
-        return shaderArr[Math.floor(Math.random() * shaderArr.length)];
-    }
-
-
-
 }
 
