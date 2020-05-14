@@ -1,9 +1,4 @@
-import { TextureLoader, RepeatWrapping, Object3D, BoxGeometry, MeshLambertMaterial, MeshNormalMaterial, Mesh } from "three";
-
-
-// const wood = new TextureLoader().load("./placeholderwood.jpg");
-// wood.wrapS = RepeatWrapping;
-// wood.wrapT = RepeatWrapping;
+import { BoxGeometry, MeshNormalMaterial, Mesh } from "three";
 
 export default class JP 
 {

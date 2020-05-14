@@ -35,6 +35,10 @@ module.exports = {
                         loader: "html-loader"
                     }
                 ]
+            },
+            {
+                test: /\.(glsl|vs|fs)$/,
+                loader: 'shader-loader'
             }
         ]
     },

@@ -1,6 +1,6 @@
 import RS from "./RemoteSync";
 import PeerJSClient from "./PeerJSClient";
-import { scene } from "../../scenes/networkedJengaScene"
+import { scene } from "../engine"
 
 let testSphere;
 
@@ -98,7 +98,7 @@ function onConnect(destId)
 
     // ResetGame();
     // scene.createTestSphere();
-    scene.initGame();
+    // scene.initGame();
     // PeerConnection.addRemoteObject(destId, objectId, mesh);
 
 

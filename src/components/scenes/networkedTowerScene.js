@@ -2,7 +2,7 @@ import { state } from '../engine/state';
 import { Scene, DirectionalLight, AxesHelper, Vector3, Euler, Object3D, Group, PerspectiveCamera, Quaternion, Position, Mesh, SphereGeometry, MeshNormalMaterial } from "three";
 
 
-import Piece from '../assets/jengapiece-normalmat';
+import Brick from '../assets/brickCustomShader';
 import { Physics } from '../engine/physics';
 import { controller1, controller2 } from '../engine/xrinput';
 
@@ -65,8 +65,8 @@ scene.initGame = () =>
         const level = new Group();
         for (let x = 0; x < 3; x++)
         {
-            const piece = new Piece(new Vector3((-1 + x) / 2 + x * .01, y / 1.9, 0));
-            level.add(piece);
+            const brick = new Brick(new Vector3((-1 + x) / 2 + x * .01, y / 1.9, 0));
+            level.add(brick);
         }
         if (y % 2 == 0) { level.rotateOnAxis(new Vector3(0, 1, 0), 1.5708); }
         tower.add(level);
@@ -97,5 +97,7 @@ scene.initGame = () =>
     PeerConnection.addSharedObject(controller1, 10);
     PeerConnection.addSharedObject(controller2, 11);
 }
+
+scene.initGame();
 
 export { scene, screenCamera }
