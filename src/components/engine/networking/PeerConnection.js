@@ -1,6 +1,5 @@
 import RS from "./RemoteSync";
 import PeerJSClient from "./PeerJSClient";
-import { scene } from "../engine"
 
 let testSphere;
 

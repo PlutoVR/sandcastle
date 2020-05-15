@@ -169,7 +169,8 @@ Physics.updatePhysics = () =>
 Physics.resetScene = () =>
 {
     const bodies = Physics.cannonWorld.bodies;
-    i = bodies.length;
+    let i = bodies.length;
+    console.log(i);
     while (i--)
     {
         this.removeBody(bodies[i]);

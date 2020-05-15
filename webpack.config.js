@@ -14,7 +14,7 @@ module.exports = {
         filename: 'bundle.js',
         // publicPath: '/'
     },
-    devtool: 'inline-source-map',
+    // devtool: 'eval-cheap-source-map',
     module: {
         rules: [
             // {

@@ -1,7 +1,4 @@
-import { state } from '../engine/state';
-import { Scene, DirectionalLight, AxesHelper, Vector3, Euler, Object3D, Group, PerspectiveCamera, Quaternion, Position, Mesh, SphereGeometry, MeshNormalMaterial } from "three";
-
-
+import { Scene, Vector3, Group, PerspectiveCamera } from "three";
 import Brick from '../assets/brickCustomShader';
 import { Physics } from '../engine/physics';
 import { controller1, controller2 } from '../engine/xrinput';
@@ -18,12 +15,12 @@ Physics.enableDebugger(scene);
 scene.initGame = () =>
 {
     //clean up scene and physics
-    Physics.resetScene;
-    PeerConnection.resetScene;
-    // scene.traverse(e =>
-    // {
-    //     scene.remove(e);
-    // });
+    // Physics.resetScene();
+    // PeerConnection.resetScene();
+    scene.traverse(e =>
+    {
+        scene.remove(e);
+    });
 
     const tower = new Group();
     tower.position.set(2, 0, 0);
@@ -54,8 +51,8 @@ scene.initGame = () =>
     PeerConnection.addSharedObject(tower, '0');
     scene.add(tower);
 
-    const axesHelper = new AxesHelper(5);
-    scene.add(axesHelper)
+    // const axesHelper = new AxesHelper(5);
+    // scene.add(axesHelper)
     // const light = new THREE.DirectionalLight(0xffffff, 1.0);
     // scene.add(light);
     // physics.addTrigger(controller1);
@@ -66,37 +63,37 @@ scene.initGame = () =>
     PeerConnection.addSharedObject(controller2, 11);
 }
 
-scene.createTestSphere = () =>
-{
-    const testSphere = new Mesh(new SphereGeometry(1.3, 16, 16), new MeshNormalMaterial);
-    testSphere.position.set(0, 0, 1);
-    PeerConnection.addSharedObject(testSphere, 11);
-    scene.add(testSphere);
-    window.addEventListener('keydown', e =>
-    {
-        if (!testSphere) return;
+// scene.createTestSphere = () =>
+// {
+//     const testSphere = new Mesh(new SphereGeometry(1.3, 16, 16), new MeshNormalMaterial);
+//     testSphere.position.set(0, 0, 1);
+//     PeerConnection.addSharedObject(testSphere, 11);
+//     scene.add(testSphere);
+//     window.addEventListener('keydown', e =>
+//     {
+//         if (!testSphere) return;
 
-        switch (e.keyCode)
-        {
-            case 87:
-                testSphere.position.y += 0.05;
-                break;
-            case 65:
-                testSphere.position.x -= 0.05;
-                break;
-            case 83:
-                testSphere.position.y -= 0.05;
-                break;
-            case 68:
-                testSphere.position.x += 0.05;
-                break;
-            default:
-                break;
+//         switch (e.keyCode)
+//         {
+//             case 87:
+//                 testSphere.position.y += 0.05;
+//                 break;
+//             case 65:
+//                 testSphere.position.x -= 0.05;
+//                 break;
+//             case 83:
+//                 testSphere.position.y -= 0.05;
+//                 break;
+//             case 68:
+//                 testSphere.position.x += 0.05;
+//                 break;
+//             default:
+//                 break;
 
-        }
-    });
+//         }
+//     });
 
-}
+// }
 
 scene.initGame();
 
