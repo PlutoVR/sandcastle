@@ -1,9 +1,9 @@
 import { Scene, Vector3, Group, PerspectiveCamera } from "three";
-import Brick from '../assets/brickCustomShader';
-import { Physics } from '../engine/physics';
-import { controller1, controller2 } from '../engine/xrinput';
+import Brick from './brickCustomShader';
+import { Physics } from '../../engine/physics';
+import { controller1, controller2 } from '../../engine/xrinput';
 
-import { PeerConnection } from '../engine/networking/PeerConnection'
+import { PeerConnection } from '../../engine/networking/PeerConnection'
 
 const screenCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 screenCamera.position.z = 10;
@@ -16,7 +16,7 @@ scene.initGame = () =>
 {
     //clean up scene and physics
     // Physics.resetScene();
-    // PeerConnection.resetScene();
+
     scene.traverse(e =>
     {
         scene.remove(e);

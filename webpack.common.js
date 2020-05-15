@@ -14,7 +14,6 @@ module.exports = {
         filename: './bundle.js',
         // publicPath: '/'
     },
-    // devtool: 'eval-cheap-source-map',
     module: {
         rules: [
             // {
@@ -40,8 +39,25 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"
+                    loader: "babel-loader",
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
                 }
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false,
+                            name: '[name].[ext]',
+                            outputPath: 'assets/images/',
+                            publicPath: 'assets/images/'
+                        }
+                    }
+                ]
             },
             {
                 test: /\.(glsl|vs|fs)$/,
@@ -62,11 +78,4 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.es6'],
     },
-    devServer: {
-        contentBase: path.join(APP_DIR, 'assets'),
-        // writeToDisk: true,
-        // host: '192.168.0.180',
-        // disableHostCheck: true
-        port: 1234,
-    }
 };
