@@ -45,7 +45,5 @@ window.addEventListener('resize', onWindowResize, false);
 // DOM append
 document.querySelector(".app").appendChild(renderer.domElement);
 // webxr button
-document.querySelector(".app").appendChild(VRButton.createButton(renderer));
-
-
-
+const a = document.querySelector(".app").appendChild(VRButton.createButton(renderer));
+a.style.background = "black";

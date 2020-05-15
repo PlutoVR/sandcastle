@@ -11,7 +11,7 @@ module.exports = {
     entry: APP_DIR + '/index.js',
     output: {
         path: BUILD_DIR,
-        filename: 'bundle.js',
+        filename: './bundle.js',
         // publicPath: '/'
     },
     // devtool: 'eval-cheap-source-map',
@@ -22,19 +22,26 @@ module.exports = {
             //     use: { loader: 'worker-loader' }
             // },
             {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: "html-loader",
+                        options: {
+                            minimize: true
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader"
                 }
-            },
-            {
-                test: /\.html$/,
-                use: [
-                    {
-                        loader: "html-loader"
-                    }
-                ]
             },
             {
                 test: /\.(glsl|vs|fs)$/,
