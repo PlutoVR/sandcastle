@@ -14,7 +14,7 @@ module.exports = {
         filename: 'bundle.js',
         // publicPath: '/'
     },
-    devtool: 'inline-source-map',
+    // devtool: 'eval-cheap-source-map',
     module: {
         rules: [
             // {
@@ -35,6 +35,10 @@ module.exports = {
                         loader: "html-loader"
                     }
                 ]
+            },
+            {
+                test: /\.(glsl|vs|fs)$/,
+                loader: 'shader-loader'
             }
         ]
     },

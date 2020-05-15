@@ -1,40 +1,44 @@
-import { World, NaiveBroadphase, Plane, Body, Box, Vec3 } from "cannon";
+import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3, Material, ContactMaterial } from "cannon";
+import CannonDebugRenderer from "./util/CannonDebugRenderer";
 
-import { Vector3 } from "three";
+import { Vector3, Quaternion } from "three";
 import { controller1, controller2 } from './xrinput';
-
-// import * as THREE from "three";
-// const CannonDebugRenderer = require("cannon/tools/threejs/CannonDebugRenderer")(THREE)
-// import { scene } from "../scene";
+import { PeerConnection } from "./networking/PeerConnection"
+import { state } from "./state";
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;
 
-
-const physics = { rigidbodies: new Array() }
+// Physics singleton
+const Physics = {
+    rigidbodies: new Array(),
+    RigidBody: {
+        Box: 1,
+        Sphere: 2,
+        Plane: 3,
+        Cylinder: 4
+    }
+}
 
 let controller1RB, controller2RB;
 
-// console.log(THREE);
-// console.log(CannonDebugRenderer);
-
 
 // TODO: FIGURE OUT IF WEBWORKER IS DOABLE
-// const physicsSolver = new PhysicsSolver();
-// physicsSolver.postMessage = physicsSolver.webkitPostMessage || physicsSolver.postMessage;
+// const PhysicsSolver = new PhysicsSolver();
+// PhysicsSolver.postMessage = PhysicsSolver.webkitPostMessage || PhysicsSolver.postMessage;
 
 // const sendDataToWorker = () => 
 // {
-//     physicsSolver.postMessage({
+//     PhysicsSolver.postMessage({
 //         // N: N,
 //     });
 // }
 
-// physicsSolver.addEventListener('message', worker =>
+// PhysicsSolver.addEventListener('message', worker =>
 // {
 //     scene.children.forEach(child =>
 //     {
-//         if (child.physics)
+//         if (child.Physics)
 //         {
 //             child.position.copy(worker.data.positions);
 //             child.quaternion.copy(worker.data.quaternions);
@@ -42,7 +46,7 @@ let controller1RB, controller2RB;
 //     });
 // });
 
-physics.addControllerPhysics = () =>
+Physics.addControllerPhysics = () =>
 {
     controller1RB = new Body({
         mass: 0,
@@ -51,8 +55,9 @@ physics.addControllerPhysics = () =>
     controller1RB.name = "Controller 1";
     controller1RB.collisionResponse = 1;
     // controller1RB.addEventListener("collide", function (e) { console.log("controller 1 collided!"); });
-    controller1RB.addShape(new Box(new Vec3(.2, .2, .2)));
-    physics.cannonWorld.add(controller1RB);
+    controller1RB.addShape(new Sphere(0.075));
+    Physics.cannonWorld.add(controller1RB);
+    Physics.rigidbodies.push(controller1RB);
 
     controller2RB = new Body({
         mass: 0,
@@ -61,34 +66,66 @@ physics.addControllerPhysics = () =>
     controller2RB.name = "Controller 2";
     controller2RB.collisionResponse = 1;
     // controller2RB.addEventListener("collide", function (e) { console.log("controller 2 collided!"); });
-    controller2RB.addShape(new Box(new Vec3(.2, .2, .2)));
-    physics.cannonWorld.add(controller2RB);
+    controller2RB.addShape(new Sphere(0.075));
+    Physics.cannonWorld.add(controller2RB);
+    Physics.rigidbodies.push(controller2RB);
 
     //init elsewhere to avoid false collisions
-    controller2RB.position.copy(new Vec3(0, 100, 0));
-    controller1RB.position.copy(new Vec3(0, 100, 0));
+    // controller2RB.position.copy(new Vec3(0, 0, 0));
+    // controller1RB.position.copy(new Vec3(0, 0, 0));
+}
+
+Physics.enableDebugger = (scene) =>
+{
+    Physics.debugRenderer = new CannonDebugRenderer(scene, Physics.cannonWorld);
 }
 
 (function ()
 {
-    // Init physics
-    physics.cannonWorld = new World();
-    physics.cannonWorld.broadphase = new NaiveBroadphase();
-    physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
-    physics.cannonWorld.solver.iterations = 50;
-    physics.cannonWorld.solver.tolerance = 0.0001;
+    // Init Physics
+    Physics.cannonWorld = new World();
+
+    Physics.cannonWorld.broadphase = new NaiveBroadphase();
+    Physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
+    Physics.cannonWorld.solver.iterations = 50; //50
+    Physics.cannonWorld.solver.tolerance = 0.00001;
     console.log("CannonJS world created");
+
+    //materials
+    // Physics.materials = {
+    //     SlipperyMaterial: new Material("slipperyMaterial"),
+    //     StickyMaterial: new Material("stickyMaterial")
+    // }
+    // const slippery_slippery_cm = new ContactMaterial(Physics.materials.SlipperyMaterial, Physics.materials.SlipperyMaterial, {
+    //     friction: 0.3,
+    //     restitution: 0.3,
+    //     contactEquationStiffness: 1e8,
+    //     contactEquationRelaxation: 3
+    // });
+    // const slippery_ground_cm = new ContactMaterial(Physics.materials.StickyMaterial, Physics.materials.SlipperyMaterial, {
+    //     friction: 1,
+    //     restitution: 0.3,
+    //     contactEquationStiffness: 1e8,
+    //     contactEquationRelaxation: 3
+    // });
+    // Physics.cannonWorld.addContactMaterial(slippery_ground_cm);
+    // Physics.cannonWorld.addContactMaterial(slippery_slippery_cm);
+
 
 
     //Plane. TODO: RELO TO SCENE!
     const groundShape = new Plane();
-    const groundBody = new Body({ mass: 0 });
+    const groundBody = new Body({
+        mass: 0
+        // material: Physics.materials.StickyMaterial
+    });
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
-    physics.cannonWorld.add(groundBody);
+    Physics.cannonWorld.add(groundBody);
+    Physics.rigidbodies.push(groundBody);
 
     // controllers. Move this.
-    physics.addControllerPhysics();
+    Physics.addControllerPhysics();
 
 })();
 
@@ -98,62 +135,99 @@ document.addEventListener('keydown', (e) =>
 });
 
 
-physics.updateControllers = () =>
+Physics.updateControllers = () =>
 {
-    if (controller1.position.y != 0)
+    // if (controller1.position.y != 0)
+    // {
+    controller1RB.position.copy(controller1.position);
+    controller2RB.position.copy(controller2.position);
+    // }
+}
+
+Physics.updatePhysics = () =>
+{
+    // sendDataToWorker();
+
+    if (Physics.rigidbodies.length < 1) return;
+
+    // run sim
+    Physics.cannonWorld.step(TIMESTEP);
+
+    Physics.updateControllers();
+
+    // sync w/scene objects
+    Physics.cannonWorld.bodies.forEach((body, i) =>
     {
-        controller1RB.position.copy(controller1.position);
-        controller2RB.position.copy(controller2.position);
+        if (Physics.cannonWorld.bodies[i].type == Body.KINEMATIC) return;
+        Physics.rigidbodies[i].quaternion.copy(Physics.cannonWorld.bodies[i].quaternion);
+        Physics.rigidbodies[i].position.copy(Physics.cannonWorld.bodies[i].position);
+    });
+
+    Physics.debugRenderer.update(state.debugPhysics);
+}
+
+Physics.resetScene = () =>
+{
+    const bodies = Physics.cannonWorld.bodies;
+    let i = bodies.length;
+    console.log(i);
+    while (i--)
+    {
+        this.removeBody(bodies[i]);
     }
 }
 
-physics.updatePhysics = () =>
-{
-    // sendDataToWorker();
-    physics.cannonWorld.step(TIMESTEP);
-    if (physics.rigidbodies.length < 1) return;
-
-    physics.updateControllers();
-
-    physics.rigidbodies.forEach((rb, i) =>
-    {
-        rb.position.copy(physics.cannonWorld.bodies[i + 3].position);
-        rb.quaternion.copy(physics.cannonWorld.bodies[i + 3].quaternion);
-    });
-
-}
-
-physics.addBody = (mesh) => 
+Physics.addBody = (mesh, rbShape) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();
     mesh.geometry.boundingBox.getSize(bbSize);
     bbSize.divideScalar(2);
-    const shape = new Box(new Vec3(bbSize.x, bbSize.y, bbSize.z));
-    const body = new Body({ mass: 1 });
+
+    let shape;
+
+    switch (rbShape)
+    {
+        case Physics.RigidBody.Box:
+            shape = new Box(new Vec3(bbSize.x, bbSize.y, bbSize.z));
+            break;
+
+        case Physics.RigidBody.Sphere:
+            shape = new Sphere(Math.max(bbSize.x, bbSize.y, bbSize.z));
+            break;
+
+        case Physics.RigidBody.Plane:
+            shape = new Plane();
+            break;
+        case Physics.RigidBody.Cylinder:
+            //Cylinder ( radiusTop  radiusBottom  height  numSegments )
+            const minSize = Math.min(bbSize.x, bbSize.y, bbSize.z);
+            const maxSize = Math.max(bbSize.x, bbSize.y, bbSize.z) * 2;
+            shape = new Cylinder(minSize, minSize, maxSize, 16);
+            break;
+
+        default:
+            console.error("Physics.addBody: No matching rigidbody found! See Physics.RigidBody object for options")
+            break;
+    }
+
+    const body = new Body({
+        mass: 5
+        // material: Physics.materials.SlipperyMaterial 
+    });
     body.addShape(shape);
     body.position.copy(mesh.position);
-    physics.cannonWorld.addBody(body);
-    physics.rigidbodies.push(mesh);
+    body.quaternion.copy(mesh.quaternion);
+
+    // parent-agnostic approach, currently not working:
+    // let _worldSpaceMeshPos = new Vector3(), _worldSpaceMeshRot = new Quaternion();
+    // mesh.getWorldPosition(_worldSpaceMeshPos);
+    // mesh.getWorldQuaternion(_worldSpaceMeshRot);
+    // body.position.copy(_worldSpaceMeshPos);
+    // body.quaternion.copy(_worldSpaceMeshRot);
+
+    Physics.cannonWorld.addBody(body);
+    Physics.rigidbodies.push(mesh);
 }
 
-
-
-// physics.addTrigger = (mesh) => 
-// {
-//     // console.log("adding trigger to " + mesh.uuid);
-//     // mesh.geometry.computeBoundingBox();
-//     // const bbSize = new Vector3(.2, .2, .2);
-//     // mesh.geometry.boundingBox.getSize(bbSize);
-//     // bbSize.divideScalar(2);
-//     const shape = new Box(new Vec3(.2, .2, .2));
-//     const body = new Body({ mass: 0 });
-//     body.position.copy(mesh.position);
-//     body.addShape(shape);
-//     body.collisionResponse = 0; // no impact on other bodys
-//     body.addEventListener("collide", function (e) { console.log("collided"); });
-//     physics.cannonWorld.addBody(body);
-
-// }
-
-export { physics }
+export { Physics }
