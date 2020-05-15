@@ -1,13 +1,15 @@
 import { Scene, Vector3, Group, PerspectiveCamera } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Brick from './brickCustomShader';
 import { Physics } from '../../engine/physics';
+import { renderer } from '../../engine/renderer';
 import { controller1, controller2 } from '../../engine/xrinput';
 
 import { PeerConnection } from '../../engine/networking/PeerConnection'
 
 const screenCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-screenCamera.position.z = 10;
-
+screenCamera.position.set(0, 0, 10);
+const OC = new OrbitControls(screenCamera, renderer.domElement);
 const scene = new Scene();
 
 Physics.enableDebugger(scene);
@@ -23,7 +25,7 @@ scene.initGame = () =>
     });
 
     const tower = new Group();
-    tower.position.set(2, 0, 0);
+    tower.position.set(0, 0, 0);
     for (let y = 1; y < 14; y++)
     {
         const level = new Group();

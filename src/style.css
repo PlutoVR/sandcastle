@@ -11,7 +11,7 @@ body
     width: 100%; 
     z-index: 9; 
     position: absolute;
-    margin-top: 82%;
+    bottom: 4em;
     text-align: center;
 }
 
