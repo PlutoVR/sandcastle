@@ -6,8 +6,6 @@ import { scene, screenCamera } from "../scenes/networkedTower/scene"
 import { Physics } from "./physics";
 import { PeerConnection } from "./networking/PeerConnection"
 
-import "./placeholderwood.jpg";
-
 // import PhysicsSolver from './physics.worker.js';
 const OC = new OrbitControls(screenCamera, renderer.domElement);
 

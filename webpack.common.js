@@ -1,6 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const ScriptExtHtmlWebpackPlugin = require("script-ext-html-webpack-plugin");
+// const TerserPlugin = require('terser-webpack-plugin');
+
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
@@ -72,6 +75,9 @@ module.exports = {
         new HtmlWebPackPlugin({
             template: "./src/index.html",
             filename: "./index.html"
+        }),
+        new ScriptExtHtmlWebpackPlugin({
+            defaultAttribute: 'defer'
         }),
         // new BundleAnalyzerPlugin()
     ],
