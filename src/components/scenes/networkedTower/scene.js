@@ -24,6 +24,15 @@ scene.initGame = () =>
         scene.remove(e);
     });
 
+    ctrlArr.forEach((controller, i) => 
+    {
+        scene.add(controller);
+        Physics.addControllerRigidBody(controller);
+        PeerConnection.addSharedObject(controller, (i + 1) * 10);
+    });
+
+    // scene.createTestSphere();
+
     const tower = new Group();
     tower.position.set(0, 0, 0);
     for (let y = 1; y < 14; y++)
@@ -59,10 +68,7 @@ scene.initGame = () =>
     // scene.add(light);
     // physics.addTrigger(controller1);
     // physics.addTrigger(controller2);
-    scene.add(controller1);
-    scene.add(controller2);
-    PeerConnection.addSharedObject(controller1, 10);
-    PeerConnection.addSharedObject(controller2, 11);
+
 }
 
 // scene.createTestSphere = () =>

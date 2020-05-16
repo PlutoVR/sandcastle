@@ -1,7 +1,7 @@
 import { state } from "./state";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, screenCamera } from "../scenes/networkedTower/scene"
+import { scene, screenCamera } from "../scenes/partycle01/scene"
 import { Physics } from "./physics";
 import { PeerConnection } from "./networking/PeerConnection"
 
@@ -23,7 +23,10 @@ renderer.setAnimationLoop(() =>
     }
 
     // Networking
-    PeerConnection.sync();
+    if (state.hasNetworking)
+    {
+        PeerConnection.sync();
+    }
 
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
