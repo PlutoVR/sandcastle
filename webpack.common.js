@@ -1,6 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const ScriptExtHtmlWebpackPlugin = require("script-ext-html-webpack-plugin");
+// const TerserPlugin = require('terser-webpack-plugin');
+
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
@@ -11,10 +14,9 @@ module.exports = {
     entry: APP_DIR + '/index.js',
     output: {
         path: BUILD_DIR,
-        filename: 'bundle.js',
+        filename: './bundle.js',
         // publicPath: '/'
     },
-    // devtool: 'eval-cheap-source-map',
     module: {
         rules: [
             // {
@@ -22,17 +24,41 @@ module.exports = {
             //     use: { loader: 'worker-loader' }
             // },
             {
-                test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
-            },
-            {
                 test: /\.html$/,
                 use: [
                     {
-                        loader: "html-loader"
+                        loader: "html-loader",
+                        options: {
+                            minimize: true
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false,
+                            name: '[name].[ext]',
+                            outputPath: 'assets/images/',
+                            publicPath: 'assets/images/'
+                        }
                     }
                 ]
             },
@@ -50,16 +76,12 @@ module.exports = {
             template: "./src/index.html",
             filename: "./index.html"
         }),
+        new ScriptExtHtmlWebpackPlugin({
+            defaultAttribute: 'defer'
+        }),
         // new BundleAnalyzerPlugin()
     ],
     resolve: {
         extensions: ['.js', '.es6'],
     },
-    devServer: {
-        contentBase: path.join(APP_DIR, 'assets'),
-        // writeToDisk: true,
-        // host: '192.168.0.180',
-        // disableHostCheck: true
-        port: 1234,
-    }
 };

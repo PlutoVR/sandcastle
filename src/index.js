@@ -14,5 +14,7 @@ TODO:
 
 */
 
+import "./index.html";
+import "./style.css";
 import * as engine from "./components/engine/engine";
 

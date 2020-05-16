@@ -1,12 +1,12 @@
 import { BoxGeometry, ShaderMaterial, MeshNormalMaterial, Mesh, Vector2 } from "three";
 
 // glsl
-const vs = require('./shaders/vs_defaultVertex.glsl');
-const fs_neon = require('./shaders/fs_neonGrid.glsl');
-const fs_matrix = require('./shaders/fs_matrixLetters.glsl');
-const fs_puddles = require('./shaders/fs_puddles.glsl');
-const fs_pastelCheckers = require('./shaders/fs_pastelCheckers.glsl');
-const fs_bloomFireflies = require('./shaders/fs_bloomFireflies.glsl');
+const vs = require('../../shaders/vs_defaultVertex.glsl');
+const fs_neon = require('../../shaders/fs_neonGrid.glsl');
+const fs_matrix = require('../../shaders/fs_matrixLetters.glsl');
+const fs_puddles = require('../../shaders/fs_puddles.glsl');
+const fs_pastelCheckers = require('../../shaders/fs_pastelCheckers.glsl');
+const fs_bloomFireflies = require('../../shaders/fs_bloomFireflies.glsl');
 
 const geometry = new BoxGeometry(.5, .5, 1.5);
 const uniforms = { time: { value: 0.0 } };

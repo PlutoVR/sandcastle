@@ -1,13 +1,14 @@
 import { state } from "./state";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, screenCamera } from "../scenes/networkedTowerScene"
+import { scene, screenCamera } from "../scenes/networkedTower/scene"
 import { Physics } from "./physics";
 import { PeerConnection } from "./networking/PeerConnection"
 
 // import PhysicsSolver from './physics.worker.js';
-const OC = new OrbitControls(screenCamera, renderer.domElement);
+
+
+// Screen cam orbitcontrols
 
 // main app render loop
 renderer.setAnimationLoop(() =>
@@ -24,8 +25,6 @@ renderer.setAnimationLoop(() =>
     // Networking
     PeerConnection.sync();
 
-    // Screen cam orbitcontrols
-    OC.update();
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
@@ -45,7 +44,5 @@ window.addEventListener('resize', onWindowResize, false);
 // DOM append
 document.querySelector(".app").appendChild(renderer.domElement);
 // webxr button
-document.querySelector(".app").appendChild(VRButton.createButton(renderer));
-
-
-
+const a = document.querySelector(".app").appendChild(VRButton.createButton(renderer));
+a.style.background = "black";

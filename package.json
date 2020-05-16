@@ -4,15 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --env.dev --devtool source-map --open",
-    "build:dev": "webpack --env.dev --progress --profile --colors",
-    "build:prod": "webpack --env.prod --progress --profile --colors"
+    "start": "webpack-dev-server --hot --open --config webpack.dev.js",
+    "build": "webpack --progress --profile --colors --config webpack.prod.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-preset-es2015": "^6.24.1",
     "cannon": "^0.6.2",
     "peerjs": "^1.2.0",
     "three": "^0.116.1"
@@ -21,14 +19,29 @@
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "compression-webpack-plugin": "^4.0.0",
+    "css-loader": "^3.5.3",
+    "dev": "^0.1.3",
+    "file-loader": "^6.0.0",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
+    "imagemin-jpegtran": "^6.0.0",
+    "imagemin-mozjpeg": "^8.0.0",
+    "imagemin-optipng": "^7.1.0",
+    "imagemin-svgo": "^7.1.0",
+    "imagemin-webpack-plugin": "^2.4.2",
+    "offline-plugin": "^5.0.7",
+    "script-ext-html-webpack-plugin": "^2.1.4",
     "shader-loader": "^1.3.1",
+    "style-loader": "^1.2.1",
+    "terser-webpack-plugin": "^3.0.1",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.7.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
     "webpack-glsl-loader": "^1.0.1",
+    "webpack-merge": "^4.2.2",
     "worker-loader": "^2.0.0"
   }
 }
