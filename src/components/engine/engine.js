@@ -1,7 +1,7 @@
 import { state } from "./state";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, camera } from "../scenes/partycle01/scene"
+import { scene, camera } from "../scenes/defaultScene"
 import { Physics } from "./physics";
 import { PeerConnection } from "./networking/PeerConnection"
 
@@ -17,7 +17,7 @@ renderer.setAnimationLoop(() =>
     renderer.render(scene, camera);
 
     // PHYSICS
-    if (!state.isPaused)
+    if (!state.isPaused && state.hasPhysics)
     {
         Physics.updatePhysics();
     }

@@ -1,26 +1,33 @@
+import { state } from "../state"
 import RS from "./RemoteSync";
 import PeerJSClient from "./PeerJSClient";
 
-let testSphere;
 
-//networking
-let clientId;
+// bad patch, make more sensible
+let PeerConnection;
+if (state.hasNetworking)
+{
 
-const PeerConnection = new RS.RemoteSync(
-    new PeerJSClient({
-        // key: 'lwjd5qra8257b9',
-        debugLevel: 0,
-    })
-);
-PeerConnection.addEventListener('open', onOpen);
-PeerConnection.addEventListener('close', onClose);
-PeerConnection.addEventListener('error', onError);
-PeerConnection.addEventListener('connect', onConnect);
-PeerConnection.addEventListener('disconnect', onDisconnect);
-PeerConnection.addEventListener('receive', onReceive);
-PeerConnection.addEventListener('add', onAdd);
-PeerConnection.addEventListener('remove', onRemove);
+    //networking
+    let clientId;
 
+
+
+    PeerConnection = new RS.RemoteSync(
+        new PeerJSClient({
+            // key: 'lwjd5qra8257b9',
+            debugLevel: 0,
+        })
+    );
+    PeerConnection.addEventListener('open', onOpen);
+    PeerConnection.addEventListener('close', onClose);
+    PeerConnection.addEventListener('error', onError);
+    PeerConnection.addEventListener('connect', onConnect);
+    PeerConnection.addEventListener('disconnect', onDisconnect);
+    PeerConnection.addEventListener('receive', onReceive);
+    PeerConnection.addEventListener('add', onAdd);
+    PeerConnection.addEventListener('remove', onRemove);
+}
 
 function onOpen(id)
 {
@@ -94,12 +101,6 @@ function onConnect(destId)
 {
 
     showMessage('onConnect: Connected with ' + destId);
-
-    // ResetGame();
-    // scene.createTestSphere();
-    // scene.initGame();
-    // PeerConnection.addRemoteObject(destId, objectId, mesh);
-
 
 }
 

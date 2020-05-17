@@ -6,6 +6,7 @@ class State
         this.hasXRInput = false;
         this.hasXRRendering = false;
         this.hasNetworking = false;
+        this.hasPhysics = false;
 
         this.isPaused = false;
         this.debugPhysics = false;

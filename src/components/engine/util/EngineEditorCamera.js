@@ -1,6 +1,6 @@
 import { Vector3, Euler, Object3D } from "three"
 
-export class EditorCamera extends Object3D
+export class EngineEditorCamera extends Object3D
 {
     constructor(camera, domElement, params)
     {
