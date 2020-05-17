@@ -18,7 +18,8 @@ export class EngineEditorCamera extends Object3D
             83: false, // s
             68: false, // d
             81: false, // q
-            69: false // e
+            69: false, // e
+            16: false // shift
         };
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
@@ -67,15 +68,19 @@ export class EngineEditorCamera extends Object3D
 
     update()
     {
-        if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED);
-        if (this.pressedKeyMap[83]) this.moveForward(-this.CAM_SPEED);
-        if (this.pressedKeyMap[69]) this.moveUp(this.CAM_SPEED);
-        if (this.pressedKeyMap[81]) this.moveUp(-this.CAM_SPEED);
-        if (this.pressedKeyMap[68]) this.moveRight(this.CAM_SPEED);
-        if (this.pressedKeyMap[65]) this.moveRight(-this.CAM_SPEED);
+        this.shiftSpeedMulti = this.pressedKeyMap[16] ? 2 : 1;
+        if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[83]) this.moveForward(-this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[69]) this.moveUp(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[81]) this.moveUp(-this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[68]) this.moveRight(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[65]) this.moveRight(-this.CAM_SPEED * this.shiftSpeedMulti);
     }
 
-    onKeyDown(event) { this.pressedKeyMap[event.keyCode] = (event.keyCode in this.pressedKeyMap); };
+    onKeyDown(event)
+    {
+        this.pressedKeyMap[event.keyCode] = (event.keyCode in this.pressedKeyMap);
+    };
     onKeyUp(event) { this.pressedKeyMap[event.keyCode] = !(event.keyCode in this.pressedKeyMap); };
 
     onMouseDown(event)

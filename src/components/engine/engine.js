@@ -19,7 +19,7 @@ renderer.setAnimationLoop(() =>
     renderer.render(scene, camera);
 
     // PHYSICS
-    if (!state.isPaused && state.hasPhysics) Physics.updatePhysics();
+    if (!state.isPaused) Physics.updatePhysics();
 
     // NETWORKING
     if (scene.networking != undefined) scene.networking.PeerConnection.sync();

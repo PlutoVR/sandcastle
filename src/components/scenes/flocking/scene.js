@@ -1,6 +1,4 @@
 import { Scene, PerspectiveCamera, TorusBufferGeometry, MeshNormalMaterial, Mesh, Vector3 } from "three";
-import { EngineEditorCamera } from "../../engine/util/EngineEditorCamera";
-import { renderer } from '../../engine/renderer';
 import { ctrlArr } from '../../engine/xrinput';
 
 const scene = new Scene();
@@ -18,6 +16,7 @@ scene.init = () =>
     {
         scene.add(controller);
     });
+
     const rots = [new Vector3(-1, 0, 0), new Vector3(1, 1, 0), new Vector3(0, -1, 0)]
     for (var i = 0; i < 3; i++)
     {

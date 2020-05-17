@@ -1,21 +1,22 @@
-import { state } from "../../engine/state"
-import { Scene, Vector3, Group, PerspectiveCamera } from "three";
+import { Scene, Vector3, Group, MeshNormalMaterial, Mesh } from "three";
 import Brick from './brickCustomShader';
 import { Physics } from '../../engine/physics';
 import { ctrlArr } from '../../engine/xrinput';
 
 import { SharedExperience } from '../../engine/networking/PeerConnection'
 
-state.hasPhysics = true;
 const scene = new Scene();
 scene.networking = new SharedExperience();
 
-
 Physics.enableDebugger(scene);
+
+const RNG = () =>
+{
+    return Math.floor(Math.random() * 1000000000)
+}
 
 scene.initGame = () =>
 {
-
     scene.traverse(e =>
     {
         scene.remove(e);
@@ -28,11 +29,9 @@ scene.initGame = () =>
         scene.networking.PeerConnection.addSharedObject(controller, (i + 1) * 10);
     });
 
-    // scene.createTestSphere();
-
     const tower = new Group();
-    tower.position.set(0, 0, 0);
-    for (let y = 1; y < 14; y++)
+    tower.position.set(0, 0, -1);
+    for (let y = 0; y < 13; y++)
     {
         const level = new Group();
         for (let x = 0; x < 3; x++)
@@ -44,20 +43,17 @@ scene.initGame = () =>
         if (y % 2 == 0) { level.rotateOnAxis(new Vector3(0, 1, 0), 1.5708); }
         tower.add(level);
         scene.updateMatrixWorld();
-        tower.children.forEach(e =>
+        tower.children.forEach((level, x) =>
         {
-            level.children.forEach(e =>
+            level.children.forEach((brick, y) =>
             {
-                //remove from groups due to physics constraints
-                scene.attach(e);
-                // if (!e.hasPhysics) return;
-                Physics.addBody(e, Physics.RigidBodyType.Box);
-                // tower.attach(e);
-            });
+                if (!(brick instanceof (Mesh))) return;
+                scene.attach(brick);
+                Physics.addBody(brick, Physics.RigidBodyType.Box);
+                scene.networking.PeerConnection.addSharedObject(brick, RNG());
+            })
         });
     }
-    scene.networking.PeerConnection.addSharedObject(tower, '0');
-    scene.add(tower);
 }
 
 scene.initGame();
