@@ -22,7 +22,7 @@ renderer.setAnimationLoop(() =>
     if (!state.isPaused && state.hasPhysics) Physics.updatePhysics();
 
     // NETWORKING
-    if (scene.se != undefined) scene.se.PeerConnection.sync();
+    if (scene.networking != undefined) scene.networking.PeerConnection.sync();
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });

@@ -1,4 +1,3 @@
-import { state } from "../state"
 import RS from "./RemoteSync";
 import PeerJSClient from "./PeerJSClient";
 
@@ -6,11 +5,8 @@ export class SharedExperience
 {
     constructor()
     {
-        // bad design, make more sensible
-
         this.PeerConnection = new RS.RemoteSync(
             new PeerJSClient({
-                // key: 'lwjd5qra8257b9',
                 debugLevel: 0,
             })
         );

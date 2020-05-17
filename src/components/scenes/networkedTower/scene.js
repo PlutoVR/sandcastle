@@ -6,18 +6,15 @@ import { ctrlArr } from '../../engine/xrinput';
 
 import { SharedExperience } from '../../engine/networking/PeerConnection'
 
-state.hasNetworking = true;
 state.hasPhysics = true;
 const scene = new Scene();
-scene.se = new SharedExperience();
+scene.networking = new SharedExperience();
 
 
 Physics.enableDebugger(scene);
 
 scene.initGame = () =>
 {
-    //clean up scene and physics
-    // Physics.resetScene();
 
     scene.traverse(e =>
     {
@@ -28,7 +25,7 @@ scene.initGame = () =>
     {
         scene.add(controller);
         Physics.addControllerRigidBody(controller);
-        scene.se.PeerConnection.addSharedObject(controller, (i + 1) * 10);
+        scene.networking.PeerConnection.addSharedObject(controller, (i + 1) * 10);
     });
 
     // scene.createTestSphere();
@@ -59,7 +56,7 @@ scene.initGame = () =>
             });
         });
     }
-    scene.se.PeerConnection.addSharedObject(tower, '0');
+    scene.networking.PeerConnection.addSharedObject(tower, '0');
     scene.add(tower);
 }
 
