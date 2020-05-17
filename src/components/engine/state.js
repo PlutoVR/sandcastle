@@ -2,6 +2,11 @@ class State
 {
     constructor()
     {
+
+        this.hasXRInput = false;
+        this.hasXRRendering = false;
+        this.hasNetworking = false;
+
         this.isPaused = false;
         this.debugPhysics = false;
         this.bindDebugKeys();
