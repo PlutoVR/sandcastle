@@ -2,155 +2,98 @@ import { state } from "../state"
 import RS from "./RemoteSync";
 import PeerJSClient from "./PeerJSClient";
 
-
-// bad patch, make more sensible
-let PeerConnection;
-if (state.hasNetworking)
+export class SharedExperience
 {
-
-    //networking
-    let clientId;
-
-
-
-    PeerConnection = new RS.RemoteSync(
-        new PeerJSClient({
-            // key: 'lwjd5qra8257b9',
-            debugLevel: 0,
-        })
-    );
-    PeerConnection.addEventListener('open', onOpen);
-    PeerConnection.addEventListener('close', onClose);
-    PeerConnection.addEventListener('error', onError);
-    PeerConnection.addEventListener('connect', onConnect);
-    PeerConnection.addEventListener('disconnect', onDisconnect);
-    PeerConnection.addEventListener('receive', onReceive);
-    PeerConnection.addEventListener('add', onAdd);
-    PeerConnection.addEventListener('remove', onRemove);
-}
-
-function onOpen(id)
-{
-
-    clientId = id;
-    const link = window.location.href + "?" + id;
-    const a = document.createElement('a');
-    a.setAttribute('href', link);
-    a.setAttribute('target', '_blank');
-    a.innerHTML = link;
-    document.querySelector(".info").appendChild(a);
-    // document.getElementById('link').appendChild(createLink());
-
-    // PeerConnection.addLocalObject(screenCamera, { type: 'camera' });
-
-    /*
-        var box = createBox();
-        box.position.y = -10;
-        scene.add( box );
-    
-        transformControls.attach( box );
-    
-        PeerConnection.addLocalObject( box, { type: 'box' } );
-    */
-
-    // var sphere = createSphere();
-    // sphere.position.y = -10;
-    // scene.add(sphere);
-
-    // transformControls.attach(sphere);
-
-    // PeerConnection.addSharedObject(sphere, 0);
-
-    // scene.add(transformControls);
-
-    connectFromURL();
-
-}
-
-function onReceive(data)
-{
-
-}
-
-function onAdd(destId, objectId, info)
-{
-    console.log("onAdd: connected to " + destId);
-
-}
-
-function onRemove(destId, objectId, object)
-{
-    if (object.parent !== null) object.parent.remove(object);
-
-}
-
-
-function onClose(destId)
-{
-    showMessage('Disconnected to ' + destId);
-}
-
-function onError(error)
-{
-
-    showMessage(error);
-
-}
-
-function onConnect(destId)
-{
-
-    showMessage('onConnect: Connected with ' + destId);
-
-}
-
-function onDisconnect(destId, object)
-{
-
-    showMessage('Disconnected with ' + destId);
-
-}
-
-function connect(id)
-{
-
-    if (id === clientId)
+    constructor()
     {
+        // bad design, make more sensible
 
-        showMessage(id + ' is your id');
+        this.PeerConnection = new RS.RemoteSync(
+            new PeerJSClient({
+                // key: 'lwjd5qra8257b9',
+                debugLevel: 0,
+            })
+        );
+        this.PeerConnection.addEventListener('open', this.onOpen.bind(this));
+        this.PeerConnection.addEventListener('close', this.onClose.bind(this));
+        this.PeerConnection.addEventListener('error', this.onError.bind(this));
+        this.PeerConnection.addEventListener('connect', this.onConnect.bind(this));
+        this.PeerConnection.addEventListener('disconnect', this.onDisconnect.bind(this));
+        this.PeerConnection.addEventListener('receive', this.onReceive.bind(this));
+        this.PeerConnection.addEventListener('add', this.onAdd.bind(this));
+        this.PeerConnection.addEventListener('remove', this.onRemove.bind(this));
+    }
 
-        return;
+    onOpen(id)
+    {
+        this.clientId = id;
+        const link = window.location.href + "?" + id;
+        const a = document.createElement('a');
+        a.setAttribute('href', link);
+        a.setAttribute('target', '_blank');
+        a.innerHTML = link;
+        document.querySelector(".info").appendChild(a);
+        this.connectFromURL();
+    }
+
+    onReceive(data)
+    {
 
     }
 
-    var message = document.getElementById('message');
-
-    showMessage('Connecting with ' + id);
-
-    PeerConnection.connect(id);
-
-}
-
-function connectFromURL()
-{
-
-    var url = location.href;
-    var index = url.indexOf('?');
-
-    if (index >= 0)
+    onAdd(destId, objectId, info)
     {
-
-        var id = url.slice(index + 1);
-
-        connect(id);
-
+        console.log("onAdd: connected to " + destId);
     }
 
-}
+    onRemove(destId, objectId, object)
+    {
+        if (object.parent !== null) object.parent.remove(object);
+    }
 
-function showMessage(str)
-{
-    console.log(str);
-}
 
-export { PeerConnection }
+    onClose(destId)
+    {
+        this.showMessage('Disconnected to ' + destId);
+    }
+
+    onError(error)
+    {
+        this.showMessage(error);
+    }
+
+    onConnect(destId)
+    {
+        this.showMessage('onConnect: Connected with ' + destId);
+    }
+
+    onDisconnect(destId, object)
+    {
+        this.showMessage('Disconnected with ' + destId);
+    }
+
+    connect(id)
+    {
+        if (id === this.clientId)
+        {
+            this.showMessage(id + ' is your id');
+            return;
+        }
+        const message = document.getElementById('message');
+        this.showMessage('Connecting with ' + id);
+        this.PeerConnection.connect(id);
+    }
+
+    connectFromURL()
+    {
+        const url = location.href;
+        const index = url.indexOf('?');
+        if (index >= 0)
+        {
+            const id = url.slice(index + 1);
+            this.PeerConnection.connect(id);
+        }
+    }
+
+    showMessage(str) { console.log(str); }
+}

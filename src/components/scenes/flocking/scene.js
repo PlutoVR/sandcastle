@@ -5,7 +5,6 @@ import { ctrlArr } from '../../engine/xrinput';
 
 const scene = new Scene();
 
-
 scene.init = () =>
 {
     scene.traverse(e =>
@@ -34,7 +33,6 @@ scene.init = () =>
         scene.add(placeholder);
     }
 }
-
 scene.init();
 
 export { scene }

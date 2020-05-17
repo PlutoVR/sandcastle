@@ -157,7 +157,7 @@ Physics.resetScene = () =>
     }
 }
 
-Physics.addBody = (mesh, rbShape) => 
+Physics.addBody = (mesh, rbShape, mass = 1) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();
@@ -192,20 +192,12 @@ Physics.addBody = (mesh, rbShape) =>
     }
 
     const body = new Body({
-        mass: 5
+        mass: mass
         // material: Physics.materials.SlipperyMaterial 
     });
     body.addShape(shape);
     body.position.copy(mesh.position);
     body.quaternion.copy(mesh.quaternion);
-
-    // parent-agnostic approach, currently not working:
-    // let _worldSpaceMeshPos = new Vector3(), _worldSpaceMeshRot = new Quaternion();
-    // mesh.getWorldPosition(_worldSpaceMeshPos);
-    // mesh.getWorldQuaternion(_worldSpaceMeshRot);
-    // body.position.copy(_worldSpaceMeshPos);
-    // body.quaternion.copy(_worldSpaceMeshRot);
-
     Physics.cannonWorld.addBody(body);
     Physics.rigidbodies.push(mesh);
 }

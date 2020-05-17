@@ -8,8 +8,6 @@ import { ctrlArr } from '../engine/xrinput';
 // import { PeerConnection } from '../engine/networking/PeerConnection'
 
 const scene = new Scene();
-const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
 
 scene.init = () =>
 {
@@ -17,8 +15,6 @@ scene.init = () =>
     {
         scene.remove(e);
     });
-    const eec = new EngineEditorCamera(camera, renderer.domElement);
-    scene.add(eec);
 
     // XR Controllers
     ctrlArr.forEach((controller, i) => 
@@ -43,4 +39,4 @@ scene.init = () =>
 
 scene.init();
 
-export { scene, camera }
+export { scene }

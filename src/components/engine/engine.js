@@ -5,8 +5,8 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-import { PeerConnection } from "./networking/PeerConnection"
-import { scene } from "../scenes/flocking/scene"
+// import { scene } from "../scenes/partycle01/scene"
+import { scene } from "../scenes/networkedTower/scene"
 
 // editor camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -22,7 +22,7 @@ renderer.setAnimationLoop(() =>
     if (!state.isPaused && state.hasPhysics) Physics.updatePhysics();
 
     // NETWORKING
-    if (state.hasNetworking) PeerConnection.sync();
+    if (scene.se != undefined) scene.se.PeerConnection.sync();
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
