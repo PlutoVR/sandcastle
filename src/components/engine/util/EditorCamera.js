@@ -1,28 +1,26 @@
-import { PerspectiveCamera, Vector3, Euler, Object3D } from "three"
-
-
-const PI_2 = Math.PI / 2;
-let CAM_SPEED = 0.05;
-let euler = new Euler(0, 0, 0, 'YXZ');
-let vec = new Vector3();
-let _rcPressed = false;
-let cameraForward = new Vector3();
-const pressedKeyMap = {
-    87: false, // w
-    65: false, // a
-    83: false, // s
-    68: false, // d
-    81: false, // q
-    69: false // e
-};
+import { Vector3, Euler, Object3D } from "three"
 
 export class EditorCamera extends Object3D
 {
-    constructor(camera, canvas, params)
+    constructor(camera, domElement, params)
     {
         super(params);
         this.camera = camera;
-        this.canvas = canvas;
+        this.domElement = domElement;
+        this.PI_2 = Math.PI / 2;
+        this.euler = new Euler(0, 0, 0, 'YXZ');
+        this.vec = new Vector3();
+        this.cameraForward = new Vector3();
+        this._rcPressed = false;
+        this.pressedKeyMap = {
+            87: false, // w
+            65: false, // a
+            83: false, // s
+            68: false, // d
+            81: false, // q
+            69: false // e
+        };
+
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
         window.addEventListener('keyup', this.onKeyUp.bind(this), false);
         window.addEventListener('mousedown', this.onMouseDown.bind(this), false);
@@ -31,95 +29,108 @@ export class EditorCamera extends Object3D
         window.addEventListener('wheel', this.onMouseWheel.bind(this), false);
 
         //disable rClick
-        document.oncontextmenu = function (e)
+        document.oncontextmenu = (e) =>
         {
-            var evt = new Object({ keyCode: 93 });
-            if (e.preventDefault != undefined)
-                e.preventDefault();
-            if (e.stopPropagation != undefined)
-                e.stopPropagation();
+            if (e.preventDefault != undefined) e.preventDefault();
+            if (e.stopPropagation != undefined) e.stopPropagation();
         }
+        this.retrieveSessionData();
+    }
+
+    setSessionData() 
+    {
+
+        this.editorCamState = {
+            camSpeed: this.CAM_SPEED,
+            cameraPosition: this.camera.position,
+            cameraQuaternion: this.camera.quaternion
+        }
+        window.localStorage.setItem('camState', JSON.stringify(this.editorCamState));
+        // console.log("saving editor camera session data");
+    }
+
+    retrieveSessionData() 
+    {
+        const camState = JSON.parse(window.localStorage.getItem('camState'));
+        if (camState == null)
+        {
+            this.CAM_SPEED = 0.05;
+            this.setSessionData();
+            return;
+        }
+
+        this.CAM_SPEED = "camSpeed" in camState ? camState["camSpeed"] : 0.05;
+        this.camera.position.copy("cameraPosition" in camState ? camState["cameraPosition"] : new Vector3());
+        this.camera.applyQuaternion("cameraQuaternion" in camState ? camState["cameraQuaternion"] : new Vector3());
+        // console.log("loading editor camera session data");
     }
 
     update()
     {
-        if (pressedKeyMap[87]) this.moveForward(CAM_SPEED);
-        if (pressedKeyMap[83]) this.moveForward(-CAM_SPEED);
-        if (pressedKeyMap[69]) this.moveUp(CAM_SPEED);
-        if (pressedKeyMap[81]) this.moveUp(-CAM_SPEED);
-        if (pressedKeyMap[68]) this.moveRight(CAM_SPEED);
-        if (pressedKeyMap[65]) this.moveRight(-CAM_SPEED);
+        if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED);
+        if (this.pressedKeyMap[83]) this.moveForward(-this.CAM_SPEED);
+        if (this.pressedKeyMap[69]) this.moveUp(this.CAM_SPEED);
+        if (this.pressedKeyMap[81]) this.moveUp(-this.CAM_SPEED);
+        if (this.pressedKeyMap[68]) this.moveRight(this.CAM_SPEED);
+        if (this.pressedKeyMap[65]) this.moveRight(-this.CAM_SPEED);
     }
 
-    onKeyDown(event)
-    {
-        if (event.keyCode in pressedKeyMap) pressedKeyMap[event.keyCode] = true;
-    };
-
-    onKeyUp(event)
-    {
-        if (event.keyCode in pressedKeyMap) pressedKeyMap[event.keyCode] = false;
-    };
+    onKeyDown(event) { this.pressedKeyMap[event.keyCode] = (event.keyCode in this.pressedKeyMap); };
+    onKeyUp(event) { this.pressedKeyMap[event.keyCode] = !(event.keyCode in this.pressedKeyMap); };
 
     onMouseDown(event)
     {
         if (event.button == 2)
         {
-            _rcPressed = true;
-            this.canvas.requestPointerLock = this.canvas.requestPointerLock ||
-                canvas.mozRequestPointerLock;
-            this.canvas.requestPointerLock()
+            this._rcPressed = true;
+            this.domElement.requestPointerLock = this.domElement.requestPointerLock ||
+                domElement.mozRequestPointerLock;
+            this.domElement.requestPointerLock()
         }
     }
 
     onMouseUp(event)
     {
-        if (event.button == 2) { _rcPressed = false; }
-        document.exitPointerLock();
+        if (event.button == 2)
+        {
+            this._rcPressed = false;
+            document.exitPointerLock();
+            this.setSessionData();
+        }
     }
 
     moveForward(distance)
     {
-        vec.setFromMatrixColumn(this.camera.matrix, 0);
-        vec.crossVectors(this.camera.up, vec);
-        this.camera.getWorldDirection(cameraForward);
-        this.camera.position.addScaledVector(cameraForward, distance);
-
-    };
+        this.camera.getWorldDirection(this.cameraForward);
+        this.camera.position.addScaledVector(this.cameraForward, distance);
+    }
 
     moveRight(distance)
     {
-        vec.setFromMatrixColumn(this.camera.matrix, 0);
-        this.camera.position.addScaledVector(vec, distance);
-    };
+        this.vec.setFromMatrixColumn(this.camera.matrix, 0);
+        this.camera.position.addScaledVector(this.vec, distance);
+    }
 
     moveUp(distance)
     {
         this.camera.position.addScaledVector(this.camera.up, distance);
-    };
+    }
 
     onMouseMove(event)
     {
-        if (!_rcPressed) return;
-
+        if (!this._rcPressed) return;
         const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-        euler.setFromQuaternion(this.camera.quaternion);
-        euler.y -= movementX * 0.002;
-        euler.x -= movementY * 0.002;
-        euler.x = Math.max(- PI_2, Math.min(PI_2, euler.x));
-        this.camera.quaternion.setFromEuler(euler);
-    };
+        this.euler.setFromQuaternion(this.camera.quaternion);
+        this.euler.y -= movementX * 0.002;
+        this.euler.x -= movementY * 0.002;
+        this.euler.x = Math.max(- this.PI_2, Math.min(this.PI_2, this.euler.x));
+        this.camera.quaternion.setFromEuler(this.euler);
+    }
 
     onMouseWheel(event)
     {
-        if (_rcPressed)
-        {
-            CAM_SPEED -= event.deltaY * 0.0001;
-        }
-        else 
-        {
-            this.moveForward(CAM_SPEED * -event.deltaY / 10);
-        }
+        if (this._rcPressed) this.CAM_SPEED = Math.max(0.01, this.CAM_SPEED -= event.deltaY * 0.0001);
+        else this.moveForward(this.CAM_SPEED * -event.deltaY / 10);
     }
 }
