@@ -1,7 +1,7 @@
 import { state } from "./state";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene, screenCamera } from "../scenes/partycle01/scene"
+import { scene, camera } from "../scenes/partycle01/scene"
 import { Physics } from "./physics";
 import { PeerConnection } from "./networking/PeerConnection"
 
@@ -14,7 +14,7 @@ import { PeerConnection } from "./networking/PeerConnection"
 renderer.setAnimationLoop(() =>
 {
     // RENDERING
-    renderer.render(scene, screenCamera);
+    renderer.render(scene, camera);
 
     // PHYSICS
     if (!state.isPaused)
@@ -37,8 +37,8 @@ renderer.setAnimationLoop(() =>
 
 const onWindowResize = () =>
 {
-    screenCamera.aspect = window.innerWidth / window.innerHeight;
-    screenCamera.updateProjectionMatrix();
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
