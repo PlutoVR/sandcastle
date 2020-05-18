@@ -5,8 +5,7 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-// import { scene } from "../scenes/partycle01/scene"
-import { scene } from "../scenes/networkedTower/scene"
+import { scene } from "../scenes/flocking/scene"
 
 // editor camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);

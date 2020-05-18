@@ -142,7 +142,7 @@ Physics.updatePhysics = () =>
         Physics.rigidbodies[i].position.copy(Physics.cannonWorld.bodies[i].position);
     });
 
-    Physics.debugRenderer.update(state.debugPhysics);
+    if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(state.debugPhysics);
 }
 
 Physics.resetScene = () =>
