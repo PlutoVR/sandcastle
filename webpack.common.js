@@ -63,6 +63,20 @@ module.exports = {
                 ]
             },
             {
+                test: /\.(gltf|glb)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false,
+                            name: '[name].[ext]',
+                            outputPath: 'assets/models/',
+                            publicPath: 'assets/models/'
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.(glsl|vs|fs)$/,
                 loader: 'shader-loader'
             }
