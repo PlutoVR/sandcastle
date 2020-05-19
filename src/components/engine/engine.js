@@ -24,7 +24,7 @@ renderer.setAnimationLoop(() =>
     if (scene.networking != undefined) scene.networking.PeerConnection.sync();
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
-    scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
+    scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });
 });
 
 window.addEventListener('resize', () =>

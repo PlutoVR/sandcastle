@@ -66,7 +66,7 @@ export class EngineEditorCamera extends Object3D
         // console.log("loading editor camera session data");
     }
 
-    update()
+    Update()
     {
         this.shiftSpeedMulti = this.pressedKeyMap[16] ? 2 : 1;
         if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED * this.shiftSpeedMulti);

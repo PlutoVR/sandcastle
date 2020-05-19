@@ -1,36 +1,35 @@
-import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping } from "three";
+import { Scene, Vector3, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, LinearMipmapLinearFilter } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Boid } from "./boid";
 import { ctrlArr } from '../../engine/xrinput';
 import { Water } from './water';
 import { Sky } from './sky.js';
+import { renderer } from '../../engine/renderer'
 
 const scene = new Scene();
 
-const boids = [];
-let light;
-let water;
-
-const setupFlock = (numA, numB) =>
-{
-    let i = 0;
-    while (i < numA)
-    {
-        boids[i] = new Boid(1, scene);
-        i++;
-    }
-    while (i < numA + numB)
-    {
-        boids[i] = new Boid(0, scene);
-        i++;
-    }
-}
-
 scene.init = () =>
 {
+    // networking refresh cleanup
     scene.traverse(e =>
     {
         scene.remove(e);
     });
+
+
+    var loader = new GLTFLoader();
+
+    // "Anonymous Bird" from https://poly.google.com/view/8Ph79kHbt9s
+    const modelPath = "./assets/flocking/polyCrow/polyCrow_updated.glb";
+    let bird;
+    loader.load(modelPath, function (gltf)
+    {
+        bird = gltf.scene.children[0];
+        setupFlock(400, bird);
+
+    });
+
+
 
     // XR Controllers
     ctrlArr.forEach((controller, i) => 
@@ -38,23 +37,24 @@ scene.init = () =>
         scene.add(controller);
     });
 
-    setupFlock(200, 200);
-    const data = new Object3D();
-    data.update = () =>
+    // Boids
+    const boids = [];
+    const setupFlock = (count, obj) =>
     {
-        // Run iteration for each flock
-        for (var i = 0; i < boids.length; i++)
+        let i = 0;
+        while (i < count)
         {
-            boids[i].step(boids);
+            boids[i] = new Boid(scene, obj);
+            i++;
         }
-    };
-    scene.add(data);
+    }
 
-    light = new DirectionalLight(0xffffff, 0.8);
+
+    const light = new DirectionalLight(0xffffff, 0.8);
     scene.add(light);
-    const waterGeometry = new PlaneBufferGeometry(10000, 10000);
 
-    water = new Water(
+    const waterGeometry = new PlaneBufferGeometry(10000, 10000);
+    const water = new Water(
         waterGeometry,
         {
             textureWidth: 512,
@@ -73,13 +73,56 @@ scene.init = () =>
     );
     water.rotation.x = - Math.PI / 2;
     water.position.y = -12;
-    water.update = function ()
-    {
-        this.material.uniforms['time'].value += 1.0 / 60.0;
-    }
     scene.add(water);
-}
 
+    const sky = new Sky();
+    const uniforms = sky.material.uniforms;
+    uniforms['turbidity'].value = 10;
+    uniforms['rayleigh'].value = 2;
+    uniforms['luminance'].value = 1;
+    uniforms['mieCoefficient'].value = 0.005;
+    uniforms['mieDirectionalG'].value = 0.8;
+
+    const cubeCamera = new CubeCamera(0.1, 1, 512);
+    cubeCamera.renderTarget.texture.generateMipmaps = true;
+    cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
+    scene.background = cubeCamera.renderTarget;
+
+    const parameters = {
+        distance: 400,
+        inclination: 0.49,
+        azimuth: 0.205
+    };
+    let sunTheta = Math.PI * (parameters.inclination - 0.5);
+    let sunPhi = 2 * Math.PI * (parameters.azimuth - 0.5);
+
+    const empty = new Object3D();
+    empty.Update = () =>
+    {
+        // boids update
+        for (let i = 0; i < boids.length; i++)
+        {
+            boids[i].step(boids);
+        }
+
+        // day/night cycle
+        // long nights are boring
+        parameters.inclination = parameters.inclination <= -0.55000 ? 0.55 : parameters.inclination - 0.00025;
+
+        sunTheta = Math.PI * (parameters.inclination - 0.5);
+        sunPhi = 2 * Math.PI * (parameters.azimuth - 0.5);
+        light.position.x = parameters.distance * Math.cos(sunPhi);
+        light.position.y = parameters.distance * Math.sin(sunPhi) * Math.sin(sunTheta);
+        light.position.z = parameters.distance * Math.sin(sunPhi) * Math.cos(sunTheta);
+        sky.material.uniforms['sunPosition'].value = light.position.copy(light.position);
+
+        // water
+        water.material.uniforms['time'].value += 1.0 / 60.0;
+        water.material.uniforms['sunDirection'].value.copy(light.position).normalize();
+        cubeCamera.update(renderer, sky);
+    };
+    scene.add(empty);
+}
 scene.init();
 
 export { scene }

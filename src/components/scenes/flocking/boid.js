@@ -1,20 +1,31 @@
-// flocking algo adapted from https://codepen.io/coaster/pen/QpqVjP
+// boids implementation adapted from https://codepen.io/coaster/pen/QpqVjP
 import
-{ Vector3, Mesh, MeshNormalMaterial, Group, SphereBufferGeometry, BoxBufferGeometry } from "three"
+{ Vector3, Mesh, MeshNormalMaterial, Group, SphereBufferGeometry, BoxBufferGeometry, MeshStandardMaterial } from "three"
 
+const birdMat = new MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0,
+    metalness: 1.0
+});
+let t = 0;
 export class Boid
 {
-    constructor(type, scene)
+    constructor(scene, object = undefined)
     {
-        this.type = type;
         // Initial movement vectors
-        this.position = (type) ? new Vector3(this.rrand(80, 100), this.rrand(-10, 10), 0) : new Vector3(this.rrand(-80, -100), this.rrand(-10, 10), 0);
+        this.position = new Vector3(this.rrand(-80, -150), this.rrand(20, 40), this.rrand(-80, -150));
         this.velocity = new Vector3(this.rrand(-1, 1), this.rrand(-1, 1), this.rrand(-1, 1));
         this.acceleration = new Vector3(0, 0, 0);
-        this.mass = (type) ? 1 : 15;
+        this.mass = 1;
         // Type determines boid geometry, home location, and starting position
-        this.obj = (type) ? new this.Box() : new this.Sphere();
-        this.home = (type) ? new Vector3(-50, 0, 0) : new Vector3(50, 0, 0);
+        // this.obj = (type) ? new this.Box() : new this.Sphere();
+        this.obj = object == undefined ? new this.Sphere() : new this.Bird(object);
+        this.homeVec = new Vector3(0, 50, 0);
+        this.a = new Mesh(new SphereBufferGeometry(0.1, 16, 16), new MeshNormalMaterial());
+        scene.add(this.a);
+        this.t = 0;
+        this.home = this.homeVec;
+
         scene.add(this.obj.mesh);
     }
 
@@ -34,6 +45,16 @@ export class Boid
         this.mesh = bxG;
     }
 
+
+    Bird(object)
+    {
+        const spG = new Group();
+        // const sp = object.clone();
+        const sp = new Mesh(object.geometry, birdMat);
+        spG.add(sp);
+        this.mesh = spG;
+    }
+
     rrand(min, max)
     {
         return Math.random() * (max - min) + min;
@@ -44,6 +65,12 @@ export class Boid
     step(flock)
     {
         this.accumulate(flock);
+
+        //change target home
+        t += .00001;
+        this.homeVec.x = 500 * Math.cos(t) + 10;
+        this.homeVec.z = 500 * Math.sin(t) + 10; // These to strings make it work
+
         this.update();
         this.obj.mesh.position.set(this.position.x, this.position.y, this.position.z);
     }
@@ -65,20 +92,23 @@ export class Boid
     }
 
     // Update Movement Vectors
+
     update()
     {
+
         this.velocity.add(this.acceleration);
         this.position.add(this.velocity);
         this.acceleration.set(0, 0, 0); // reset each iteration
+
         // X-Boids point in their direction of travel, O-Boids point in their direction of acceleration
-        const pointAt = (this.type) ? this.position.clone() : this.velocity.clone();
-        this.obj.mesh.lookAt(pointAt);
+        // const pointAt = (this.type) ? this.position.clone() : this.velocity.clone();
+        this.obj.mesh.lookAt(this.position.clone());
     }
 
     // Separation Function (personal space)
     separate(flock)
     {
-        const minRange = 60;
+        const minRange = 200;
         let currBoid;
         const total = new Vector3(0, 0, 0);
         let count = 0;
@@ -86,7 +116,7 @@ export class Boid
         for (let i = 0; i < flock.length; i++)
         {
             currBoid = flock[i];
-            const dist = this.position.distanceTo(currBoid.position);
+            const dist = this.position.distanceTo(currBoid.position) * 3;
             // Apply weight if too close
             if (dist < minRange && dist > 0)
             {
@@ -110,7 +140,7 @@ export class Boid
     // Alignment Function (follow neighbours)
     align(flock)
     {
-        const neighborRange = 100;
+        const neighborRange = 60;
         let currBoid;
         const total = new Vector3(0, 0, 0);
         let count = 0;
@@ -138,7 +168,7 @@ export class Boid
     // Cohesion Function (follow whole flock)
     cohesion(flock)
     {
-        const neighborRange = 100;
+        const neighborRange = 60;
         let currBoid;
         const total = new Vector3(0, 0, 0);
         let count = 0;
