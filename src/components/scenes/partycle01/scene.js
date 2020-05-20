@@ -1,27 +1,19 @@
 import { Scene, Mesh, SphereGeometry, MeshNormalMaterial, Vector3, Group, PerspectiveCamera } from "three";
-import { EditorCamera } from "../../engine/util/editorCamera"
 import { Physics } from '../../engine/physics';
 import { renderer } from '../../engine/renderer';
 import { ctrlArr } from '../../engine/xrinput';
-import { PeerConnection } from '../../engine/networking/PeerConnection'
+// import { PeerConnection } from '../../engine/networking/PeerConnection'
 
-const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const editorCamera = new EditorCamera(camera, renderer.domElement);
 const scene = new Scene();
-
 
 Physics.enableDebugger(scene);
 
 scene.initGame = () =>
 {
-    //clean up scene and physics
-    // Physics.resetScene();
     scene.traverse(e =>
     {
         scene.remove(e);
     });
-
-    scene.add(editorCamera);
 
     ctrlArr.forEach((controller, i) => 
     {
@@ -47,33 +39,8 @@ scene.createTestSphere = () =>
             }
         }
     }
-    // PeerConnection.addSharedObject(testSphere, 11);
-    window.addEventListener('keydown', e =>
-    {
-        // if (!testSphere) return;
-
-        // switch (e.keyCode)
-        // {
-        //     case 87:
-        //         testSphere.position.y += 0.05;
-        //         break;
-        //     case 65:
-        //         testSphere.position.x -= 0.05;
-        //         break;
-        //     case 83:
-        //         testSphere.position.y -= 0.05;
-        //         break;
-        //     case 68:
-        //         testSphere.position.x += 0.05;
-        //         break;
-        //     default:
-        //         break;
-
-        // }
-    });
-
 }
 
 scene.initGame();
 
-export { scene, camera }
+export { scene }

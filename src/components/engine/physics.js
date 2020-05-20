@@ -1,6 +1,5 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3, Material, ContactMaterial } from "cannon";
 import CannonDebugRenderer from "./util/CannonDebugRenderer";
-
 import { Vector3, Quaternion } from "three";
 import { ctrlArr } from './xrinput';
 import { PeerConnection } from "./networking/PeerConnection"
@@ -75,7 +74,7 @@ Physics.addControllerRigidBody = (controller) =>
     });
     _cRB.name = "Controller " + Physics.controllerRigidbodies.length + " RigidBody";
     _cRB.collisionResponse = 1;
-    _cRB.addEventListener("collide", function (e) { console.log("controller " + i + " collided!"); });
+    _cRB.addEventListener("collide", function (e) { console.log("controller collided!"); });
     _cRB.addShape(new Sphere(0.075));
     Physics.cannonWorld.add(_cRB);
     Physics.controllerRigidbodies.push(_cRB);
@@ -143,7 +142,7 @@ Physics.updatePhysics = () =>
         Physics.rigidbodies[i].position.copy(Physics.cannonWorld.bodies[i].position);
     });
 
-    Physics.debugRenderer.update(state.debugPhysics);
+    if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(state.debugPhysics);
 }
 
 Physics.resetScene = () =>
@@ -157,7 +156,7 @@ Physics.resetScene = () =>
     }
 }
 
-Physics.addBody = (mesh, rbShape) => 
+Physics.addBody = (mesh, rbShape, mass = 1) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();
@@ -192,20 +191,12 @@ Physics.addBody = (mesh, rbShape) =>
     }
 
     const body = new Body({
-        mass: 5
+        mass: mass
         // material: Physics.materials.SlipperyMaterial 
     });
     body.addShape(shape);
     body.position.copy(mesh.position);
     body.quaternion.copy(mesh.quaternion);
-
-    // parent-agnostic approach, currently not working:
-    // let _worldSpaceMeshPos = new Vector3(), _worldSpaceMeshRot = new Quaternion();
-    // mesh.getWorldPosition(_worldSpaceMeshPos);
-    // mesh.getWorldQuaternion(_worldSpaceMeshRot);
-    // body.position.copy(_worldSpaceMeshPos);
-    // body.quaternion.copy(_worldSpaceMeshRot);
-
     Physics.cannonWorld.addBody(body);
     Physics.rigidbodies.push(mesh);
 }

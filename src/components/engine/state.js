@@ -5,8 +5,6 @@ class State
 
         this.hasXRInput = false;
         this.hasXRRendering = false;
-        this.hasNetworking = false;
-
         this.isPaused = false;
         this.debugPhysics = false;
         this.bindDebugKeys();
@@ -20,7 +18,7 @@ class State
 
             switch (e.keyCode)
             {
-                case 68: //"d"
+                case 192: // tilde
                     state.debugPhysics = !state.debugPhysics;
                     console.log("Physics Debug: " + state.debugPhysics);
                     break;
