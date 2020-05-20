@@ -1,5 +1,5 @@
 /*
-TODO: 
+TODO:
 * Jenga Tower w/real physics
 * Controller model and interaction
 * Postprocessing ?
@@ -14,4 +14,7 @@ TODO:
 
 */
 
+import "./index.html";
+import "./style.css";
 import * as engine from "./components/engine/engine";
+

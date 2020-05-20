@@ -1,15 +1,14 @@
 import { state } from "./state";
-import { PerspectiveCamera, Clock } from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { renderer } from "./renderer";
-import { scene } from "../scenes/scene-postprocessing";
-import { physics } from "./physics";
+import { scene, camera } from "../scenes/partycle01/scene"
+import { Physics } from "./physics";
+import { PeerConnection } from "./networking/PeerConnection"
+
 // import PhysicsSolver from './physics.worker.js';
 
-const screenCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-screenCamera.position.z = 13;
-const OC = new OrbitControls(screenCamera, renderer.domElement);
+
+// Screen cam orbitcontrols
 
 const clock = new Clock();
 
@@ -42,33 +41,38 @@ composer.addPass(effectPass);
 renderer.setAnimationLoop(() =>
 {
     // RENDERING
-    renderer.render(scene, screenCamera);
-    composer.render(clock.getDelta());
+    renderer.render(scene, camera);
 
     // PHYSICS
     if (!state.isPaused)
     {
-        physics.updatePhysics();
+        Physics.updatePhysics();
     }
 
-    OC.update();
+    // Networking
+    if (state.hasNetworking)
+    {
+        PeerConnection.sync();
+    }
+
+
+    // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
+    scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
 });
 
-// TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
-scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
+
 
 const onWindowResize = () =>
 {
-    screenCamera.aspect = window.innerWidth / window.innerHeight;
-    screenCamera.updateProjectionMatrix();
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
+
 window.addEventListener('resize', onWindowResize, false);
 
 // DOM append
-document.body.appendChild(renderer.domElement);
+document.querySelector(".app").appendChild(renderer.domElement);
 // webxr button
-document.body.appendChild(VRButton.createButton(renderer));
-
-
-
+const a = document.querySelector(".app").appendChild(VRButton.createButton(renderer));
+a.style.background = "black";

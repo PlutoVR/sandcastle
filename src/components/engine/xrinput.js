@@ -1,110 +1,79 @@
+import { state } from "./state"
 import { renderer } from './renderer';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
-
-// controllers
-
-const onSelectStart = () =>
-{
-    this.userData.isSelecting = true;
-}
-
-const onSelectEnd = () =>
-{
-    this.userData.isSelecting = false;
-}
-
-// controller1 = renderer.xr.getController(0);
-// controller1.addEventListener('selectstart', onSelectStart);
-// controller1.addEventListener('selectend', onSelectEnd);
-
-// controller1.addEventListener('connected', (event) =>    
-// {
-
-//     // this.add(buildController(event.data));
-
-// });
-
-// controller1.addEventListener('disconnected', () =>
-// {
-//     // this.remove(this.children[0]);
-// });
-
-// scene.add(controller1);
-
-// controller2 = renderer.xr.getController(1);
-
-// controller2.addEventListener('selectstart', onSelectStart);
-// controller2.addEventListener('selectend', onSelectEnd);
-
-// controller2.addEventListener('connected', function (event)
-// {
-//     // this.add(buildController(event.data));
-// });
-
-// controller2.addEventListener('disconnected', function ()
-// {
-//     // this.remove(this.children[0]);
-// });
-
-// scene.add(controller2);
-
-// The XRControllerModelFactory will automatically fetch controller models
-// that match what the user is holding as closely as possible. The models
-// should be attached to the object returned from getControllerGrip in
-// order to match the orientation of the held device.
-
 const controllerModelFactory = new XRControllerModelFactory();
+let ctrlArr = [];
 
-const controller1 = renderer.xr.getControllerGrip(0);
-controller1.add(controllerModelFactory.createControllerModel(controller1));
-// scene.add(controller1);
-
-const controller2 = renderer.xr.getControllerGrip(1);
-controller2.add(controllerModelFactory.createControllerModel(controller2));
-
-console.log("XR Controllers Loaded");
-// scene.add(controller2);
-
-// function buildController(data)
-// {
-
-//     switch (data.targetRayMode)
-//     {
-
-//         case 'tracked-pointer':
-
-//             var geometry = new THREE.BufferGeometry();
-//             geometry.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, - 1], 3));
-//             geometry.setAttribute('color', new THREE.Float32BufferAttribute([0.5, 0.5, 0.5, 0, 0, 0], 3));
-
-//             var material = new THREE.LineBasicMaterial({ vertexColors: true, blending: THREE.AdditiveBlending });
-
-//             return new THREE.Line(geometry, material);
-
-//         case 'gaze':
-
-//             var geometry = new THREE.RingBufferGeometry(0.02, 0.04, 32).translate(0, 0, - 1);
-//             var material = new THREE.MeshBasicMaterial({ opacity: 0.5, transparent: true });
-//             return new THREE.Mesh(geometry, material);
-
-//     }
-
-// }
-
-function handleController(controller)
+window.addEventListener("gamepadconnected", function (e)
 {
+    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index, e.gamepad.id,
+        e.gamepad.buttons.length, e.gamepad.axes.length);
+});
 
-    if (controller.userData.isSelecting)
+// trigger start
+const onSelectStart = (e) =>
+{
+    console.log("trigger pressed!");
+}
+// trigger end
+const onSelectEnd = (e) =>
+{
+    console.log("trigger released!");
+}
+// trigger "event" (fully completed after release)
+const onSelect = (e) =>
+{
+    console.log("select event completed!")
+}
+
+// side button start
+const onSqueezeStart = (e) =>
+{
+    console.log("squeeze pressed!");
+}
+
+// side button end
+const onSqueezeEnd = (e) =>
+{
+    console.log("squeeze released!");
+}
+
+// side button "event" (fully completed after release)
+const onSqueeze = (e) =>
+{
+    console.log("squeeze event completed!")
+}
+
+
+const connectedCont = [];
+
+for (let i = 0; i < 2; i++)
+{
+    ctrlArr[i] = renderer.xr.getControllerGrip(i);
+    ctrlArr[i].add(controllerModelFactory.createControllerModel(ctrlArr[i]));
+    ctrlArr[i].addEventListener('selectstart', onSelectStart);
+    ctrlArr[i].addEventListener('selectend', onSelectEnd);
+    ctrlArr[i].addEventListener('select', onSelect);
+    ctrlArr[i].addEventListener('squeezestart', onSqueezeStart);
+    ctrlArr[i].addEventListener('squeezeend', onSqueezeEnd);
+    ctrlArr[i].addEventListener('squeeze', onSqueeze);
+
+    ctrlArr[i].addEventListener('connected', (event) =>    
     {
-        console.log("selecting!");
-    }
+        console.log("XR Controller " + i + " connected");
+        connectedCont.push(ctrlArr[i]);
+        state.hasXRInput = true;
+    });
+    ctrlArr[i].addEventListener('disconnected', (event) =>    
+    {
+        console.log("XR Controller " + i + " Disconnected");
+        connectedCont.pop(ctrlArr[i]);
+
+        if (connectedCont.length == 0) state.hasXRInput = false;
+    });
 
 }
 
-controller1.update = () => 
-{
-    console.log(controller1.position + " " + controller2.position);
-}
-
-export { controller1, controller2 }
+export { ctrlArr }
