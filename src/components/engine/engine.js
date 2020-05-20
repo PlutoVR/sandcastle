@@ -10,31 +10,6 @@ import { PeerConnection } from "./networking/PeerConnection"
 
 // Screen cam orbitcontrols
 
-const clock = new Clock();
-
-
-const {
-    EffectComposer,
-    EffectPass,
-    RenderPass,
-    BloomEffect,
-    NoiseEffect
-} = POSTPROCESSING;
-
-const bloomEffect = new BloomEffect();
-const noiseEffect = new NoiseEffect();
-
-noiseEffect.blendMode.opacity.value = 0.6;
-
-const composer = new EffectComposer(renderer);
-
-const renderPass = new RenderPass(scene, screenCamera);
-const effectPass = new EffectPass(
-    screenCamera,
-    noiseEffect
-);
-composer.addPass(renderPass);
-composer.addPass(effectPass);
 
 
 // main app render loop
@@ -55,12 +30,9 @@ renderer.setAnimationLoop(() =>
         PeerConnection.sync();
     }
 
-
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.update === 'function' ? obj.update() : false });
 });
-
-
 
 const onWindowResize = () =>
 {
