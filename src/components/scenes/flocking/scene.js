@@ -72,7 +72,7 @@ scene.init = () =>
         }
     );
     water.rotation.x = - Math.PI / 2;
-    water.position.y = -12;
+    water.position.y = 0;
     scene.add(water);
 
     const sky = new Sky();
@@ -86,7 +86,7 @@ scene.init = () =>
     const cubeCamera = new CubeCamera(0.1, 1, 512);
     cubeCamera.renderTarget.texture.generateMipmaps = true;
     cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
-    scene.background = cubeCamera.renderTarget;
+    // scene.background = cubeCamera.renderTarget;
 
     const parameters = {
         distance: 400,
@@ -119,7 +119,7 @@ scene.init = () =>
         // water
         water.material.uniforms['time'].value += 1.0 / 60.0;
         water.material.uniforms['sunDirection'].value.copy(light.position).normalize();
-        cubeCamera.update(renderer, sky);
+        // cubeCamera.update(renderer, sky);
     };
     scene.add(empty);
 }
