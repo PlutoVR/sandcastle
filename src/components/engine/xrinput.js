@@ -6,8 +6,10 @@ const controllerModelFactory = new XRControllerModelFactory();
 
 class XRInput
 {
-
-
+    constructor()
+    {
+        this.debugOutput = "";
+    }
     // trigger start
     onSelectStart(e)
     {
@@ -60,6 +62,8 @@ class XRInput
     }
     updateControllers()
     {
+        this.debugOutput = "";
+
         state.controllers.forEach((e) =>
         {
             // console.log(e);
@@ -67,20 +71,40 @@ class XRInput
             {
                 if (f.pressed == true)
                 {
-                    console.log(e.handedness);
-                    console.log("button " + i);
-                    console.log(f);
+
+                    this.debugOutput += (e.handedness + " controller button " + i + "\n");
+                    this.debugOutput += ("value: " + f.value + "\n");
                 }
             });
-            e.gamepad.axes.forEach((g, i) =>
+
+            // unused at least on the quest
+            // if (e.gamepad.axes[ 0 ] != 0)
+            // {
+            //     console.log("0 " + e.gamepad.axes[ 0 ]);
+            // }
+            // if (e.gamepad.axes[ 1 ] != 0)
+            // {
+            //     console.log("1 " + e.gamepad.axes[ 1 ]);
+            // }
+
+
+            if (e.gamepad.axes[ 2 ] != 0 || e.gamepad.axes[ 3 ] != 0)
             {
-                if (g != 0)
-                {
-                    console.log(e.handedness);
-                    console.log(g + "\n--------");
-                }
-            });
+                this.debugOutput += e.handedness + " joystick:\n";
+                this.debugOutput += "x: " + e.gamepad.axes[ 2 ] + "\n";
+                this.debugOutput += "y: " + e.gamepad.axes[ 3 ] + "\n";
+            }
+            // e.gamepad.axes.forEach((g, i) =>
+            // {
+            //     if (g != 0)
+            //     {
+            //         console.log(e.handedness);
+            //         console.log(g + "\n--------");
+            //     }
+            // });
         });
+
+        if (this.debugOutput !== "") console.log(this.debugOutput);
     }
 }
 
@@ -112,5 +136,3 @@ state.eventHandler.addEventListener("xrsessionended", () =>
     console.warn("xr session ended");
     state.inXR = false;
 });
-
-// export { xrInput }
