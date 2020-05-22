@@ -49,7 +49,12 @@ export default class JP
         const mesh = new Mesh(geometry, shaderArr[material]);
 
         //hook into render update method
-        mesh.update = () => { mesh.material.uniforms.time.value = 6. * (Date.now() - startTime) / 100.; }
+
+        mesh.update = () =>
+        {
+            if (mesh.material.uniforms == undefined) return;
+            mesh.material.uniforms.time.value = 6. * (Date.now() - startTime) / 100.;
+        }
         const startTime = Date.now();
         if (position) mesh.position.copy(position);
         // if (rotation) mesh.rotation.copy(rotation);

@@ -1,6 +1,6 @@
 import { Vector3, Euler, Object3D } from "three"
 
-export class EditorCamera extends Object3D
+export class EngineEditorCamera extends Object3D
 {
     constructor(camera, domElement, params)
     {
@@ -18,7 +18,8 @@ export class EditorCamera extends Object3D
             83: false, // s
             68: false, // d
             81: false, // q
-            69: false // e
+            69: false, // e
+            16: false // shift
         };
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), false);
@@ -54,28 +55,32 @@ export class EditorCamera extends Object3D
         const camState = JSON.parse(window.localStorage.getItem('camState'));
         if (camState == null)
         {
-            this.CAM_SPEED = 0.05;
+            this.CAM_SPEED = 0.75;
             this.setSessionData();
             return;
         }
 
-        this.CAM_SPEED = "camSpeed" in camState ? camState["camSpeed"] : 0.05;
+        this.CAM_SPEED = "camSpeed" in camState ? camState["camSpeed"] : 0.75;
         this.camera.position.copy("cameraPosition" in camState ? camState["cameraPosition"] : new Vector3());
         this.camera.applyQuaternion("cameraQuaternion" in camState ? camState["cameraQuaternion"] : new Vector3());
         // console.log("loading editor camera session data");
     }
 
-    update()
+    Update()
     {
-        if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED);
-        if (this.pressedKeyMap[83]) this.moveForward(-this.CAM_SPEED);
-        if (this.pressedKeyMap[69]) this.moveUp(this.CAM_SPEED);
-        if (this.pressedKeyMap[81]) this.moveUp(-this.CAM_SPEED);
-        if (this.pressedKeyMap[68]) this.moveRight(this.CAM_SPEED);
-        if (this.pressedKeyMap[65]) this.moveRight(-this.CAM_SPEED);
+        this.shiftSpeedMulti = this.pressedKeyMap[16] ? 2 : 1;
+        if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[83]) this.moveForward(-this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[69]) this.moveUp(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[81]) this.moveUp(-this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[68]) this.moveRight(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[65]) this.moveRight(-this.CAM_SPEED * this.shiftSpeedMulti);
     }
 
-    onKeyDown(event) { this.pressedKeyMap[event.keyCode] = (event.keyCode in this.pressedKeyMap); };
+    onKeyDown(event)
+    {
+        this.pressedKeyMap[event.keyCode] = (event.keyCode in this.pressedKeyMap);
+    };
     onKeyUp(event) { this.pressedKeyMap[event.keyCode] = !(event.keyCode in this.pressedKeyMap); };
 
     onMouseDown(event)

@@ -1,14 +1,57 @@
+//helper class for custom XR events
+class Event
+{
+    constructor(name)
+    {
+        this.name = name;
+        this.callbacks = [];
+    }
+    registerCallback(callback)
+    {
+        this.callbacks.push(callback);
+    }
+}
+
+class EventHandler
+{
+    constructor()
+    {
+        this.events = {};
+    }
+
+    registerEvent(eventName)
+    {
+        var event = new Event(eventName);
+        this.events[ eventName ] = event;
+    };
+
+    dispatchEvent(eventName, eventArgs)
+    {
+        this.events[ eventName ].callbacks.forEach(function (callback)
+        {
+            callback(eventArgs);
+        });
+    };
+
+    addEventListener(eventName, callback)
+    {
+        this.events[ eventName ].registerCallback(callback);
+    };
+}
+
+// main state singleton
 class State
 {
     constructor()
     {
-
-        this.hasXRInput = false;
-        this.hasXRRendering = false;
-        this.hasNetworking = false;
-
+        this.xrSession = false;
+        this.controllers = [];
         this.isPaused = false;
+        this.currentSession = null;
         this.debugPhysics = false;
+        this.eventHandler = new EventHandler();
+        this.eventHandler.registerEvent('xrsessionstarted');
+        this.eventHandler.registerEvent('xrsessionended');
         this.bindDebugKeys();
     }
 
@@ -20,7 +63,7 @@ class State
 
             switch (e.keyCode)
             {
-                case 68: //"d"
+                case 192: // tilde
                     state.debugPhysics = !state.debugPhysics;
                     console.log("Physics Debug: " + state.debugPhysics);
                     break;
@@ -35,7 +78,4 @@ class State
     }
 };
 
-const state = new State();
-
-export { state }
-
+export const state = new State();

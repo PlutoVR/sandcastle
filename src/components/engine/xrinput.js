@@ -3,77 +3,112 @@ import { renderer } from './renderer';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 const controllerModelFactory = new XRControllerModelFactory();
-let ctrlArr = [];
 
-window.addEventListener("gamepadconnected", function (e)
+class XRInput
 {
-    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-        e.gamepad.index, e.gamepad.id,
-        e.gamepad.buttons.length, e.gamepad.axes.length);
+    // trigger start
+    onSelectStart(e)
+    {
+        console.log("select started!");
+    }
+    // trigger end
+    onSelectEnd(e)
+    {
+        console.log("select ended!");
+    }
+
+    // trigger "event" (fully completed after release)
+    onSelect(e) 
+    {
+        console.log("select event!")
+    }
+
+    // side button start
+    onSqueezeStart(e)
+    {
+        console.log("squeeze pressed!");
+    }
+
+    // side button end
+    onSqueezeEnd(e)
+    {
+        console.log("squeeze released!");
+    }
+
+    // side button "event" (fully completed after release)
+    onSqueeze(e)
+    {
+        console.log("squeeze event completed!")
+    }
+
+    // controller connection
+    onConnected(e)
+    {
+        console.log("onConnected");
+        state.controllers.push(e.data);
+    }
+
+    // controller disconnection
+    onDisconnected(e)
+    {
+        console.log("onDisconnected");
+        state.controllers = [];
+    }
+    updateControllers()
+    {
+        this.debugOutput = "";
+        state.controllers.forEach((e) =>
+        {
+            e.gamepad.buttons.forEach((f, i) =>
+            {
+                if (f.pressed == true)
+                {
+                    this.debugOutput += (e.handedness + " controller button " + i + "\n");
+                    this.debugOutput += ("value: " + f.value + "\n");
+                }
+            });
+
+            // axes 0 and 1 unused at least on the quest
+            if (e.gamepad.axes[ 2 ] != 0 || e.gamepad.axes[ 3 ] != 0)
+            {
+                this.debugOutput += e.handedness + " joystick:\n";
+                this.debugOutput += "x: " + e.gamepad.axes[ 2 ] + "\n";
+                this.debugOutput += "y: " + e.gamepad.axes[ 3 ] + "\n";
+            }
+        });
+
+        return this.debugOutput == "" ? 0 : console.log(this.debugOutput);
+    }
+}
+
+//xrInput singleton
+export const xrInput = new XRInput();
+
+// init input on XR session start
+state.eventHandler.addEventListener("xrsessionstarted", (e) =>
+{
+    console.warn("xr session started");
+    state.currentSession = e;
+    state.xrSession = true;
+
+    //buggy on MC? Should replace arbitrary "2"
+    // const s = renderer.xr.getSession();
+    // console.log(s.inputSources);
+    for (let i = 0; i < 2; i++)
+    {
+        const c = renderer.xr.getController(i);
+        c.addEventListener('selectend', xrInput.onSelectEnd);
+        c.addEventListener('selectstart', xrInput.onSelectStart);
+        c.addEventListener('select', xrInput.onSelect);
+        c.addEventListener('squeezestart', xrInput.onSqueezeStart);
+        c.addEventListener('squeezeend', xrInput.onSqueezeEnd);
+        c.addEventListener('connected', xrInput.onConnected);
+        c.addEventListener('disconnected', xrInput.onDisconnected);
+    }
 });
 
-// trigger start
-const onSelectStart = (e) =>
+state.eventHandler.addEventListener("xrsessionended", () =>
 {
-    console.log("trigger pressed!");
-}
-// trigger end
-const onSelectEnd = (e) =>
-{
-    console.log("trigger released!");
-}
-// trigger "event" (fully completed after release)
-const onSelect = (e) =>
-{
-    console.log("select event completed!")
-}
-
-// side button start
-const onSqueezeStart = (e) =>
-{
-    console.log("squeeze pressed!");
-}
-
-// side button end
-const onSqueezeEnd = (e) =>
-{
-    console.log("squeeze released!");
-}
-
-// side button "event" (fully completed after release)
-const onSqueeze = (e) =>
-{
-    console.log("squeeze event completed!")
-}
-
-
-const connectedCont = [];
-
-for (let i = 0; i < 2; i++)
-{
-    ctrlArr[i] = renderer.xr.getControllerGrip(i);
-    ctrlArr[i].add(controllerModelFactory.createControllerModel(ctrlArr[i]));
-    ctrlArr[i].addEventListener('selectstart', onSelectStart);
-    ctrlArr[i].addEventListener('selectend', onSelectEnd);
-    ctrlArr[i].addEventListener('select', onSelect);
-    ctrlArr[i].addEventListener('squeezestart', onSqueezeStart);
-    ctrlArr[i].addEventListener('squeezeend', onSqueezeEnd);
-    ctrlArr[i].addEventListener('squeeze', onSqueeze);
-
-    ctrlArr[i].addEventListener('connected', (event) =>    
-    {
-        console.log("XR Controller " + i + " connected");
-        connectedCont.push(ctrlArr[i]);
-        state.hasXRInput = true;
-    });
-    ctrlArr[i].addEventListener('disconnected', (event) =>    
-    {
-        console.log("XR Controller " + i + " Disconnected");
-        connectedCont.pop(ctrlArr[i]);
-
-        if (connectedCont.length == 0) state.hasXRInput = false;
-    });
-
-}
-
-export { ctrlArr }
+    console.warn("xr session ended");
+    state.inXR = false;
+});
