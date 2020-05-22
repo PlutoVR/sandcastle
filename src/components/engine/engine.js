@@ -5,13 +5,13 @@ import { VRButton } from './util/SessionHandler';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../scenes/flocking/scene"
+import { scene } from "../scenes/defaultScene"
 import { xrInput } from "../engine/xrinput"
 
 // editor camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 scene.add(new EngineEditorCamera(camera, renderer.domElement));
-
+scene.add(camera);
 
 
 // main app render loop
@@ -20,6 +20,7 @@ renderer.setAnimationLoop(() =>
     // RENDERING
     renderer.render(scene, camera);
 
+    // INPUT
     if (state.xrSession) xrInput.updateControllers();
 
     // PHYSICS
