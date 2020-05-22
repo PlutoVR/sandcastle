@@ -1,11 +1,12 @@
 import { state } from "./state";
 import { PerspectiveCamera } from "three";
 import { EngineEditorCamera } from "./util/EngineEditorCamera";
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { VRButton } from './util/SessionHandler';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
 import { scene } from "../scenes/flocking/scene"
+import { xrInput } from "../engine/xrinput"
 
 // editor camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -19,6 +20,8 @@ renderer.setAnimationLoop(() =>
     // RENDERING
     renderer.render(scene, camera);
 
+    if (state.xrSession) xrInput.updateControllers();
+
     // PHYSICS
     if (!state.isPaused) Physics.updatePhysics();
 
@@ -27,6 +30,7 @@ renderer.setAnimationLoop(() =>
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });
+
 });
 
 window.addEventListener('resize', () =>

@@ -6,10 +6,14 @@ import { Water } from './water';
 import { Sky } from './sky.js';
 import { renderer } from '../../engine/renderer'
 
+
 const scene = new Scene();
+
 
 scene.init = () =>
 {
+
+
     // networking refresh cleanup
     scene.traverse(e =>
     {
@@ -24,7 +28,7 @@ scene.init = () =>
     let bird;
     loader.load(modelPath, function (gltf)
     {
-        bird = gltf.scene.children[0];
+        bird = gltf.scene.children[ 0 ];
         setupFlock(400, bird);
 
     });
@@ -32,10 +36,11 @@ scene.init = () =>
 
 
     // XR Controllers
-    ctrlArr.forEach((controller, i) => 
-    {
-        scene.add(controller);
-    });
+    // ctrlArr.forEach((controller, i) => 
+    // {
+    //     console.log("murg");
+    //     scene.add(controller);
+    // });
 
     // Boids
     const boids = [];
@@ -44,7 +49,7 @@ scene.init = () =>
         let i = 0;
         while (i < count)
         {
-            boids[i] = new Boid(scene, obj);
+            boids[ i ] = new Boid(scene, obj);
             i++;
         }
     }
@@ -77,15 +82,15 @@ scene.init = () =>
 
     const sky = new Sky();
     const uniforms = sky.material.uniforms;
-    uniforms['turbidity'].value = 10;
-    uniforms['rayleigh'].value = 2;
-    uniforms['luminance'].value = 1;
-    uniforms['mieCoefficient'].value = 0.005;
-    uniforms['mieDirectionalG'].value = 0.8;
+    uniforms[ 'turbidity' ].value = 10;
+    uniforms[ 'rayleigh' ].value = 2;
+    uniforms[ 'luminance' ].value = 1;
+    uniforms[ 'mieCoefficient' ].value = 0.005;
+    uniforms[ 'mieDirectionalG' ].value = 0.8;
 
-    const cubeCamera = new CubeCamera(0.1, 1, 512);
-    cubeCamera.renderTarget.texture.generateMipmaps = true;
-    cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
+    // const cubeCamera = new CubeCamera(0.1, 1, 512);
+    // cubeCamera.renderTarget.texture.generateMipmaps = true;
+    // cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
     // scene.background = cubeCamera.renderTarget;
 
     const parameters = {
@@ -102,7 +107,7 @@ scene.init = () =>
         // boids update
         for (let i = 0; i < boids.length; i++)
         {
-            boids[i].step(boids);
+            boids[ i ].step(boids);
         }
 
         // day/night cycle
@@ -114,16 +119,15 @@ scene.init = () =>
         light.position.x = parameters.distance * Math.cos(sunPhi);
         light.position.y = parameters.distance * Math.sin(sunPhi) * Math.sin(sunTheta);
         light.position.z = parameters.distance * Math.sin(sunPhi) * Math.cos(sunTheta);
-        sky.material.uniforms['sunPosition'].value = light.position.copy(light.position);
+        sky.material.uniforms[ 'sunPosition' ].value = light.position.copy(light.position);
 
         // water
-        water.material.uniforms['time'].value += 1.0 / 60.0;
-        water.material.uniforms['sunDirection'].value.copy(light.position).normalize();
+        water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+        water.material.uniforms[ 'sunDirection' ].value.copy(light.position).normalize();
         // cubeCamera.update(renderer, sky);
     };
     scene.add(empty);
 }
 scene.init();
-
 export { scene }
 

@@ -113,13 +113,13 @@ Physics.enableDebugger = (scene) =>
 
 Physics.updateControllers = () =>
 {
-    if (state.hasXRInput)
+    // if (state.hasXRInput)
         // {
-        ctrlArr.forEach((ctrl, i) =>
-        {
-            Physics.controllerRigidbodies[i].position.copy(ctrlArr[i].position);
-            Physics.controllerRigidbodies[i].quaternion.copy(ctrlArr[i].quaternion);
-        });
+        // ctrlArr.forEach((ctrl, i) =>
+        // {
+        //     Physics.controllerRigidbodies[i].position.copy(ctrlArr[i].position);
+        //     Physics.controllerRigidbodies[i].quaternion.copy(ctrlArr[i].quaternion);
+        // });
     // }
 }
 

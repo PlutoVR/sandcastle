@@ -1,5 +1,5 @@
 {
-  "name": "jengavr",
+  "name": "sandcastle",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -22,7 +22,6 @@
     "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^4.0.0",
     "css-loader": "^3.5.3",
-    "dev": "^0.1.3",
     "file-loader": "^6.0.0",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
