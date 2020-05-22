@@ -1,4 +1,5 @@
 import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, LinearMipmapLinearFilter } from "three";
+import { renderer } from "../../engine/renderer"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Boid } from "./boid";
 import { Water } from './water';
@@ -44,7 +45,7 @@ scene.init = () =>
         {
             textureWidth: 512,
             textureHeight: 512,
-            waterNormals: new TextureLoader().load('https://threejs.org/examples/textures/waternormals.jpg', function (texture)
+            waterNormals: new TextureLoader().load('./assets/flocking/waternormals.jpg', function (texture)
             {
                 texture.wrapS = texture.wrapT = RepeatWrapping;
             }),
@@ -68,10 +69,10 @@ scene.init = () =>
     uniforms[ 'mieCoefficient' ].value = 0.005;
     uniforms[ 'mieDirectionalG' ].value = 0.8;
 
-    // const cubeCamera = new CubeCamera(0.1, 1, 512);
-    // cubeCamera.renderTarget.texture.generateMipmaps = true;
-    // cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
-    // scene.background = cubeCamera.renderTarget;
+    const cubeCamera = new CubeCamera(0.1, 1, 512);
+    cubeCamera.renderTarget.texture.generateMipmaps = true;
+    cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
+    scene.background = cubeCamera.renderTarget;
 
     const parameters = {
         distance: 400,
@@ -103,7 +104,7 @@ scene.init = () =>
         // water
         water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
         water.material.uniforms[ 'sunDirection' ].value.copy(light.position).normalize();
-        // cubeCamera.update(renderer, sky);
+        cubeCamera.update(renderer, sky);
     };
     scene.add(empty);
 }
