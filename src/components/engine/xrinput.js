@@ -1,7 +1,6 @@
 import { state } from "./state"
 import { renderer } from './renderer';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
-import { Object3D } from "three";
 
 const controllerModelFactory = new XRControllerModelFactory();
 
@@ -91,10 +90,10 @@ state.eventHandler.addEventListener("xrsessionstarted", (e) =>
     console.warn("xr session started");
     state.currentSession = e;
     state.xrSession = true;
-    const s = renderer.xr.getSession();
 
-    console.log(s.inputSources);
-
+    //buggy on MC? Should replace arbitrary "2"
+    // const s = renderer.xr.getSession();
+    // console.log(s.inputSources);
     for (let i = 0; i < 2; i++)
     {
         const c = renderer.xr.getController(i);

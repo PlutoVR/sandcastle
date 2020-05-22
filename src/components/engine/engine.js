@@ -13,7 +13,6 @@ const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight,
 scene.add(new EngineEditorCamera(camera, renderer.domElement));
 scene.add(camera);
 
-
 // main app render loop
 renderer.setAnimationLoop(() =>
 {
@@ -31,7 +30,6 @@ renderer.setAnimationLoop(() =>
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });
-
 });
 
 window.addEventListener('resize', () =>
@@ -44,6 +42,5 @@ window.addEventListener('resize', () =>
 // DOM append
 document.querySelector(".app").appendChild(renderer.domElement);
 
-// webxr button
-const a = document.querySelector(".app").appendChild(VRButton.createButton(renderer));
-a.style.background = "black";
+// WebXR button
+const a = document.querySelector(".app").appendChild(new VRButton(renderer));

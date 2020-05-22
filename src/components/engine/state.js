@@ -52,10 +52,6 @@ class State
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEvent('xrsessionstarted');
         this.eventHandler.registerEvent('xrsessionended');
-        this.eventHandler.registerEvent('inputsourceschanged');
-
-        this.input = "mah";
-
         this.bindDebugKeys();
     }
 
@@ -82,7 +78,4 @@ class State
     }
 };
 
-const state = new State();
-
-export { state }
-
+export const state = new State();

@@ -1,13 +1,5 @@
-import { Scene, PerspectiveCamera, SphereGeometry, TorusBufferGeometry, MeshNormalMaterial, Mesh, Vector3 } from "three";
-// import { EngineEditorCamera } from "../engine/util/EngineEditorCamera";
-// import { renderer } from "../engine/renderer"
-
+import { Scene, TorusBufferGeometry, MeshNormalMaterial, Mesh, Vector3 } from "three";
 const scene = new Scene();
-// const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-// scene.add(new EngineEditorCamera(camera, renderer.domElement));
-
-
 
 scene.init = () =>
 {
@@ -15,7 +7,6 @@ scene.init = () =>
     {
         scene.remove(e);
     });
-
 
     const rots = [ new Vector3(-1, 0, 0), new Vector3(1, 1, 0), new Vector3(0, -1, 0) ]
     for (var i = 0; i < 3; i++)

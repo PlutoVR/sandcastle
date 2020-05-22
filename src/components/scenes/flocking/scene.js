@@ -1,28 +1,20 @@
-import { Scene, Vector3, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, LinearMipmapLinearFilter } from "three";
+import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, LinearMipmapLinearFilter } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Boid } from "./boid";
-import { ctrlArr } from '../../engine/xrinput';
 import { Water } from './water';
 import { Sky } from './sky.js';
-import { renderer } from '../../engine/renderer'
 
-
-const scene = new Scene();
-
+export const scene = new Scene();
 
 scene.init = () =>
 {
-
-
     // networking refresh cleanup
     scene.traverse(e =>
     {
         scene.remove(e);
     });
 
-
     var loader = new GLTFLoader();
-
     // "Anonymous Bird" from https://poly.google.com/view/8Ph79kHbt9s
     const modelPath = "./assets/flocking/polyCrow/polyCrow_updated.glb";
     let bird;
@@ -30,17 +22,7 @@ scene.init = () =>
     {
         bird = gltf.scene.children[ 0 ];
         setupFlock(400, bird);
-
     });
-
-
-
-    // XR Controllers
-    // ctrlArr.forEach((controller, i) => 
-    // {
-    //     console.log("murg");
-    //     scene.add(controller);
-    // });
 
     // Boids
     const boids = [];
@@ -54,10 +36,8 @@ scene.init = () =>
         }
     }
 
-
     const light = new DirectionalLight(0xffffff, 0.8);
     scene.add(light);
-
     const waterGeometry = new PlaneBufferGeometry(10000, 10000);
     const water = new Water(
         waterGeometry,
@@ -113,7 +93,6 @@ scene.init = () =>
         // day/night cycle
         // long nights are boring
         parameters.inclination = parameters.inclination <= -0.55000 ? 0.55 : parameters.inclination - 0.00025;
-
         sunTheta = Math.PI * (parameters.inclination - 0.5);
         sunPhi = 2 * Math.PI * (parameters.azimuth - 0.5);
         light.position.x = parameters.distance * Math.cos(sunPhi);
@@ -129,5 +108,3 @@ scene.init = () =>
     scene.add(empty);
 }
 scene.init();
-export { scene }
-
