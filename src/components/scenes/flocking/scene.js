@@ -1,4 +1,5 @@
 import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, LinearMipmapLinearFilter } from "three";
+import { XRCubeCamera } from "../../engine/util/XRCubeCamera"
 import { renderer } from "../../engine/renderer"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Boid } from "./boid";
@@ -69,7 +70,7 @@ scene.init = () =>
     uniforms[ 'mieCoefficient' ].value = 0.005;
     uniforms[ 'mieDirectionalG' ].value = 0.8;
 
-    const cubeCamera = new CubeCamera(0.1, 1, 512);
+    const cubeCamera = new XRCubeCamera(0.1, 1, 512);
     cubeCamera.renderTarget.texture.generateMipmaps = true;
     cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
     scene.background = cubeCamera.renderTarget;

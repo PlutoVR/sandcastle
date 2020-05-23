@@ -87,8 +87,8 @@ var Water = function (geometry, options)
 	var mirrorShader = {
 
 		uniforms: UniformsUtils.merge([
-			UniformsLib[ 'fog' ],
-			UniformsLib[ 'lights' ],
+			UniformsLib['fog'],
+			UniformsLib['lights'],
 			{
 				"normalSampler": { value: null },
 				"mirrorSampler": { value: null },
@@ -214,17 +214,17 @@ var Water = function (geometry, options)
 		fog: fog
 	});
 
-	material.uniforms[ "mirrorSampler" ].value = renderTarget.texture;
-	material.uniforms[ "textureMatrix" ].value = textureMatrix;
-	material.uniforms[ "alpha" ].value = alpha;
-	material.uniforms[ "time" ].value = time;
-	material.uniforms[ "normalSampler" ].value = normalSampler;
-	material.uniforms[ "sunColor" ].value = sunColor;
-	material.uniforms[ "waterColor" ].value = waterColor;
-	material.uniforms[ "sunDirection" ].value = sunDirection;
-	material.uniforms[ "distortionScale" ].value = distortionScale;
+	material.uniforms["mirrorSampler"].value = renderTarget.texture;
+	material.uniforms["textureMatrix"].value = textureMatrix;
+	material.uniforms["alpha"].value = alpha;
+	material.uniforms["time"].value = time;
+	material.uniforms["normalSampler"].value = normalSampler;
+	material.uniforms["sunColor"].value = sunColor;
+	material.uniforms["waterColor"].value = waterColor;
+	material.uniforms["sunDirection"].value = sunDirection;
+	material.uniforms["distortionScale"].value = distortionScale;
 
-	material.uniforms[ "eye" ].value = eye;
+	material.uniforms["eye"].value = eye;
 
 	scope.material = material;
 
@@ -288,19 +288,19 @@ var Water = function (geometry, options)
 
 		var projectionMatrix = mirrorCamera.projectionMatrix;
 
-		q.x = (Math.sign(clipPlane.x) + projectionMatrix.elements[ 8 ]) / projectionMatrix.elements[ 0 ];
-		q.y = (Math.sign(clipPlane.y) + projectionMatrix.elements[ 9 ]) / projectionMatrix.elements[ 5 ];
+		q.x = (Math.sign(clipPlane.x) + projectionMatrix.elements[8]) / projectionMatrix.elements[0];
+		q.y = (Math.sign(clipPlane.y) + projectionMatrix.elements[9]) / projectionMatrix.elements[5];
 		q.z = - 1.0;
-		q.w = (1.0 + projectionMatrix.elements[ 10 ]) / projectionMatrix.elements[ 14 ];
+		q.w = (1.0 + projectionMatrix.elements[10]) / projectionMatrix.elements[14];
 
 		// Calculate the scaled plane vector
 		clipPlane.multiplyScalar(2.0 / clipPlane.dot(q));
 
 		// Replacing the third row of the projection matrix
-		projectionMatrix.elements[ 2 ] = clipPlane.x;
-		projectionMatrix.elements[ 6 ] = clipPlane.y;
-		projectionMatrix.elements[ 10 ] = clipPlane.z + 1.0 - clipBias;
-		projectionMatrix.elements[ 14 ] = clipPlane.w;
+		projectionMatrix.elements[2] = clipPlane.x;
+		projectionMatrix.elements[6] = clipPlane.y;
+		projectionMatrix.elements[10] = clipPlane.z + 1.0 - clipBias;
+		projectionMatrix.elements[14] = clipPlane.w;
 
 		eye.setFromMatrixPosition(camera.matrixWorld);
 
