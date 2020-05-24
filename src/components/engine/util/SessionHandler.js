@@ -23,7 +23,6 @@ export class VRButton
             this.stylizeElement(this.button);
             navigator.xr.isSessionSupported('immersive-vr').then(function (supported)
             {
-                console.log(that);
                 supported ? that.showEnterVR() : that.showWebXRNotFound();
             });
             return this.button;

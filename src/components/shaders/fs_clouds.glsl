@@ -233,7 +233,7 @@ void main() {
     float noiseBig = fbm3d(vec3(vUv * uFac1, uTime * uTimeFactor1), 4)+ 1.0 * 0.5;
     newUv += noiseBig * uDisplStrenght1;
 
-    float noiseSmall = snoise3(vec3(newUv * uFac2, uTime * uTimeFactor2));
+    float noiseSmall = snoise3(vec3(newUv * uFac2, uTime * uTimeFactor2))+ 1.0 * 0.5;
 
     newUv += noiseSmall * uDisplStrenght2;
 
