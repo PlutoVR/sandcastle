@@ -17,7 +17,7 @@
 2. `npm i` will install all the dependencies
 3. `npm start` will start a dev server at `http://localhost:1234` with the default scene (located at `./src/components/scenes/defaultScene.js`).
 4. `npm run build` will build your project into `./dist`.
-5. Check out the Wiki for much more information about networkking, physics and the various features that comprise Sandcastle!
+5. Check out the [Wiki](https://github.com/MichaelHazani/sandcastle/wiki) for a closer look at the various aspects of Sandcastle, its APIs, asset pipelines and much more.
 
 
 #### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_
