@@ -4,7 +4,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 
 const controllerModelFactory = new XRControllerModelFactory();
 
-class XRInput
+class XRInputClass
 {
     // trigger start
     onSelectStart(e)
@@ -54,35 +54,39 @@ class XRInput
         console.log("onDisconnected");
         state.controllers = [];
     }
-    updateControllers()
+    Update()
     {
-        this.debugOutput = "";
+        this.debugOutput();
+    }
+    debugOutput()
+    {
+        this.inputDebugString = "";
         state.controllers.forEach((e) =>
         {
             e.gamepad.buttons.forEach((f, i) =>
             {
                 if (f.pressed == true)
                 {
-                    this.debugOutput += (e.handedness + " controller button " + i + "\n");
-                    this.debugOutput += ("value: " + f.value + "\n");
+                    this.inputDebugString += (e.handedness + " controller button " + i + "\n");
+                    this.inputDebugString += ("value: " + f.value + "\n");
                 }
             });
 
             // axes 0 and 1 unused at least on the quest
             if (e.gamepad.axes[ 2 ] != 0 || e.gamepad.axes[ 3 ] != 0)
             {
-                this.debugOutput += e.handedness + " joystick:\n";
-                this.debugOutput += "x: " + e.gamepad.axes[ 2 ] + "\n";
-                this.debugOutput += "y: " + e.gamepad.axes[ 3 ] + "\n";
+                this.inputDebugString += e.handedness + " joystick:\n";
+                this.inputDebugString += "x: " + e.gamepad.axes[ 2 ] + "\n";
+                this.inputDebugString += "y: " + e.gamepad.axes[ 3 ] + "\n";
             }
         });
 
-        return this.debugOutput == "" ? 0 : console.log(this.debugOutput);
+        return this.inputDebugString == "" ? 0 : console.log(this.inputDebugString);
     }
 }
 
 //xrInput singleton
-export const xrInput = new XRInput();
+const XRInput = new XRInputClass();
 
 // init input on XR session start
 state.eventHandler.addEventListener("xrsessionstarted", (e) =>
@@ -97,13 +101,13 @@ state.eventHandler.addEventListener("xrsessionstarted", (e) =>
     for (let i = 0; i < 2; i++)
     {
         const c = renderer.xr.getController(i);
-        c.addEventListener('selectend', xrInput.onSelectEnd);
-        c.addEventListener('selectstart', xrInput.onSelectStart);
-        c.addEventListener('select', xrInput.onSelect);
-        c.addEventListener('squeezestart', xrInput.onSqueezeStart);
-        c.addEventListener('squeezeend', xrInput.onSqueezeEnd);
-        c.addEventListener('connected', xrInput.onConnected);
-        c.addEventListener('disconnected', xrInput.onDisconnected);
+        c.addEventListener('selectend', XRInput.onSelectEnd);
+        c.addEventListener('selectstart', XRInput.onSelectStart);
+        c.addEventListener('select', XRInput.onSelect);
+        c.addEventListener('squeezestart', XRInput.onSqueezeStart);
+        c.addEventListener('squeezeend', XRInput.onSqueezeEnd);
+        c.addEventListener('connected', XRInput.onConnected);
+        c.addEventListener('disconnected', XRInput.onDisconnected);
     }
 });
 
@@ -112,3 +116,5 @@ state.eventHandler.addEventListener("xrsessionended", () =>
     console.warn("xr session ended");
     state.inXR = false;
 });
+
+export { XRInput }

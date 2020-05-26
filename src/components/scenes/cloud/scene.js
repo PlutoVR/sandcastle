@@ -1,7 +1,7 @@
 import { Scene, Object3D, Vector3, DirectionalLight, ShaderMaterial, Mesh, Fog, FogExp2, TextureLoader, LinearMipmapLinearFilter, PlaneBufferGeometry } from "three";
 import { XRCubeCamera } from "../../engine/util/XRCubeCamera"
 import { renderer } from "../../engine/renderer"
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
+import { XRInput } from "../../engine/xrinput"
 
 import { Cloud } from "./cloud";
 
@@ -41,6 +41,12 @@ scene.init = () =>
     cubeCamera.renderTarget.texture.generateMipmaps = true;
     cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
     scene.background = cubeCamera.renderTarget;
+
+    XRInput.onSelect = (e) =>
+    {
+        scene.background == cubeCamera.renderTarget ? scene.background = null : scene.background = cubeCamera.renderTarget;
+    }
+
 
     const parameters = {
         distance: 400,

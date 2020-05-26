@@ -16,7 +16,7 @@ import { state } from "../state"
  * @param {object} [options]
  */
 
-export default class CannonDebugRenderer
+class CannonDebugRenderer
 {
     constructor(scene, world, options) 
     {
@@ -64,25 +64,25 @@ export default class CannonDebugRenderer
 
             for (var i = 0; i !== bodies.length; i++)
             {
-                var body = bodies[i];
+                var body = bodies[ i ];
 
                 for (var j = 0; j !== body.shapes.length; j++)
                 {
-                    var shape = body.shapes[j];
+                    var shape = body.shapes[ j ];
 
                     this._updateMesh(meshIndex, body, shape);
 
-                    var mesh = meshes[meshIndex];
+                    var mesh = meshes[ meshIndex ];
 
                     if (mesh)
                     {
 
                         // Get world position
-                        body.quaternion.vmult(body.shapeOffsets[j], shapeWorldPosition);
+                        body.quaternion.vmult(body.shapeOffsets[ j ], shapeWorldPosition);
                         body.position.vadd(shapeWorldPosition, shapeWorldPosition);
 
                         // Get world quaternion
-                        body.quaternion.mult(body.shapeOrientations[j], shapeWorldQuaternion);
+                        body.quaternion.mult(body.shapeOrientations[ j ], shapeWorldQuaternion);
 
                         // Copy to meshes
                         mesh.position.copy(shapeWorldPosition);
@@ -95,7 +95,7 @@ export default class CannonDebugRenderer
 
             for (var i = meshIndex; i < meshes.length; i++)
             {
-                var mesh = meshes[i];
+                var mesh = meshes[ i ];
                 if (mesh)
                 {
                     this.scene.remove(mesh);
@@ -108,14 +108,14 @@ export default class CannonDebugRenderer
 
     _updateMesh(index, body, shape)
     {
-        var mesh = this._meshes[index];
+        var mesh = this._meshes[ index ];
         if (!this._typeMatch(mesh, shape))
         {
             if (mesh)
             {
                 this.scene.remove(mesh);
             }
-            mesh = this._meshes[index] = this._createMesh(shape);
+            mesh = this._meshes[ index ] = this._createMesh(shape);
         }
         this._scaleMesh(mesh, shape);
     }
@@ -164,20 +164,20 @@ export default class CannonDebugRenderer
                 // Add vertices
                 for (var i = 0; i < shape.vertices.length; i++)
                 {
-                    var v = shape.vertices[i];
+                    var v = shape.vertices[ i ];
                     geo.vertices.push(new Vector3(v.x, v.y, v.z));
                 }
 
                 for (var i = 0; i < shape.faces.length; i++)
                 {
-                    var face = shape.faces[i];
+                    var face = shape.faces[ i ];
 
                     // add triangles
-                    var a = face[0];
+                    var a = face[ 0 ];
                     for (var j = 1; j < face.length - 1; j++)
                     {
-                        var b = face[j];
-                        var c = face[j + 1];
+                        var b = face[ j ];
+                        var c = face[ j + 1 ];
                         geo.faces.push(new Face3(a, b, c));
                     }
                 }
@@ -218,14 +218,14 @@ export default class CannonDebugRenderer
                 var v2 = this.tmpVec2;
                 for (var xi = 0; xi < shape.data.length - 1; xi++)
                 {
-                    for (var yi = 0; yi < shape.data[xi].length - 1; yi++)
+                    for (var yi = 0; yi < shape.data[ xi ].length - 1; yi++)
                     {
                         for (var k = 0; k < 2; k++)
                         {
                             shape.getConvexTrianglePillar(xi, yi, k === 0);
-                            v0.copy(shape.pillarConvex.vertices[0]);
-                            v1.copy(shape.pillarConvex.vertices[1]);
-                            v2.copy(shape.pillarConvex.vertices[2]);
+                            v0.copy(shape.pillarConvex.vertices[ 0 ]);
+                            v1.copy(shape.pillarConvex.vertices[ 1 ]);
+                            v2.copy(shape.pillarConvex.vertices[ 2 ]);
                             v0.vadd(shape.pillarOffset, v0);
                             v1.vadd(shape.pillarOffset, v1);
                             v2.vadd(shape.pillarOffset, v2);
@@ -283,4 +283,6 @@ export default class CannonDebugRenderer
 
         }
     }
-};
+}
+
+export { CannonDebugRenderer }

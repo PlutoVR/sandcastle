@@ -1,11 +1,12 @@
 /**
  * @author mrdoob / http://mrdoob.com
  * @author Mugen87 / https://github.com/Mugen87
- (modified by Michael Hazani for Sandcastle)
+ * gently modified by MichaelHazani / https://github.com/MichaelHazani
  */
+
 import { state } from "../state"
 
-export class VRButton
+class VRButton
 {
     constructor(renderer, options)
     {
@@ -95,7 +96,13 @@ export class VRButton
                 // ('local' is always available for immersive sessions and doesn't need to
                 // be requested separately.)
                 var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+
                 navigator.xr.requestSession('immersive-vr', sessionInit).then(onSessionStarted);
+                // navigator.xr.addEventListener('sessiongranted', function (evt)
+                // {
+                //     console.log("session granted!");
+                // })
+
             }
             else
             {
@@ -138,3 +145,4 @@ export class VRButton
     }
 }
 
+export { VRButton }

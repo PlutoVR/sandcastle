@@ -5,8 +5,8 @@ import { VRButton } from './util/SessionHandler';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../scenes/veraMolnar/scene"
-import { xrInput } from "../engine/xrinput"
+import { scene } from "../scenes/defaultScene"
+import { XRInput } from "../engine/xrinput"
 
 // editor camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -20,10 +20,10 @@ renderer.setAnimationLoop(() =>
     renderer.render(scene, camera);
 
     // INPUT
-    if (state.xrSession) xrInput.updateControllers();
+    if (state.xrSession) XRInput.Update();
 
     // PHYSICS
-    if (!state.isPaused) Physics.updatePhysics();
+    if (!state.isPaused) Physics.Update();
 
     // NETWORKING
     if (scene.networking != undefined) scene.networking.PeerConnection.sync();
@@ -43,4 +43,4 @@ window.addEventListener('resize', () =>
 document.querySelector(".app").appendChild(renderer.domElement);
 
 // WebXR button
-const a = document.querySelector(".app").appendChild(new VRButton(renderer));
+document.querySelector(".app").appendChild(new VRButton(renderer));
