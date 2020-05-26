@@ -18,7 +18,7 @@
 3. `npm start` will start a dev server at `http://localhost:1234` with the default scene (located at `./src/components/scenes/defaultScene.js`).
 4. `npm run build` will build your project into `./dist`.
 
-Check out the [Wiki](https://github.com/MichaelHazani/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
+Check out the [Wiki](https://github.com/PlutoVR/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
 
 
 #### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_
