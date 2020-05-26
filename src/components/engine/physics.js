@@ -57,7 +57,7 @@ Physics.addControllerRigidBody = (controller) =>
     console.log(_cRB.name + " created");
 }
 
-// TODO: FIGURE OUT IF WEBWORKER IS DOABLE
+// TODO: IMPLEMENT WEBWORKER
 // const PhysicsSolver = new PhysicsSolver();
 // PhysicsSolver.postMessage = PhysicsSolver.webkitPostMessage || PhysicsSolver.postMessage;
 
@@ -97,7 +97,7 @@ Physics.updateControllers = () =>
     // }
 }
 
-Physics.updatePhysics = () =>
+Physics.Update = () =>
 {
     // sendDataToWorker();
     if (Physics.rigidbodies.length < 1) return;
@@ -122,7 +122,6 @@ Physics.resetScene = () =>
 {
     const bodies = Physics.cannonWorld.bodies;
     let i = bodies.length;
-    console.log(i);
     while (i--)
     {
         this.removeBody(bodies[ i ]);
