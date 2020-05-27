@@ -1,7 +1,6 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
 import CannonDebugRenderer from "./util/CannonDebugRenderer";
 import { Vector3 } from "three";
-import { PeerConnection } from "./networking/PeerConnection"
 import { state } from "./state";
 import { XRInput } from "../engine/xrinput"
 
@@ -48,7 +47,7 @@ Physics.addControllerRigidBody = (controller) =>
     });
     _cRB.name = "Controller " + Physics.controllerRigidbodies.length + " RigidBody";
     _cRB.collisionResponse = 1;
-    _cRB.addEventListener("collide", function (e) { console.log("controller collided!"); });
+    // _cRB.addEventListener("collide", function (e) { console.log("controller collided!"); });
     _cRB.addShape(new Sphere(0.075));
     Physics.cannonWorld.add(_cRB);
     Physics.controllerRigidbodies.push(_cRB);
@@ -63,14 +62,14 @@ Physics.enableDebugger = (scene) =>
 
 Physics.updateControllers = () =>
 {
-    if (state.isXRSession == true)
+    // if (state.isXRSession == true)
+    // {
+    XRInput.controllerGrips.forEach((ctrl, i) =>
     {
-        XRInput.controllerGrips.forEach((ctrl, i) =>
-        {
-            Physics.controllerRigidbodies[ i ].position.copy(XRInput.controllerGrips[ i ].position);
-            Physics.controllerRigidbodies[ i ].quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
-        });
-    }
+        Physics.controllerRigidbodies[ i ].position.copy(XRInput.controllerGrips[ i ].position);
+        Physics.controllerRigidbodies[ i ].quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
+    });
+    // }
 }
 
 Physics.Update = () =>

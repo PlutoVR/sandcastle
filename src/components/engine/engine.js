@@ -26,7 +26,7 @@ renderer.setAnimationLoop(() =>
     if (!state.isPaused) Physics.Update();
 
     // NETWORKING
-    if (scene.networking != undefined) scene.networking.PeerConnection.sync();
+    if (scene.networking.remoteSync != undefined) { scene.networking.remoteSync.sync(); } else { console.log("remoteSync undefined"); }
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });

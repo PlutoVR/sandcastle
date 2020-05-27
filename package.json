@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "cannon": "^0.6.2",
+    "firebase": "^7.14.5",
     "peerjs": "^1.2.0",
     "three": "^0.116.1"
   },

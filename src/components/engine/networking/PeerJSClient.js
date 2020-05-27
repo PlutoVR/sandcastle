@@ -135,7 +135,7 @@ export default class PeerJSClient extends RemoteSync.NetworkClient
 		list.length = 0;
 		for (var i = 0, il = this.connections.length; i < il; i++)
 		{
-			var connection = this.connections[i];
+			var connection = this.connections[ i ];
 			if (connection.peer === this.id || connection.peer === id) continue;
 			list.push(connection.peer);
 		}
@@ -146,7 +146,7 @@ export default class PeerJSClient extends RemoteSync.NetworkClient
 	{
 		for (var i = 0, il = peers.length; i < il; i++)
 		{
-			var id = peers[i];
+			var id = peers[ i ];
 			if (id === this.id || this.hasConnection(id)) continue;
 			this.connect(id);
 		}
@@ -173,7 +173,7 @@ export default class PeerJSClient extends RemoteSync.NetworkClient
 			{
 				for (var i = 0, il = list.length; i < il; i++)
 				{
-					var id = list[i];
+					var id = list[ i ];
 					if (!self.hasConnection(id))
 					{
 						self.connected(self.peer.connect(id), false);
@@ -190,7 +190,7 @@ export default class PeerJSClient extends RemoteSync.NetworkClient
 
 	send(id, data)
 	{
-		var connection = this.connectionTable[id];
+		var connection = this.connectionTable[ id ];
 		if (connection === undefined) return;
 		connection.send(data);
 	}
@@ -199,7 +199,7 @@ export default class PeerJSClient extends RemoteSync.NetworkClient
 	{
 		for (var i = 0, il = this.connections.length; i < il; i++)
 		{
-			this.send(this.connections[i].peer, data);
+			this.send(this.connections[ i ].peer, data);
 		}
 	}
 };

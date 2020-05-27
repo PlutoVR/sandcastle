@@ -10,7 +10,6 @@ class XRInputClass
     {
         this.controllerGrips = [ renderer.xr.getControllerGrip(0), renderer.xr.getControllerGrip(1) ];
         this.controllers = [];
-        console.log(this.controllers);
     }
     // trigger start
     onSelectStart(e)
@@ -52,7 +51,6 @@ class XRInputClass
     {
         console.log("onConnected");
         this.controllers.push(e.data);
-        console.log(e.data);
     }
 
     // controller disconnection

@@ -1,34 +1,56 @@
 import RS from "./RemoteSync";
-import PeerJSClient from "./PeerJSClient";
+import { state } from "../state"
+// import PeerJSClient from "./PeerJSClient";
+import FirebaseSignalingServer from "./FirebaseSignalingServer";
+// import FirebaseClient from "./FirebaseClient"
+import WebRTCClient from "./WebRTCClient";
 
 export class SharedExperience
 {
     constructor()
     {
-        this.PeerConnection = new RS.RemoteSync(
-            new PeerJSClient({
-                debugLevel: 0,
-            })
+        this.remoteSync = new RS.RemoteSync(
+            new WebRTCClient(
+                new FirebaseSignalingServer({
+                    authType: 'none',
+                    apiKey: 'AIzaSyBu6M0W3iBAWPLIkW5L3ixr7io2IQZxQOA',
+                    authDomain: 'sandcastle-e07df.firebaseapp.com',
+                    databaseURL: 'https://sandcastle-e07df.firebaseio.com'
+                }),
+                // new FirebaseClient({
+                //     authType: 'none',
+                //     apiKey: "AIzaSyBu6M0W3iBAWPLIkW5L3ixr7io2IQZxQOA",
+                //     authDomain: "sandcastle-e07df.firebaseapp.com",
+                //     databaseURL: "https://sandcastle-e07df.firebaseio.com",
+                //     projectId: "sandcastle-e07df",
+                //     storageBucket: "sandcastle-e07df.appspot.com",
+                //     messagingSenderId: "759077241408",
+                //     appId: "1:759077241408:web:c615b3ff8181fc2a65d5a5",
+                //     measurementId: "G-X3VYHXT0XN"
+                // }),
+
+            )
         );
-        this.PeerConnection.addEventListener('open', this.onOpen.bind(this));
-        this.PeerConnection.addEventListener('close', this.onClose.bind(this));
-        this.PeerConnection.addEventListener('error', this.onError.bind(this));
-        this.PeerConnection.addEventListener('connect', this.onConnect.bind(this));
-        this.PeerConnection.addEventListener('disconnect', this.onDisconnect.bind(this));
-        this.PeerConnection.addEventListener('receive', this.onReceive.bind(this));
-        this.PeerConnection.addEventListener('add', this.onAdd.bind(this));
-        this.PeerConnection.addEventListener('remove', this.onRemove.bind(this));
+        this.remoteSync.addEventListener('open', this.onOpen.bind(this));
+        this.remoteSync.addEventListener('close', this.onClose.bind(this));
+        this.remoteSync.addEventListener('error', this.onError.bind(this));
+        this.remoteSync.addEventListener('connect', this.onConnect.bind(this));
+        this.remoteSync.addEventListener('disconnect', this.onDisconnect.bind(this));
+        this.remoteSync.addEventListener('receive', this.onReceive.bind(this));
+        this.remoteSync.addEventListener('add', this.onAdd.bind(this));
+        this.remoteSync.addEventListener('remove', this.onRemove.bind(this));
     }
 
     onOpen(id)
     {
         this.clientId = id;
-        const link = window.location.href + "?" + id;
+        const link = location.protocol + '//' + location.host + location.pathname + "?" + id;
         const a = document.createElement('a');
         a.setAttribute('href', link);
         a.setAttribute('target', '_blank');
         a.innerHTML = link;
         document.querySelector(".info").appendChild(a);
+        state.eventHandler.dispatchEvent("peerconnected");
         this.connectFromURL();
     }
 
@@ -50,34 +72,34 @@ export class SharedExperience
 
     onClose(destId)
     {
-        this.showMessage('Disconnected to ' + destId);
+        console.log('Disconnected to ' + destId);
     }
 
     onError(error)
     {
-        this.showMessage(error);
+        console.log(error);
     }
 
     onConnect(destId)
     {
-        this.showMessage('onConnect: Connected with ' + destId);
+        console.log('onConnect: Connected with ' + destId);
+
     }
 
     onDisconnect(destId, object)
     {
-        this.showMessage('Disconnected with ' + destId);
+        console.log('Disconnected with ' + destId);
     }
 
     connect(id)
     {
         if (id === this.clientId)
         {
-            this.showMessage(id + ' is your id');
+            console.log(id + ' is your id');
             return;
         }
-        const message = document.getElementById('message');
-        this.showMessage('Connecting with ' + id);
-        this.PeerConnection.connect(id);
+        console.log('Connecting with ' + id);
+        this.remoteSync.connect(id);
     }
 
     connectFromURL()
@@ -87,7 +109,7 @@ export class SharedExperience
         if (index >= 0)
         {
             const id = url.slice(index + 1);
-            this.PeerConnection.connect(id);
+            this.connect(id);
         }
     }
 

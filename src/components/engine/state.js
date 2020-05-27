@@ -51,6 +51,8 @@ class State
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEvent('xrsessionstarted');
         this.eventHandler.registerEvent('xrsessionended');
+        this.eventHandler.registerEvent('peerconnected');
+        this.eventHandler.registerEvent('peerdisconnected');
         this.bindDebugKeys();
     }
 

@@ -1,10 +1,10 @@
+import { state } from "../../engine/state"
 import { Scene, Vector3, Group, MeshNormalMaterial, Mesh } from "three";
 import Brick from './brickCustomShader';
 import { Physics } from '../../engine/physics';
 import { XRInput } from '../../engine/xrinput';
 
 import { SharedExperience } from '../../engine/networking/PeerConnection'
-import { state } from "../../engine/state";
 
 const scene = new Scene();
 scene.networking = new SharedExperience();
@@ -16,19 +16,20 @@ const RNG = () =>
     return Math.floor(Math.random() * 1000000000)
 }
 
+
 scene.initGame = () =>
 {
-    scene.traverse(e =>
-    {
-        scene.remove(e);
-    });
-
+    // scene.traverse(e =>
+    // {
+    //     scene.remove(e);
+    // });
     XRInput.controllerGrips.forEach((controller, i) => 
     {
         // console.log(controller);
-        scene.add(controller);
         Physics.addControllerRigidBody(controller);
-        scene.networking.PeerConnection.addSharedObject(controller, (i + 1) * 10);
+        scene.networking.remoteSync.addSharedObject(controller, (i + 3) * 10);
+        scene.add(controller);
+
     });
 
     const tower = new Group();
@@ -50,14 +51,18 @@ scene.initGame = () =>
             level.children.forEach((brick, y) =>
             {
                 if (!(brick instanceof (Mesh))) return;
-                scene.attach(brick);
                 Physics.addBody(brick, Physics.RigidBodyType.Box);
-                scene.networking.PeerConnection.addSharedObject(brick, RNG());
+                // scene.networking.remoteSync.addSharedObject(brick, RNG());
+                scene.attach(brick);
             })
         });
     }
 }
 
-scene.initGame();
+state.eventHandler.addEventListener("peerconnected", (e) =>
+{
+    scene.initGame();
+});
+
 
 export { scene }
