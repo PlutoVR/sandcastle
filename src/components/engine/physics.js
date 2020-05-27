@@ -40,8 +40,6 @@ groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 Physics.cannonWorld.add(groundBody);
 Physics.rigidbodies.push(groundBody);
 
-
-// controllers. Move this.
 Physics.addControllerRigidBody = (controller) =>
 {
     const _cRB = new Body({
@@ -57,29 +55,6 @@ Physics.addControllerRigidBody = (controller) =>
     Physics.rigidbodies.push(_cRB);
     console.log(_cRB.name + " created");
 }
-
-// TODO: IMPLEMENT WEBWORKER
-// const PhysicsSolver = new PhysicsSolver();
-// PhysicsSolver.postMessage = PhysicsSolver.webkitPostMessage || PhysicsSolver.postMessage;
-
-// const sendDataToWorker = () => 
-// {
-//     PhysicsSolver.postMessage({
-//         // N: N,
-//     });
-// }
-
-// PhysicsSolver.addEventListener('message', worker =>
-// {
-//     scene.children.forEach(child =>
-//     {
-//         if (child.Physics)
-//         {
-//             child.position.copy(worker.data.positions);
-//             child.quaternion.copy(worker.data.quaternions);
-//         }
-//     });
-// });
 
 Physics.enableDebugger = (scene) =>
 {

@@ -1,3 +1,31 @@
+// TODO: IMPLEMENT WEBWORKER
+// basic physics.js future code:
+
+// const PhysicsSolver = new PhysicsSolver();
+// PhysicsSolver.postMessage = PhysicsSolver.webkitPostMessage || PhysicsSolver.postMessage;
+
+// const sendDataToWorker = () => 
+// {
+//     PhysicsSolver.postMessage({
+//         // N: N,
+//     });
+// }
+
+// PhysicsSolver.addEventListener('message', worker =>
+// {
+//     scene.children.forEach(child =>
+//     {
+//         if (child.Physics)
+//         {
+//             child.position.copy(worker.data.positions);
+//             child.quaternion.copy(worker.data.quaternions);
+//         }
+//     });
+// });
+
+//////////////////////////////////////////
+
+// webworker code:
 // import * as CANNON from "cannon";
 
 // // let cannonWorld;
