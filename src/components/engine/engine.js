@@ -5,7 +5,7 @@ import { VRButton } from './util/SessionHandler';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../scenes/defaultScene"
+import { scene } from "../scenes/networkedTower/scene"
 import { XRInput } from "../engine/xrinput"
 
 // editor camera
@@ -20,7 +20,7 @@ renderer.setAnimationLoop(() =>
     renderer.render(scene, camera);
 
     // INPUT
-    if (state.xrSession) XRInput.Update();
+    if (state.isXRSession) XRInput.Update();
 
     // PHYSICS
     if (!state.isPaused) Physics.Update();

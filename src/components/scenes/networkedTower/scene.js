@@ -1,9 +1,10 @@
 import { Scene, Vector3, Group, MeshNormalMaterial, Mesh } from "three";
 import Brick from './brickCustomShader';
 import { Physics } from '../../engine/physics';
-import { ctrlArr } from '../../engine/xrinput';
+import { XRInput } from '../../engine/xrinput';
 
 import { SharedExperience } from '../../engine/networking/PeerConnection'
+import { state } from "../../engine/state";
 
 const scene = new Scene();
 scene.networking = new SharedExperience();
@@ -22,8 +23,9 @@ scene.initGame = () =>
         scene.remove(e);
     });
 
-    ctrlArr.forEach((controller, i) => 
+    XRInput.controllerGrips.forEach((controller, i) => 
     {
+        // console.log(controller);
         scene.add(controller);
         Physics.addControllerRigidBody(controller);
         scene.networking.PeerConnection.addSharedObject(controller, (i + 1) * 10);

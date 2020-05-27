@@ -6,6 +6,12 @@ const controllerModelFactory = new XRControllerModelFactory();
 
 class XRInputClass
 {
+    constructor()
+    {
+        this.controllerGrips = [ renderer.xr.getControllerGrip(0), renderer.xr.getControllerGrip(1) ];
+        this.controllers = [];
+        console.log(this.controllers);
+    }
     // trigger start
     onSelectStart(e)
     {
@@ -45,7 +51,8 @@ class XRInputClass
     onConnected(e)
     {
         console.log("onConnected");
-        state.controllers.push(e.data);
+        this.controllers.push(e.data);
+        console.log(e.data);
     }
 
     // controller disconnection
@@ -61,8 +68,9 @@ class XRInputClass
     debugOutput()
     {
         this.inputDebugString = "";
-        state.controllers.forEach((e) =>
+        this.controllers.forEach((e) =>
         {
+            // console.log(e);
             e.gamepad.buttons.forEach((f, i) =>
             {
                 if (f.pressed == true)
@@ -93,7 +101,7 @@ state.eventHandler.addEventListener("xrsessionstarted", (e) =>
 {
     console.warn("xr session started");
     state.currentSession = e;
-    state.xrSession = true;
+    state.isXRSession = true;
 
     //buggy on MC? Should replace arbitrary "2"
     // const s = renderer.xr.getSession();
@@ -101,20 +109,20 @@ state.eventHandler.addEventListener("xrsessionstarted", (e) =>
     for (let i = 0; i < 2; i++)
     {
         const c = renderer.xr.getController(i);
-        c.addEventListener('selectend', XRInput.onSelectEnd);
-        c.addEventListener('selectstart', XRInput.onSelectStart);
-        c.addEventListener('select', XRInput.onSelect);
-        c.addEventListener('squeezestart', XRInput.onSqueezeStart);
-        c.addEventListener('squeezeend', XRInput.onSqueezeEnd);
-        c.addEventListener('connected', XRInput.onConnected);
-        c.addEventListener('disconnected', XRInput.onDisconnected);
+        c.addEventListener('selectend', XRInput.onSelectEnd.bind(XRInput));
+        c.addEventListener('selectstart', XRInput.onSelectStart.bind(XRInput));
+        c.addEventListener('select', XRInput.onSelect.bind(XRInput));
+        c.addEventListener('squeezestart', XRInput.onSqueezeStart.bind(XRInput));
+        c.addEventListener('squeezeend', XRInput.onSqueezeEnd.bind(XRInput));
+        c.addEventListener('connected', XRInput.onConnected.bind(XRInput));
+        c.addEventListener('disconnected', XRInput.onDisconnected.bind(XRInput));
     }
 });
 
 state.eventHandler.addEventListener("xrsessionended", () =>
 {
     console.warn("xr session ended");
-    state.inXR = false;
+    state.isXRSession = false;
 });
 
 export { XRInput }

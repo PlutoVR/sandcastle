@@ -3,6 +3,7 @@ import CannonDebugRenderer from "./util/CannonDebugRenderer";
 import { Vector3 } from "three";
 import { PeerConnection } from "./networking/PeerConnection"
 import { state } from "./state";
+import { XRInput } from "../engine/xrinput"
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;
@@ -87,14 +88,14 @@ Physics.enableDebugger = (scene) =>
 
 Physics.updateControllers = () =>
 {
-    // if (state.hasXRInput)
-    // {
-    // ctrlArr.forEach((ctrl, i) =>
-    // {
-    //     Physics.controllerRigidbodies[i].position.copy(ctrlArr[i].position);
-    //     Physics.controllerRigidbodies[i].quaternion.copy(ctrlArr[i].quaternion);
-    // });
-    // }
+    if (state.isXRSession == true)
+    {
+        XRInput.controllerGrips.forEach((ctrl, i) =>
+        {
+            Physics.controllerRigidbodies[ i ].position.copy(XRInput.controllerGrips[ i ].position);
+            Physics.controllerRigidbodies[ i ].quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
+        });
+    }
 }
 
 Physics.Update = () =>

@@ -44,8 +44,7 @@ class State
 {
     constructor()
     {
-        this.xrSession = false;
-        this.controllers = [];
+        this.isXRSession = false;
         this.isPaused = false;
         this.currentSession = null;
         this.debugPhysics = false;
