@@ -22,7 +22,7 @@ class RemoteSync
 
 		this.client = client;
 		this.id = '';
-
+		this.sharedObjectID = 0;
 		// for local object
 
 		this.localObjects = [];
@@ -463,8 +463,9 @@ class RemoteSync
 	 * @param {string} id - shared id.
 	 * @param {boolean} recursive - recursively adds children if true
 	 */
-	addSharedObject(object, id, recursive)
+	addSharedObject(object, recursive)
 	{
+		const id = this.sharedObjectID++;
 
 		if (this.sharedObjectTable[ id ] !== undefined)
 		{

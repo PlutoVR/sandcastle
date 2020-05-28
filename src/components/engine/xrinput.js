@@ -2,8 +2,6 @@ import { state } from "./state"
 import { renderer } from './renderer';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
-const controllerModelFactory = new XRControllerModelFactory();
-
 class XRInputClass
 {
     constructor()
@@ -59,6 +57,14 @@ class XRInputClass
         console.log("onDisconnected");
         state.controllers = [];
     }
+
+    CreateControllerModel(controllerGrip)
+    {
+        const controllerModelFactory = new XRControllerModelFactory();
+        controllerGrip.add(controllerModelFactory.createControllerModel(controllerGrip));
+    }
+
+
     Update()
     {
         this.debugOutput();

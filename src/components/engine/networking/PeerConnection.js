@@ -53,13 +53,14 @@ export class PeerConnection
         a.setAttribute('target', '_blank');
         a.innerHTML = link;
         document.querySelector(".info").appendChild(a);
-        state.eventHandler.dispatchEvent("peerconnected");
         this.connectFromURL();
+        state.eventHandler.dispatchEvent("peerconnected");
     }
 
     onReceive(data)
     {
-
+        // console.log("OnReceive")
+        // console.log(data);
     }
 
     onAdd(destId, objectId, info)
@@ -86,6 +87,7 @@ export class PeerConnection
     onConnect(destId)
     {
         console.log('onConnect: Connected with ' + destId);
+
 
     }
 

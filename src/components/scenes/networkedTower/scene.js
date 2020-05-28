@@ -8,33 +8,29 @@ import { PeerConnection } from '../../engine/networking/PeerConnection'
 
 const scene = new Scene();
 const networking = new PeerConnection(scene);
-// if (scene.networking.remoteSync != undefined) { scene.networking.remoteSync.sync(); } else { console.log("remoteSync undefined"); }
-// scene.networking.Update = () =>
-// {
-//     console.log("heyo");
-// }
 
+// start Physics debug
 Physics.enableDebugger(scene);
 
-const RNG = () =>
-{
-    return Math.floor(Math.random() * 1000000000)
-}
 
 scene.initGame = () =>
 {
-    // scene.traverse(e =>
-    // {
-    //     scene.remove(e);
-    // });
     XRInput.controllerGrips.forEach((controller, i) => 
     {
+        // add controller RBs
         Physics.addControllerRigidBody(controller);
-        networking.remoteSync.addSharedObject(controller, RNG());
-        scene.add(controller);
 
+        // network controllers
+        networking.remoteSync.addSharedObject(controller);
+
+        // create controller models
+        XRInput.CreateControllerModel(controller);
+
+        // add to scene
+        scene.add(controller);
     });
 
+    // BLOCK TOWER
     const tower = new Group();
 
     for (let y = 0; y < 13; y++)
@@ -50,7 +46,7 @@ scene.initGame = () =>
         tower.add(level);
 
         // 0 pos is more likely to clash w/viewer
-        tower.position.set(0, 0, -2);
+        tower.position.set(0, 0, -.5);
         scene.updateMatrixWorld();
         tower.children.forEach((level, x) =>
         {
@@ -58,9 +54,16 @@ scene.initGame = () =>
             {
                 if (!(brick instanceof (Mesh))) return;
                 scene.attach(brick);
+                //dumb hack to avoid false positive for remoteSync.master
+                // setTimeout(e =>
+                // {
+                //     if (networking.remoteSync.master == true)
+                //     {
+                //         // Physics.addRigidBody(brick, Physics.RigidBodyType.Box);
+                //     }
+                // }, 5);
                 Physics.addRigidBody(brick, Physics.RigidBodyType.Box);
-                networking.remoteSync.addSharedObject(brick, RNG());
-
+                // networking.remoteSync.addSharedObject(brick);
             })
         });
     }

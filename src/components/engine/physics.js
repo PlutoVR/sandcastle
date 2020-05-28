@@ -64,6 +64,7 @@ Physics.updateControllers = () =>
 {
     // if (state.isXRSession == true)
     // {
+    if (XRInput.controllerGrips.length == 0 || Physics.controllerRigidbodies.length == 0) return;
     XRInput.controllerGrips.forEach((ctrl, i) =>
     {
         Physics.controllerRigidbodies[ i ].position.copy(XRInput.controllerGrips[ i ].position);
