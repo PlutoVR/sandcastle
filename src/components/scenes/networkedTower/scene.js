@@ -4,10 +4,15 @@ import Brick from './brickCustomShader';
 import { Physics } from '../../engine/physics';
 import { XRInput } from '../../engine/xrinput';
 
-import { SharedExperience } from '../../engine/networking/PeerConnection'
+import { PeerConnection } from '../../engine/networking/PeerConnection'
 
 const scene = new Scene();
-scene.networking = new SharedExperience();
+const networking = new PeerConnection(scene);
+// if (scene.networking.remoteSync != undefined) { scene.networking.remoteSync.sync(); } else { console.log("remoteSync undefined"); }
+// scene.networking.Update = () =>
+// {
+//     console.log("heyo");
+// }
 
 Physics.enableDebugger(scene);
 
@@ -25,7 +30,7 @@ scene.initGame = () =>
     XRInput.controllerGrips.forEach((controller, i) => 
     {
         Physics.addControllerRigidBody(controller);
-        scene.networking.remoteSync.addSharedObject(controller, RNG());
+        networking.remoteSync.addSharedObject(controller, RNG());
         scene.add(controller);
 
     });
@@ -54,7 +59,7 @@ scene.initGame = () =>
                 if (!(brick instanceof (Mesh))) return;
                 scene.attach(brick);
                 Physics.addRigidBody(brick, Physics.RigidBodyType.Box);
-                scene.networking.remoteSync.addSharedObject(brick, RNG());
+                networking.remoteSync.addSharedObject(brick, RNG());
 
             })
         });

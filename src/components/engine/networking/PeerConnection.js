@@ -1,14 +1,14 @@
 import RS from "./RemoteSync";
 import { state } from "../state"
-// import PeerJSClient from "./PeerJSClient";
+import { Object3D } from "three";
 import FirebaseSignalingServer from "./FirebaseSignalingServer";
-// import FirebaseClient from "./FirebaseClient"
 import WebRTCClient from "./WebRTCClient";
 
-export class SharedExperience
+export class PeerConnection
 {
-    constructor()
+    constructor(scene)
     {
+        this.scene = scene;
         // assign random id to URL
         if (location.href.indexOf('?') === -1)
         {
@@ -32,12 +32,20 @@ export class SharedExperience
         this.remoteSync.addEventListener('receive', this.onReceive.bind(this));
         this.remoteSync.addEventListener('add', this.onAdd.bind(this));
         this.remoteSync.addEventListener('remove', this.onRemove.bind(this));
+
+        //add networking update Method
+        const networkingUpdate = new Object3D();
+        networkingUpdate.Update = () =>
+        {
+            this.remoteSync.sync();
+        }
+        this.scene.add(networkingUpdate);
+
     }
 
     onOpen(id)
     {
         this.clientId = id;
-        // const link = location.protocol + '//' + location.host + location.pathname + "?" + id;
         const link = location.href;
         const a = document.createElement('a');
         a.target = '_blank';
