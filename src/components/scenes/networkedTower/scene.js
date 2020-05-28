@@ -16,7 +16,6 @@ const RNG = () =>
     return Math.floor(Math.random() * 1000000000)
 }
 
-
 scene.initGame = () =>
 {
     // scene.traverse(e =>
@@ -26,7 +25,7 @@ scene.initGame = () =>
     XRInput.controllerGrips.forEach((controller, i) => 
     {
         Physics.addControllerRigidBody(controller);
-        scene.networking.remoteSync.addSharedObject(controller, (i + 3) * 10);
+        scene.networking.remoteSync.addSharedObject(controller, RNG());
         scene.add(controller);
 
     });
@@ -46,7 +45,7 @@ scene.initGame = () =>
         tower.add(level);
 
         // 0 pos is more likely to clash w/viewer
-        tower.position.set(3, 0, -1);
+        tower.position.set(0, 0, -2);
         scene.updateMatrixWorld();
         tower.children.forEach((level, x) =>
         {
