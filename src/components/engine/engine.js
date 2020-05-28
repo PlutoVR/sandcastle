@@ -5,7 +5,7 @@ import { VRButton } from './util/SessionHandler';
 import { renderer } from "./renderer";
 import { Physics } from "./physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../scenes/networkedTower/scene"
+import { scene } from "../scenes/defaultScene"
 import { XRInput } from "../engine/xrinput"
 
 // editor camera
