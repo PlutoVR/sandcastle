@@ -20,13 +20,10 @@ renderer.setAnimationLoop(() =>
     renderer.render(scene, camera);
 
     // INPUT
-    if (state.xrSession) XRInput.Update();
+    if (state.isXRSession) XRInput.Update();
 
     // PHYSICS
     if (!state.isPaused) Physics.Update();
-
-    // NETWORKING
-    if (scene.networking != undefined) scene.networking.PeerConnection.sync();
 
     // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });

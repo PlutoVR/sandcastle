@@ -285,4 +285,4 @@ class CannonDebugRenderer
     }
 }
 
-export default { CannonDebugRenderer } 
+export default CannonDebugRenderer

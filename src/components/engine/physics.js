@@ -1,8 +1,8 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
 import CannonDebugRenderer from "./util/CannonDebugRenderer";
 import { Vector3 } from "three";
-import { PeerConnection } from "./networking/PeerConnection"
 import { state } from "./state";
+import { XRInput } from "../engine/xrinput"
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;
@@ -39,8 +39,6 @@ groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
 Physics.cannonWorld.add(groundBody);
 Physics.rigidbodies.push(groundBody);
 
-
-// controllers. Move this.
 Physics.addControllerRigidBody = (controller) =>
 {
     const _cRB = new Body({
@@ -49,36 +47,13 @@ Physics.addControllerRigidBody = (controller) =>
     });
     _cRB.name = "Controller " + Physics.controllerRigidbodies.length + " RigidBody";
     _cRB.collisionResponse = 1;
-    _cRB.addEventListener("collide", function (e) { console.log("controller collided!"); });
+    // _cRB.addEventListener("collide", function (e) { console.log("controller collided!"); });
     _cRB.addShape(new Sphere(0.075));
     Physics.cannonWorld.add(_cRB);
     Physics.controllerRigidbodies.push(_cRB);
     Physics.rigidbodies.push(_cRB);
     console.log(_cRB.name + " created");
 }
-
-// TODO: IMPLEMENT WEBWORKER
-// const PhysicsSolver = new PhysicsSolver();
-// PhysicsSolver.postMessage = PhysicsSolver.webkitPostMessage || PhysicsSolver.postMessage;
-
-// const sendDataToWorker = () => 
-// {
-//     PhysicsSolver.postMessage({
-//         // N: N,
-//     });
-// }
-
-// PhysicsSolver.addEventListener('message', worker =>
-// {
-//     scene.children.forEach(child =>
-//     {
-//         if (child.Physics)
-//         {
-//             child.position.copy(worker.data.positions);
-//             child.quaternion.copy(worker.data.quaternions);
-//         }
-//     });
-// });
 
 Physics.enableDebugger = (scene) =>
 {
@@ -87,13 +62,14 @@ Physics.enableDebugger = (scene) =>
 
 Physics.updateControllers = () =>
 {
-    // if (state.hasXRInput)
+    // if (state.isXRSession == true)
     // {
-    // ctrlArr.forEach((ctrl, i) =>
-    // {
-    //     Physics.controllerRigidbodies[i].position.copy(ctrlArr[i].position);
-    //     Physics.controllerRigidbodies[i].quaternion.copy(ctrlArr[i].quaternion);
-    // });
+    if (XRInput.controllerGrips.length == 0 || Physics.controllerRigidbodies.length == 0) return;
+    XRInput.controllerGrips.forEach((ctrl, i) =>
+    {
+        Physics.controllerRigidbodies[ i ].position.copy(XRInput.controllerGrips[ i ].position);
+        Physics.controllerRigidbodies[ i ].quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
+    });
     // }
 }
 
@@ -128,7 +104,7 @@ Physics.resetScene = () =>
     }
 }
 
-Physics.addBody = (mesh, rbShape, mass = 1) => 
+Physics.addRigidBody = (mesh, rbShape, mass = 1) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();

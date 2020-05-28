@@ -44,14 +44,15 @@ class State
 {
     constructor()
     {
-        this.xrSession = false;
-        this.controllers = [];
+        this.isXRSession = false;
         this.isPaused = false;
         this.currentSession = null;
-        this.debugPhysics = false;
+        this.debugPhysics = true;
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEvent('xrsessionstarted');
         this.eventHandler.registerEvent('xrsessionended');
+        this.eventHandler.registerEvent('peerconnected');
+        this.eventHandler.registerEvent('peerdisconnected');
         this.bindDebugKeys();
     }
 

@@ -46,13 +46,13 @@ export class EngineEditorCamera extends Object3D
             cameraPosition: this.camera.position,
             cameraQuaternion: this.camera.quaternion
         }
-        window.localStorage.setItem('camState', JSON.stringify(this.editorCamState));
+        window.sessionStorage.setItem('camState', JSON.stringify(this.editorCamState));
         // console.log("saving editor camera session data");
     }
 
     retrieveSessionData() 
     {
-        const camState = JSON.parse(window.localStorage.getItem('camState'));
+        const camState = JSON.parse(window.sessionStorage.getItem('camState'));
         if (camState == null)
         {
             this.CAM_SPEED = 0.75;
@@ -60,28 +60,28 @@ export class EngineEditorCamera extends Object3D
             return;
         }
 
-        this.CAM_SPEED = "camSpeed" in camState ? camState["camSpeed"] : 0.75;
-        this.camera.position.copy("cameraPosition" in camState ? camState["cameraPosition"] : new Vector3());
-        this.camera.applyQuaternion("cameraQuaternion" in camState ? camState["cameraQuaternion"] : new Vector3());
+        this.CAM_SPEED = "camSpeed" in camState ? camState[ "camSpeed" ] : 0.75;
+        this.camera.position.copy("cameraPosition" in camState ? camState[ "cameraPosition" ] : new Vector3());
+        this.camera.applyQuaternion("cameraQuaternion" in camState ? camState[ "cameraQuaternion" ] : new Vector3());
         // console.log("loading editor camera session data");
     }
 
     Update()
     {
-        this.shiftSpeedMulti = this.pressedKeyMap[16] ? 2 : 1;
-        if (this.pressedKeyMap[87]) this.moveForward(this.CAM_SPEED * this.shiftSpeedMulti);
-        if (this.pressedKeyMap[83]) this.moveForward(-this.CAM_SPEED * this.shiftSpeedMulti);
-        if (this.pressedKeyMap[69]) this.moveUp(this.CAM_SPEED * this.shiftSpeedMulti);
-        if (this.pressedKeyMap[81]) this.moveUp(-this.CAM_SPEED * this.shiftSpeedMulti);
-        if (this.pressedKeyMap[68]) this.moveRight(this.CAM_SPEED * this.shiftSpeedMulti);
-        if (this.pressedKeyMap[65]) this.moveRight(-this.CAM_SPEED * this.shiftSpeedMulti);
+        this.shiftSpeedMulti = this.pressedKeyMap[ 16 ] ? 2 : 1;
+        if (this.pressedKeyMap[ 87 ]) this.moveForward(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[ 83 ]) this.moveForward(-this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[ 69 ]) this.moveUp(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[ 81 ]) this.moveUp(-this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[ 68 ]) this.moveRight(this.CAM_SPEED * this.shiftSpeedMulti);
+        if (this.pressedKeyMap[ 65 ]) this.moveRight(-this.CAM_SPEED * this.shiftSpeedMulti);
     }
 
     onKeyDown(event)
     {
-        this.pressedKeyMap[event.keyCode] = (event.keyCode in this.pressedKeyMap);
+        this.pressedKeyMap[ event.keyCode ] = (event.keyCode in this.pressedKeyMap);
     };
-    onKeyUp(event) { this.pressedKeyMap[event.keyCode] = !(event.keyCode in this.pressedKeyMap); };
+    onKeyUp(event) { this.pressedKeyMap[ event.keyCode ] = !(event.keyCode in this.pressedKeyMap); };
 
     onMouseDown(event)
     {

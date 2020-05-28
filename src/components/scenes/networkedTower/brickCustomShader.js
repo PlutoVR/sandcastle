@@ -39,18 +39,18 @@ const shaderArr = [
 ]
 const selectRandomShader = () =>
 {
-    return shaderArr[Math.floor(Math.random() * shaderArr.length)];
+    return shaderArr[ Math.floor(Math.random() * shaderArr.length) ];
 }
 
 export default class JP 
 {
     constructor(position, material) 
     {
-        const mesh = new Mesh(geometry, shaderArr[material]);
+        const mesh = new Mesh(geometry, shaderArr[ material ]);
 
         //hook into render update method
 
-        mesh.update = () =>
+        mesh.Update = () =>
         {
             if (mesh.material.uniforms == undefined) return;
             mesh.material.uniforms.time.value = 6. * (Date.now() - startTime) / 100.;

@@ -22,7 +22,7 @@ class RemoteSync
 
 		this.client = client;
 		this.id = '';
-
+		this.sharedObjectID = 0;
 		// for local object
 
 		this.localObjects = [];
@@ -197,7 +197,7 @@ class RemoteSync
 
 			case 'update':
 				// TODO: check if object is registered as shared or remote object here?
-				this.onUpdates[object.uuid] = func;  // overrides without any warning so far.
+				this.onUpdates[ object.uuid ] = func;  // overrides without any warning so far.
 				// even if listener is registered.
 				break;
 
@@ -235,9 +235,7 @@ class RemoteSync
 	 */
 	connect(id)
 	{
-
 		this.client.connect(id);
-
 	}
 
 	/**
@@ -250,7 +248,7 @@ class RemoteSync
 	addLocalObject(object, info, recursive)
 	{
 
-		if (this.localObjectTable[object.uuid] !== undefined)
+		if (this.localObjectTable[ object.uuid ] !== undefined)
 		{
 
 			console.warn('RemoteSync.addLocalObject: This object has already been registered.');
@@ -260,11 +258,11 @@ class RemoteSync
 
 		if (info === undefined) info = {};
 
-		this.localObjectTable[object.uuid] = object;
+		this.localObjectTable[ object.uuid ] = object;
 		this.localObjects.push(object);
-		this.localObjectInfos[object.uuid] = { userInfo: info };
+		this.localObjectInfos[ object.uuid ] = { userInfo: info };
 
-		this.transferComponents[object.uuid] = createTransferComponent(object);
+		this.transferComponents[ object.uuid ] = createTransferComponent(object);
 
 		if (recursive === true)
 		{
@@ -285,22 +283,22 @@ class RemoteSync
 				for (var i = 0, il = parent.children.length; i < il; i++)
 				{
 
-					var child = parent.children[i];
+					var child = parent.children[ i ];
 
-					if (self.localObjectTable[child.uuid] !== undefined) continue;
+					if (self.localObjectTable[ child.uuid ] !== undefined) continue;
 
-					self.localObjectTable[child.uuid] = child;
+					self.localObjectTable[ child.uuid ] = child;
 					self.localObjects.push(child);
 					// child: true indicates this object is registered as child of another object
-					self.localObjectInfos[child.uuid] = { child: true };
+					self.localObjectInfos[ child.uuid ] = { child: true };
 
-					self.transferComponents[child.uuid] = createTransferComponent(child);
+					self.transferComponents[ child.uuid ] = createTransferComponent(child);
 
 					var param = {};
 					param.id = child.uuid;
 					param.children = traverse(child);
 
-					array[i] = param;
+					array[ i ] = param;
 
 				}
 
@@ -308,8 +306,8 @@ class RemoteSync
 
 			}
 
-			this.localObjectInfos[object.uuid].recursive = true;
-			this.localObjectInfos[object.uuid].children = traverse(object);
+			this.localObjectInfos[ object.uuid ].recursive = true;
+			this.localObjectInfos[ object.uuid ].children = traverse(object);
 
 		}
 
@@ -325,7 +323,7 @@ class RemoteSync
 	removeLocalObject(object)
 	{
 
-		if (this.localObjectTable[object.uuid] === undefined)
+		if (this.localObjectTable[ object.uuid ] === undefined)
 		{
 
 			console.warn('RemoteSync.removeLocalObject: object not found');
@@ -333,11 +331,11 @@ class RemoteSync
 
 		}
 
-		var info = this.localObjectInfos[object.uuid];
+		var info = this.localObjectInfos[ object.uuid ];
 
-		delete this.localObjectTable[object.uuid];
-		delete this.localObjectInfos[object.uuid];
-		delete this.transferComponents[object.uuid];
+		delete this.localObjectTable[ object.uuid ];
+		delete this.localObjectInfos[ object.uuid ];
+		delete this.transferComponents[ object.uuid ];
 
 		removeObjectFromArray(this.localObjects, object);
 
@@ -354,13 +352,13 @@ class RemoteSync
 				for (var i = 0, il = parent.children.length; i < il; i++)
 				{
 
-					var child = parent.children[i];
+					var child = parent.children[ i ];
 
-					if (self.localObjectTable[child.uuid] === undefined) continue;
+					if (self.localObjectTable[ child.uuid ] === undefined) continue;
 
-					delete self.localObjectTable[child.uuid];
-					delete self.localObjectInfos[child.uuid];
-					delete self.transferComponents[child.uuid];
+					delete self.localObjectTable[ child.uuid ];
+					delete self.localObjectInfos[ child.uuid ];
+					delete self.transferComponents[ child.uuid ];
 
 					removeObjectFromArray(self.localObjects, child);
 
@@ -390,7 +388,7 @@ class RemoteSync
 	addRemoteObject(destId, objectId, object)
 	{
 
-		var objects = this.remoteObjectTable[destId];
+		var objects = this.remoteObjectTable[ destId ];
 
 		if (objects === undefined)
 		{
@@ -400,8 +398,8 @@ class RemoteSync
 
 		}
 
-		var infos = this.remoteObjectInfos[destId];
-		var info = infos[objectId];
+		var infos = this.remoteObjectInfos[ destId ];
+		var info = infos[ objectId ];
 
 		if (info === undefined)
 		{
@@ -411,7 +409,7 @@ class RemoteSync
 
 		}
 
-		if (objects[objectId] !== undefined)
+		if (objects[ objectId ] !== undefined)
 		{
 
 			console.warn('RemoteSync.addRemoteObject: object for ' + objectId + ' object of ' + destId + ' peer has been already registered.');
@@ -419,7 +417,7 @@ class RemoteSync
 
 		}
 
-		objects[objectId] = object;
+		objects[ objectId ] = object;
 
 		// assumes corresponding remote's local object and this object has the same
 		// tree structure including the order of children.
@@ -435,13 +433,13 @@ class RemoteSync
 				for (var i = 0, il = Math.min(children1.length, children2.length); i < il; i++)
 				{
 
-					var child1 = children1[i];
-					var child2 = children2[i];
+					var child1 = children1[ i ];
+					var child2 = children2[ i ];
 
-					if (objects[child2.id] !== undefined) continue;
+					if (objects[ child2.id ] !== undefined) continue;
 
-					objects[child2.id] = child1;
-					infos[child2.id] = { child: true };
+					objects[ child2.id ] = child1;
+					infos[ child2.id ] = { child: true };
 
 					traverse(child1, child2);
 
@@ -465,10 +463,11 @@ class RemoteSync
 	 * @param {string} id - shared id.
 	 * @param {boolean} recursive - recursively adds children if true
 	 */
-	addSharedObject(object, id, recursive)
+	addSharedObject(object, recursive)
 	{
+		const id = this.sharedObjectID++;
 
-		if (this.sharedObjectTable[id] !== undefined)
+		if (this.sharedObjectTable[ id ] !== undefined)
 		{
 
 			console.warn('RemoteSystem.addSharedObject: Shared id ' + id + ' is already used.');
@@ -476,17 +475,17 @@ class RemoteSync
 
 		}
 
-		this.sharedObjectTable[id] = object;
+		this.sharedObjectTable[ id ] = object;
 		this.sharedObjects.push(object);
 
 		var component = createTransferComponent(object);
 		component.sid = id;  // shared id, special property for shared object
-		this.transferComponents[object.uuid] = component;
+		this.transferComponents[ object.uuid ] = component;
 
 		if (recursive === true)
 		{
 
-			this.sharedObjectRecursives[id] = true;
+			this.sharedObjectRecursives[ id ] = true;
 
 			var self = this;
 
@@ -498,18 +497,18 @@ class RemoteSync
 				for (var i = 0, il = children.length; i < il; i++)
 				{
 
-					var child = children[i];
+					var child = children[ i ];
 					// can conflict with other user-specified id?
 					var id = parentId + '__' + i;
 
-					if (self.sharedObjectTable[id] !== undefined) continue;
+					if (self.sharedObjectTable[ id ] !== undefined) continue;
 
-					self.sharedObjectTable[id] = child;
+					self.sharedObjectTable[ id ] = child;
 					self.sharedObjects.push(child);
 
 					var component = createTransferComponent(child);
 					component.sid = id;
-					self.transferComponents[child.uuid] = component;
+					self.transferComponents[ child.uuid ] = component;
 
 					traverse(id, child);
 
@@ -531,7 +530,7 @@ class RemoteSync
 	removeSharedObject(id)
 	{
 
-		if (this.sharedObjectTable[id] === undefined)
+		if (this.sharedObjectTable[ id ] === undefined)
 		{
 
 			console.warn('RemoteSync.removeSharedObject: no found shared id ' + id);
@@ -539,16 +538,16 @@ class RemoteSync
 
 		}
 
-		var object = this.sharedObjectTable[id];
+		var object = this.sharedObjectTable[ id ];
 
-		delete this.sharedObjectTable[id];
+		delete this.sharedObjectTable[ id ];
 
 		removeObjectFromArray(this.sharedObjects, object);
 
-		if (this.sharedObjectRecursives[id] === true)
+		if (this.sharedObjectRecursives[ id ] === true)
 		{
 
-			delete this.sharedObjectRecursives[id];
+			delete this.sharedObjectRecursives[ id ];
 
 			var self = this;
 
@@ -564,11 +563,11 @@ class RemoteSync
 
 					var id = parentId + '__' + i;
 
-					if (self.sharedObjectTable[id] === undefined) continue;
+					if (self.sharedObjectTable[ id ] === undefined) continue;
 
-					var child = self.sharedObjectTable[id];
+					var child = self.sharedObjectTable[ id ];
 
-					delete self.sharedObjectTable[id];
+					delete self.sharedObjectTable[ id ];
 
 					removeObjectFromArray(self.sharedObjects, child);
 
@@ -614,7 +613,7 @@ class RemoteSync
 			for (var j = 0, jl = array.length; j < jl; j++)
 			{
 
-				var object = array[j];
+				var object = array[ j ];
 
 				if (force === true || this.checkUpdate(object))
 				{
@@ -707,7 +706,7 @@ class RemoteSync
 
 			function (id, fromRemote)
 			{
-
+				// console.log("connected!");
 				self.invokeConnectListeners(id, fromRemote);
 
 				if (!fromRemote && self.isMaster()) self.beSlave();
@@ -731,7 +730,7 @@ class RemoteSync
 				// removes objects registered as remote object
 				// of disconnected peer
 
-				var objects = self.remoteObjectTable[id];
+				var objects = self.remoteObjectTable[ id ];
 
 				if (objects === undefined) return;
 
@@ -740,11 +739,11 @@ class RemoteSync
 				for (var i = 0, il = keys.length; i < il; i++)
 				{
 
-					self.removeRemoteObject(id, keys[i]);
+					self.removeRemoteObject(id, keys[ i ]);
 
 				}
 
-				delete self.remoteObjectTable[id];
+				delete self.remoteObjectTable[ id ];
 
 				self.invokeDisconnectListeners(id);
 
@@ -774,6 +773,8 @@ class RemoteSync
 
 					case TRANSFER_TYPE_ADD:
 						self.handleAddRequest(component);
+						// console.log("component: ");
+						// console.log(component);
 						break;
 
 					case TRANSFER_TYPE_REMOVE:
@@ -823,13 +824,13 @@ class RemoteSync
 		var destId = component.id;
 		var list = component.list;
 
-		var objects = this.remoteObjectTable[destId];
+		var objects = this.remoteObjectTable[ destId ];
 
 		for (var i = 0, il = list.length; i < il; i++)
 		{
 
-			var objectId = list[i].id;  // remote object uuid
-			var sharedId = list[i].sid; // shared object id
+			var objectId = list[ i ].id;  // remote object uuid
+			var sharedId = list[ i ].sid; // shared object id
 
 			var object;
 
@@ -838,20 +839,20 @@ class RemoteSync
 
 				// shared object
 
-				object = this.sharedObjectTable[sharedId];
+				object = this.sharedObjectTable[ sharedId ];
 
 			} else
 			{
 
 				if (objects === undefined) continue;
 
-				object = objects[objectId];
+				object = objects[ objectId ];
 
 			}
 
 			if (object === undefined) continue;
 
-			this.deserialize(object, list[i]);
+			this.deserialize(object, list[ i ]);
 
 			// to update transfer component
 			if (sharedId !== undefined) this.serialize(object);
@@ -866,30 +867,29 @@ class RemoteSync
 	 */
 	handleAddRequest(component)
 	{
-
 		var destId = component.id;
 		var list = component.list;
 
-		if (this.remoteObjectTable[destId] === undefined)
+		if (this.remoteObjectTable[ destId ] === undefined)
 		{
 
-			this.remoteObjectTable[destId] = {};
-			this.remoteObjectInfos[destId] = {};
+			this.remoteObjectTable[ destId ] = {};
+			this.remoteObjectInfos[ destId ] = {};
 
 		}
 
-		var objects = this.remoteObjectTable[destId];
-		var infos = this.remoteObjectInfos[destId];
+		var objects = this.remoteObjectTable[ destId ];
+		var infos = this.remoteObjectInfos[ destId ];
 
 		for (var i = 0, il = list.length; i < il; i++)
 		{
 
-			var objectId = list[i].id;
-			var info = list[i].info;
+			var objectId = list[ i ].id;
+			var info = list[ i ].info;
 
-			if (objects[objectId] !== undefined) continue;
+			if (objects[ objectId ] !== undefined) continue;
 
-			infos[objectId] = info;
+			infos[ objectId ] = info;
 
 			this.invokeAddListeners(destId, objectId, info.userInfo);
 
@@ -907,16 +907,16 @@ class RemoteSync
 		var destId = component.id;
 		var list = component.list;
 
-		var objects = this.remoteObjectTable[destId];
+		var objects = this.remoteObjectTable[ destId ];
 
 		if (objects === undefined) return;
 
 		for (var i = 0, il = list.length; i < il; i++)
 		{
 
-			var objectId = list[i].id;
+			var objectId = list[ i ].id;
 
-			var object = objests[objectId];
+			var object = objests[ objectId ];
 
 			if (object === undefined) continue;
 
@@ -936,18 +936,18 @@ class RemoteSync
 	removeRemoteObject(destId, objectId)
 	{
 
-		if (this.remoteObjectTable[destId] === undefined) return;
+		if (this.remoteObjectTable[ destId ] === undefined) return;
 
-		var objects = this.remoteObjectTable[destId];
-		var infos = this.remoteObjectInfos[destId];
+		var objects = this.remoteObjectTable[ destId ];
+		var infos = this.remoteObjectInfos[ destId ];
 
-		if (objects[objectId] === undefined) return;
+		if (objects[ objectId ] === undefined) return;
 
-		var object = objects[objectId];
-		var info = infos[objectId];
+		var object = objects[ objectId ];
+		var info = infos[ objectId ];
 
-		delete objects[objectId];
-		delete infos[objectId];
+		delete objects[ objectId ];
+		delete infos[ objectId ];
 
 		if (info.recursive === true)
 		{
@@ -963,10 +963,10 @@ class RemoteSync
 				for (var i = 0, il = Math.min(children1.length, children2.length); i < il; i++)
 				{
 
-					var child1 = children1[i];
-					var child2 = children2[i];
+					var child1 = children1[ i ];
+					var child2 = children2[ i ];
 
-					delete objects[child2.id];
+					delete objects[ child2.id ];
 					traverse(child1, child2);
 
 				}
@@ -991,7 +991,7 @@ class RemoteSync
 	checkUpdate(object)
 	{
 
-		var component = this.transferComponents[object.uuid];
+		var component = this.transferComponents[ object.uuid ];
 
 		var array = component.matrix;
 		var array2 = object.matrix.elements;
@@ -999,7 +999,7 @@ class RemoteSync
 		for (var i = 0, il = array.length; i < il; i++)
 		{
 
-			if (ensureFloat32(array[i]) !== ensureFloat32(array2[i])) return true;
+			if (ensureFloat32(array[ i ]) !== ensureFloat32(array2[ i ])) return true;
 
 		}
 
@@ -1012,7 +1012,7 @@ class RemoteSync
 			for (var i = 0, il = array.length; i < il; i++)
 			{
 
-				if (ensureFloat32(array[i]) !== ensureFloat32(array2[i])) return true;
+				if (ensureFloat32(array[ i ]) !== ensureFloat32(array2[ i ])) return true;
 
 			}
 
@@ -1031,7 +1031,7 @@ class RemoteSync
 	serialize(object)
 	{
 
-		var component = this.transferComponents[object.uuid];
+		var component = this.transferComponents[ object.uuid ];
 
 		var array = component.matrix;
 		var array2 = object.matrix.elements;
@@ -1039,7 +1039,7 @@ class RemoteSync
 		for (var i = 0, il = array.length; i < il; i++)
 		{
 
-			array[i] = ensureFloat32(array2[i]);
+			array[ i ] = ensureFloat32(array2[ i ]);
 
 		}
 
@@ -1052,7 +1052,7 @@ class RemoteSync
 			for (var i = 0, il = array.length; i < il; i++)
 			{
 
-				array[i] = ensureFloat32(array2[i]);
+				array[ i ] = ensureFloat32(array2[ i ]);
 
 			}
 
@@ -1070,7 +1070,7 @@ class RemoteSync
 	deserialize(object, component)
 	{
 
-		var transferComponent = this.transferComponents[object.uuid];
+		var transferComponent = this.transferComponents[ object.uuid ];
 
 		object.matrix.fromArray(component.matrix);
 		object.matrix.decompose(object.position, object.quaternion, object.scale);
@@ -1084,16 +1084,16 @@ class RemoteSync
 			for (var i = 0, il = array.length; i < il; i++)
 			{
 
-				array2[i] = array[i];
+				array2[ i ] = array[ i ];
 
 			}
 
 		}
 
-		if (this.onUpdates[object.uuid] !== undefined)
+		if (this.onUpdates[ object.uuid ] !== undefined)
 		{
 
-			this.onUpdates[object.uuid]();
+			this.onUpdates[ object.uuid ]();
 
 		}
 
@@ -1106,7 +1106,7 @@ class RemoteSync
 	broadcastAddObjectRequest(object)
 	{
 
-		this.client.broadcast(buildObjectAdditionComponent(this.id, object, this.localObjectInfos[object.uuid]));
+		this.client.broadcast(buildObjectAdditionComponent(this.id, object, this.localObjectInfos[ object.uuid ]));
 
 	}
 
@@ -1144,7 +1144,7 @@ class RemoteSync
 		for (var i = 0, il = this.onOpens.length; i < il; i++)
 		{
 
-			this.onOpens[i](id);
+			this.onOpens[ i ](id);
 
 		}
 
@@ -1156,7 +1156,7 @@ class RemoteSync
 		for (var i = 0, il = this.onCloses.length; i < il; i++)
 		{
 
-			this.onCloses[i](id);
+			this.onCloses[ i ](id);
 
 		}
 
@@ -1168,7 +1168,7 @@ class RemoteSync
 		for (var i = 0, il = this.onErrors.length; i < il; i++)
 		{
 
-			this.onErrors[i](error);
+			this.onErrors[ i ](error);
 
 		}
 
@@ -1180,7 +1180,7 @@ class RemoteSync
 		for (var i = 0, il = this.onConnects.length; i < il; i++)
 		{
 
-			this.onConnects[i](id, fromRemote);
+			this.onConnects[ i ](id, fromRemote);
 
 		}
 
@@ -1192,7 +1192,7 @@ class RemoteSync
 		for (var i = 0, il = this.onDisconnects.length; i < il; i++)
 		{
 
-			this.onDisconnects[i](id);
+			this.onDisconnects[ i ](id);
 
 		}
 
@@ -1204,7 +1204,7 @@ class RemoteSync
 		for (var i = 0, il = this.onAdds.length; i < il; i++)
 		{
 
-			this.onAdds[i](destId, objectId, info);
+			this.onAdds[ i ](destId, objectId, info);
 
 		}
 
@@ -1216,7 +1216,7 @@ class RemoteSync
 		for (var i = 0, il = this.onRemoves.length; i < il; i++)
 		{
 
-			this.onRemoves[i](destId, objectId, object);
+			this.onRemoves[ i ](destId, objectId, object);
 
 		}
 
@@ -1228,7 +1228,7 @@ class RemoteSync
 		for (var i = 0, il = this.onReceives.length; i < il; i++)
 		{
 
-			this.onReceives[i](component);
+			this.onReceives[ i ](component);
 
 		}
 
@@ -1240,7 +1240,7 @@ class RemoteSync
 		for (var i = 0, il = this.onRemoteStreams.length; i < il; i++)
 		{
 
-			this.onRemoteStreams[i](stream);
+			this.onRemoteStreams[ i ](stream);
 
 		}
 
@@ -1252,7 +1252,7 @@ class RemoteSync
 		for (var i = 0, il = this.onReceiveUserDatas.length; i < il; i++)
 		{
 
-			this.onReceiveUserDatas[i](component.list[0]);
+			this.onReceiveUserDatas[ i ](component.list[ 0 ]);
 
 		}
 
@@ -1348,7 +1348,7 @@ class RemoteSync
 	handleMasterNotification(component)
 	{
 
-		var newMasterPeer = component.list[0];
+		var newMasterPeer = component.list[ 0 ];
 
 		if (newMasterPeer === this.id && !this.isMaster())
 		{
@@ -1386,16 +1386,16 @@ class RemoteSync
 		// Chooses the first peer ordered by peer id as a master peer so far.
 		// This logic is very temporal.
 
-		var array = [this.id];
+		var array = [ this.id ];
 
 		for (var i = 0, il = connections.length; i < il; i++)
 		{
 
-			array.push(connections[i].peer);
+			array.push(connections[ i ].peer);
 
 		}
 
-		if (array.sort()[0] === this.id)
+		if (array.sort()[ 0 ] === this.id)
 		{
 
 			this.beMaster();
@@ -1410,7 +1410,7 @@ class RemoteSync
 		for (var i = 0, il = this.onMasters.length; i < il; i++)
 		{
 
-			this.onMasters[i]();
+			this.onMasters[ i ]();
 
 		}
 
@@ -1422,7 +1422,7 @@ class RemoteSync
 		for (var i = 0, il = this.onSlaves.length; i < il; i++)
 		{
 
-			this.onSlaves[i]();
+			this.onSlaves[ i ]();
 
 		}
 
@@ -1434,7 +1434,7 @@ class RemoteSync
 		for (var i = 0, il = this.onMasterNotifications.length; i < il; i++)
 		{
 
-			this.onMasterNotifications[i](masterPeer);
+			this.onMasterNotifications[ i ](masterPeer);
 
 		}
 
@@ -1462,8 +1462,8 @@ var float32Value = new Float32Array(1);
 function ensureFloat32(value)
 {
 
-	float32Value[0] = value;
-	return float32Value[0];
+	float32Value[ 0 ] = value;
+	return float32Value[ 0 ];
 
 }
 
@@ -1478,10 +1478,10 @@ function removeObjectFromArray(array, object)
 	for (var i = 0, il = array.length; i < il; i++)
 	{
 
-		if (array[i] === object)
+		if (array[ i ] === object)
 		{
 
-			array[writeIndex] = array[readIndex];
+			array[ writeIndex ] = array[ readIndex ];
 			writeIndex++;
 
 		}
@@ -1508,7 +1508,7 @@ function createTransferComponent(object)
 	for (var i = 0, il = object.matrix.elements.length; i < il; i++)
 	{
 
-		matrix[i] = ensureFloat32(object.matrix.elements[i]);
+		matrix[ i ] = ensureFloat32(object.matrix.elements[ i ]);
 
 	}
 
@@ -1518,7 +1518,7 @@ function createTransferComponent(object)
 		for (var i = 0, il = object.morphTargetInfluences.length; i < il; i++)
 		{
 
-			morphTargetInfluences[i] = ensureFloat32(object.morphTargetInfluences[i]);
+			morphTargetInfluences[ i ] = ensureFloat32(object.morphTargetInfluences[ i ]);
 
 		}
 
@@ -1554,8 +1554,8 @@ function buildObjectsAdditionComponent(sourceId, objects, infoTable)
 	for (var i = 0, il = objects.length; i < il; i++)
 	{
 
-		var object = objects[i];
-		var info = infoTable[object.uuid];
+		var object = objects[ i ];
+		var info = infoTable[ object.uuid ];
 
 		// not sends this object because it'll be included in
 		// parent addition request.
@@ -1694,7 +1694,7 @@ class NetworkClient
 		this.onDisconnects = [];
 		this.onReceives = [];
 		this.onRemoteStreams = [];
-
+		// console.log(params);
 		if (params.onOpen !== undefined) this.addEventListener('open', params.onOpen);
 		if (params.onClose !== undefined) this.addEventListener('close', params.onClose);
 		if (params.onError !== undefined) this.addEventListener('error', params.onError);
@@ -1753,7 +1753,7 @@ class NetworkClient
 
 	hasConnection(id)
 	{
-		return this.connectionTable[id] !== undefined;
+		return this.connectionTable[ id ] !== undefined;
 	}
 
 	connectionNum()
@@ -1764,10 +1764,10 @@ class NetworkClient
 	addConnection(id, connection)
 	{
 
-		if (id === this.id || this.connectionTable[id] !== undefined) return false;
+		if (id === this.id || this.connectionTable[ id ] !== undefined) return false;
 
 		this.connections.push(connection);
-		this.connectionTable[id] = connection;
+		this.connectionTable[ id ] = connection;
 
 		return true;
 
@@ -1775,9 +1775,9 @@ class NetworkClient
 	removeConnection(id)
 	{
 
-		if (id === this.id || this.connectionTable[id] === undefined) return false;
+		if (id === this.id || this.connectionTable[ id ] === undefined) return false;
 
-		delete this.connectionTable[id];
+		delete this.connectionTable[ id ];
 
 		// TODO: optimize
 		var readIndex = 0;
@@ -1786,10 +1786,10 @@ class NetworkClient
 		for (var i = 0, il = this.connections.length; i < il; i++)
 		{
 
-			if (this.connections[readIndex].peer !== id)
+			if (this.connections[ readIndex ].peer !== id)
 			{
 
-				this.connections[writeIndex] = this.connections[readIndex];
+				this.connections[ writeIndex ] = this.connections[ readIndex ];
 				writeIndex++;
 
 			}
@@ -1811,7 +1811,7 @@ class NetworkClient
 		for (var i = 0, il = this.onOpens.length; i < il; i++)
 		{
 
-			this.onOpens[i](id);
+			this.onOpens[ i ](id);
 
 		}
 
@@ -1822,7 +1822,7 @@ class NetworkClient
 		for (var i = 0, il = this.onCloses.length; i < il; i++)
 		{
 
-			this.onCloses[i](id);
+			this.onCloses[ i ](id);
 
 		}
 
@@ -1834,7 +1834,7 @@ class NetworkClient
 		for (var i = 0, il = this.onErrors.length; i < il; i++)
 		{
 
-			this.onErrors[i](error);
+			this.onErrors[ i ](error);
 
 		}
 
@@ -1846,7 +1846,7 @@ class NetworkClient
 		for (var i = 0, il = this.onConnects.length; i < il; i++)
 		{
 
-			this.onConnects[i](id, fromRemote);
+			this.onConnects[ i ](id, fromRemote);
 
 		}
 
@@ -1858,7 +1858,7 @@ class NetworkClient
 		for (var i = 0, il = this.onDisconnects.length; i < il; i++)
 		{
 
-			this.onDisconnects[i](id);
+			this.onDisconnects[ i ](id);
 
 		}
 
@@ -1870,7 +1870,7 @@ class NetworkClient
 		for (var i = 0, il = this.onReceives.length; i < il; i++)
 		{
 
-			this.onReceives[i](data);
+			this.onReceives[ i ](data);
 
 		}
 
@@ -1882,7 +1882,7 @@ class NetworkClient
 		for (var i = 0, il = this.onRemoteStreams.length; i < il; i++)
 		{
 
-			this.onRemoteStreams[i](stream);
+			this.onRemoteStreams[ i ](stream);
 
 		}
 
@@ -1894,45 +1894,44 @@ class NetworkClient
 /**
  * Abstract signaling server class used for WebRTC connection establishment.
  */
-const SignalingServer = function ()
+class SignalingServer
 {
+	constructor()
+	{
+		this.id = '';  // local peer id, assigned when local peer connects the server
+		this.roomId = '';
 
-	this.id = '';  // local peer id, assigned when local peer connects the server
-	this.roomId = '';
+		// event listeners
 
-	// event listeners
+		this.onOpens = [];
+		this.onCloses = [];
+		this.onErrors = [];
+		this.onRemoteJoins = [];
+		this.onReceives = [];
 
-	this.onOpens = [];
-	this.onCloses = [];
-	this.onErrors = [];
-	this.onRemoteJoins = [];
-	this.onReceives = [];
-
-};
-
-Object.assign(SignalingServer.prototype, {
+	}
 
 	/**
-	 * Adds EventListener. Callback function will be invoked when
-	 * 'open': a connection is established with a signaling server
-	 * 'close': a connection is disconnected from a signaling server
-	 * 'error': error occurs
-	 * 'receive': receives signal from a remote peer via server
-	 * 'remote_join': aware of a remote peer joins the room
-	 *
-	 * Arguments for callback functions are
-	 * 'open': {string} local peer id
-	 * 'close': {string} local peer id
-	 * 'error': {string} error message
-	 * 'receive': {object} signal sent from a remote peer
-	 * 'remote_join': {string} remote peer id
-	 *                {number} timestamp when local peer joined the room
-	 *                {number} timestamp when remote peer joined the room
-	 *
-	 * @param {string} type - event type
-	 * @param {function} func - callback function
-	 */
-	addEventListener: function (type, func)
+ * Adds EventListener. Callback function will be invoked when
+ * 'open': a connection is established with a signaling server
+ * 'close': a connection is disconnected from a signaling server
+ * 'error': error occurs
+ * 'receive': receives signal from a remote peer via server
+ * 'remote_join': aware of a remote peer joins the room
+ *
+ * Arguments for callback functions are
+ * 'open': {string} local peer id
+ * 'close': {string} local peer id
+ * 'error': {string} error message
+ * 'receive': {object} signal sent from a remote peer
+ * 'remote_join': {string} remote peer id
+ *                {number} timestamp when local peer joined the room
+ *                {number} timestamp when remote peer joined the room
+ *
+ * @param {string} type - event type
+ * @param {function} func - callback function
+ */
+	addEventListener(type, func)
 	{
 
 		switch (type)
@@ -1964,69 +1963,69 @@ Object.assign(SignalingServer.prototype, {
 
 		}
 
-	},
+	}
 
 	// invoke event listeners. refer to .addEventListener() comment for arguments.
 
-	invokeOpenListeners: function (id)
+	invokeOpenListeners(id)
 	{
 
 		for (var i = 0, il = this.onOpens.length; i < il; i++)
 		{
 
-			this.onOpens[i](id);
+			this.onOpens[ i ](id);
 
 		}
 
-	},
+	}
 
-	invokeCloseListeners: function (id)
+	invokeCloseListeners(id)
 	{
 
 		for (var i = 0, il = this.onCloses.length; i < il; i++)
 		{
 
-			this.onCloses[i](id);
+			this.onCloses[ i ](id);
 
 		}
 
-	},
+	}
 
-	invokeErrorListeners: function (error)
+	invokeErrorListeners(error)
 	{
 
 		for (var i = 0, il = this.onErrors.length; i < il; i++)
 		{
 
-			this.onErrors[i](error);
+			this.onErrors[ i ](error);
 
 		}
 
-	},
+	}
 
-	invokeRemoteJoinListeners: function (id, localTimestamp, remoteTimestamp)
+	invokeRemoteJoinListeners(id, localTimestamp, remoteTimestamp)
 	{
 
 		for (var i = 0, il = this.onRemoteJoins.length; i < il; i++)
 		{
 
-			this.onRemoteJoins[i](id, localTimestamp, remoteTimestamp);
+			this.onRemoteJoins[ i ](id, localTimestamp, remoteTimestamp);
 
 		}
 
-	},
+	}
 
-	invokeReceiveListeners: function (signal)
+	invokeReceiveListeners(signal)
 	{
 
 		for (var i = 0, il = this.onReceives.length; i < il; i++)
 		{
 
-			this.onReceives[i](signal);
+			this.onReceives[ i ](signal);
 
 		}
 
-	},
+	}
 
 	// public abstract method
 
@@ -2034,7 +2033,7 @@ Object.assign(SignalingServer.prototype, {
 	 * Joins a room.
 	 * @param {string} roomId
 	 */
-	connect: function (roomId) { },
+	connect(roomId) { }
 
 	/**
 	 * Sends signal.
@@ -2042,7 +2041,11 @@ Object.assign(SignalingServer.prototype, {
 	 *       enable it to send signal to a peer?
 	 * @param {object} signal
 	 */
-	send: function (signal) { }
+	send(signal) { }
+}
 
-});
+
+
+
+
 module.exports = { RemoteSync, NetworkClient, SignalingServer }
