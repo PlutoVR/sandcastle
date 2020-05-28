@@ -103,7 +103,7 @@ Physics.resetScene = () =>
     }
 }
 
-Physics.addBody = (mesh, rbShape, mass = 1) => 
+Physics.addRigidBody = (mesh, rbShape, mass = 1) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();

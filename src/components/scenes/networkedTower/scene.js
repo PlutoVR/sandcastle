@@ -25,7 +25,6 @@ scene.initGame = () =>
     // });
     XRInput.controllerGrips.forEach((controller, i) => 
     {
-        // console.log(controller);
         Physics.addControllerRigidBody(controller);
         scene.networking.remoteSync.addSharedObject(controller, (i + 3) * 10);
         scene.add(controller);
@@ -33,7 +32,7 @@ scene.initGame = () =>
     });
 
     const tower = new Group();
-    tower.position.set(0, 0, -1);
+
     for (let y = 0; y < 13; y++)
     {
         const level = new Group();
@@ -45,15 +44,19 @@ scene.initGame = () =>
         }
         if (y % 2 == 0) { level.rotateOnAxis(new Vector3(0, 1, 0), 1.5708); }
         tower.add(level);
+
+        // 0 pos is more likely to clash w/viewer
+        tower.position.set(3, 0, -1);
         scene.updateMatrixWorld();
         tower.children.forEach((level, x) =>
         {
             level.children.forEach((brick, y) =>
             {
                 if (!(brick instanceof (Mesh))) return;
-                Physics.addBody(brick, Physics.RigidBodyType.Box);
-                // scene.networking.remoteSync.addSharedObject(brick, RNG());
                 scene.attach(brick);
+                Physics.addRigidBody(brick, Physics.RigidBodyType.Box);
+                scene.networking.remoteSync.addSharedObject(brick, RNG());
+
             })
         });
     }
