@@ -1,3 +1,7 @@
+// demonstrating basic voice streaming and networking shared objects over WebRTC
+// everything happens automatically once you enter the same room on two instances (XR not required)
+
+
 import { Scene, Color, Mesh, SphereBufferGeometry, MeshNormalMaterial, Object3D, HemisphereLight, DirectionalLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage } from "three";
 import { State } from "../../engine/state"
 import { XRInput } from "../../engine/xrinput"
@@ -53,37 +57,6 @@ scene.init = () =>
         // XRInput.CreateControllerModel(e, scene);
     });
 
-    // console.log(c);
-
-    // window.addEventListener('keydown', (e) =>
-    // {
-    //     scene.traverse(e =>
-    //     {
-    //         if (e.name == "camera")
-    //         {
-    //             const c = renderer.xr.getCamera(e);
-    //             console.log(c);
-    //             const sp = mesh.clone();
-    //             sp.Update = () =>
-    //             {
-    //                 console.log(sp.position);
-    //             }
-    //             sp.position.copy(c.position);
-    //             c.add(sp);
-
-    //             // scene.add(e.camera);
-
-    //             // scene.add(e);
-    //         }
-    //     });
-    // });
-
-    // light controllers
-
-    // scene.add(new HemisphereLight(0x606060, 0x404040, 13));
-    // const light = new DirectionalLight(0xffffff, 13);
-    // light.position.set(1, 1, 1).normalize();
-    // scene.add(light);
 
     uniforms = {
         pointTexture: { value: new TextureLoader().load(spark) }

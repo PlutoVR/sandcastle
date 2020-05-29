@@ -1,5 +1,6 @@
 /**
  * @author Takahiro https://github.com/takahirox
+ * Gently modified by Michael Hazani
  */
 
 const RemoteSync = require("./RemoteSync");
