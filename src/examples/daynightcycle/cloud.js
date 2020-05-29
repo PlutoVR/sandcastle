@@ -3,10 +3,10 @@
 
 import { PlaneBufferGeometry, Mesh, ShaderMaterial, TextureLoader, Object3D } from "three"
 const tl = new TextureLoader();
-const vs_clouds = require('../../shaders/vs_clouds.glsl');
-const fs_clouds = require('../../shaders/fs_clouds.glsl');
-const cloud1 = require("./assets/clouds/1.jpg");
-const cloud2 = require("./assets/clouds/2.jpg");
+const vs_clouds = require('./assets/shaders/vs_clouds.glsl');
+const fs_clouds = require('./assets/shaders/fs_clouds.glsl');
+const cloud1 = require("./assets/textures/1.jpg");
+const cloud2 = require("./assets/textures/2.jpg");
 
 export class Cloud extends Object3D
 {

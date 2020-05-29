@@ -12,6 +12,10 @@ const spark = require("./textures/spark1.png");
 const scene = new Scene();
 
 let networking;
+
+
+// 1. get access to mic
+
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia ||
@@ -20,11 +24,15 @@ navigator.getUserMedia = navigator.getUserMedia ||
 navigator.mediaDevices.getUserMedia({ audio: true, video: false })
     .then(function (stream)
     {
+
+        // 2. create new peer connection instance, pass audiostream.
+        // on connection this will 
+
         networking = new PeerConnection(scene, stream);
 
+        // play incoming audio
         networking.remoteSync.addEventListener('remote_stream', function (remoteStream)
         {
-            // console.log("getting audio");
             var audio = document.createElement("AUDIO");
             audio.srcObject = remoteStream;
             audio.autoplay = true;

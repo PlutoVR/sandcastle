@@ -1,11 +1,6 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ScriptExtHtmlWebpackPlugin = require("script-ext-html-webpack-plugin");
-// const TerserPlugin = require('terser-webpack-plugin');
-
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
 
 const APP_DIR = path.resolve(__dirname, 'src/');
 const BUILD_DIR = path.resolve(__dirname, 'dist/');
@@ -36,7 +31,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
+                use: [ 'style-loader', 'css-loader' ],
             },
             {
                 test: /\.(js|jsx)$/,
@@ -44,7 +39,7 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ['@babel/preset-env']
+                        presets: [ '@babel/preset-env' ]
                     }
                 }
             },
@@ -96,6 +91,6 @@ module.exports = {
         // new BundleAnalyzerPlugin()
     ],
     resolve: {
-        extensions: ['.js', '.es6'],
+        extensions: [ '.js', '.es6' ],
     },
 };

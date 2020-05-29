@@ -1,7 +1,7 @@
 import { state } from "../../engine/state"
 import { Scene, Vector3, Group, MeshNormalMaterial, Mesh } from "three";
 import Brick from './brickCustomShader';
-import { Physics } from '../../engine/physics';
+import { Physics } from '../../engine/physics/physics';
 import { XRInput } from '../../engine/xrinput';
 
 import { PeerConnection } from '../../engine/networking/PeerConnection'

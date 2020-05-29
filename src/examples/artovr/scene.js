@@ -13,6 +13,7 @@ import { Boid } from "./boid";
 import { Water } from './water';
 import { Sky } from './sky.js';
 const WaterNormalsTexture = require("./assets/textures/waternormals.jpg");
+const GLTFbird = require("./assets/models/polyCrow/polyCrow_updated.glb");
 
 export const scene = new Scene();
 
@@ -22,9 +23,8 @@ scene.init = () =>
 
     const loader = new GLTFLoader();
     // "Anonymous Bird" from https://poly.google.com/view/8Ph79kHbt9s
-    const modelPath = "./examples/artovr/assets/models/polyCrow/polyCrow_updated.glb";
     let bird;
-    loader.load(modelPath, function (gltf)
+    loader.load(GLTFbird, function (gltf)
     {
         bird = gltf.scene.children[ 0 ];
         setupFlock(400, bird);
