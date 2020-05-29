@@ -1,8 +1,8 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
-import CannonDebugRenderer from "./util/debughelpers/CannonDebugRenderer";
+import CannonDebugRenderer from "../util/debughelpers/CannonDebugRenderer";
 import { Vector3 } from "three";
-import { State } from "./state";
-import { XRInput } from "./xrinput"
+import { State } from "../state";
+import { XRInput } from "../../engine/xrinput"
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;

@@ -1,3 +1,5 @@
+// default scene loaded in src/engine/engine.js
+
 import { Scene, TorusBufferGeometry, MeshNormalMaterial, Mesh, Vector3 } from "three";
 const scene = new Scene();
 

@@ -1,24 +1,22 @@
-import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, LinearMipmapLinearFilter } from "three";
-import { XRCubeCamera } from "../../engine/util/XRCubeCamera"
-import { renderer } from "../../engine/renderer"
+import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, WebGLCubeRenderTarget, RGBAFormat, LinearMipmapLinearFilter } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
+import { Renderer } from "../../engine/renderer"
+import { XRInput } from "../../engine/xrinput";
+
 import { Boid } from "./boid";
 import { Water } from './water';
 import { Sky } from './sky.js';
+const WaterNormalsTexture = require("./assets/textures/waternormals.jpg");
 
 export const scene = new Scene();
 
 scene.init = () =>
 {
-    // networking refresh cleanup
-    scene.traverse(e =>
-    {
-        scene.remove(e);
-    });
+    // Boids
 
-    var loader = new GLTFLoader();
+    const loader = new GLTFLoader();
     // "Anonymous Bird" from https://poly.google.com/view/8Ph79kHbt9s
-    const modelPath = "./assets/flocking/polyCrow/polyCrow_updated.glb";
+    const modelPath = "./examples/artovr/assets/models/polyCrow/polyCrow_updated.glb";
     let bird;
     loader.load(modelPath, function (gltf)
     {
@@ -26,7 +24,6 @@ scene.init = () =>
         setupFlock(400, bird);
     });
 
-    // Boids
     const boids = [];
     const setupFlock = (count, obj) =>
     {
@@ -38,6 +35,8 @@ scene.init = () =>
         }
     }
 
+    // Ocean
+
     const light = new DirectionalLight(0xffffff, 0.8);
     scene.add(light);
     const waterGeometry = new PlaneBufferGeometry(10000, 10000);
@@ -46,7 +45,7 @@ scene.init = () =>
         {
             textureWidth: 512,
             textureHeight: 512,
-            waterNormals: new TextureLoader().load('./assets/flocking/waternormals.jpg', function (texture)
+            waterNormals: new TextureLoader().load(WaterNormalsTexture, function (texture)
             {
                 texture.wrapS = texture.wrapT = RepeatWrapping;
             }),
@@ -59,8 +58,11 @@ scene.init = () =>
         }
     );
     water.rotation.x = - Math.PI / 2;
-    water.position.y = 0;
+    water.position.y = -3;
     scene.add(water);
+
+
+    // Atmosphere / day-night cycle. Custom XRCubeCamera component that handles XR rendering, soon merged to threeJS:
 
     const sky = new Sky();
     const uniforms = sky.material.uniforms;
@@ -70,7 +72,9 @@ scene.init = () =>
     uniforms[ 'mieCoefficient' ].value = 0.005;
     uniforms[ 'mieDirectionalG' ].value = 0.8;
 
-    const cubeCamera = new XRCubeCamera(0.1, 1, 512);
+    var cubeRenderTarget = new WebGLCubeRenderTarget(512, { format: RGBAFormat, generateMipmaps: true, minFilter: LinearMipmapLinearFilter });
+
+    const cubeCamera = new CubeCamera(0.1, 1000, cubeRenderTarget);
     cubeCamera.renderTarget.texture.generateMipmaps = true;
     cubeCamera.renderTarget.texture.minFilter = LinearMipmapLinearFilter;
     scene.background = cubeCamera.renderTarget;
@@ -83,8 +87,10 @@ scene.init = () =>
     let sunTheta = Math.PI * (parameters.inclination - 0.5);
     let sunPhi = 2 * Math.PI * (parameters.azimuth - 0.5);
 
-    const empty = new Object3D();
-    empty.Update = () =>
+
+    // tap render loop's rAF to update certain vars every frame;
+    const data = new Object3D();
+    data.Update = () =>
     {
         // boids update
         for (let i = 0; i < boids.length; i++)
@@ -93,7 +99,8 @@ scene.init = () =>
         }
 
         // day/night cycle
-        // long nights are boring
+
+        // long nights are boring:
         parameters.inclination = parameters.inclination <= -0.55000 ? 0.55 : parameters.inclination - 0.00025;
         sunTheta = Math.PI * (parameters.inclination - 0.5);
         sunPhi = 2 * Math.PI * (parameters.azimuth - 0.5);
@@ -105,8 +112,15 @@ scene.init = () =>
         // water
         water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
         water.material.uniforms[ 'sunDirection' ].value.copy(light.position).normalize();
-        cubeCamera.update(renderer, sky);
+        cubeCamera.update(Renderer, sky);
     };
-    scene.add(empty);
+    scene.add(data);
+
+    //toggle VR: day/night cycle vs. AR: transparent background
+    XRInput.onSelect = function ()
+    {
+        scene.background == null ? scene.background = cubeCamera.renderTarget : scene.background = null;
+    }
+
 }
 scene.init();

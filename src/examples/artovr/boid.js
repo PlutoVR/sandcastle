@@ -21,8 +21,6 @@ export class Boid
         // this.obj = (type) ? new this.Box() : new this.Sphere();
         this.obj = object == undefined ? new this.Sphere() : new this.Bird(object);
         this.homeVec = new Vector3(0, 50, 0);
-        this.a = new Mesh(new SphereBufferGeometry(0.1, 16, 16), new MeshNormalMaterial());
-        scene.add(this.a);
         this.t = 0;
         this.home = this.homeVec;
 
@@ -115,7 +113,7 @@ export class Boid
         // Find total weight of separation
         for (let i = 0; i < flock.length; i++)
         {
-            currBoid = flock[i];
+            currBoid = flock[ i ];
             const dist = this.position.distanceTo(currBoid.position) * 3;
             // Apply weight if too close
             if (dist < minRange && dist > 0)
@@ -147,7 +145,7 @@ export class Boid
         // Find total weight for alignment
         for (let i = 0; i < flock.length; i++)
         {
-            currBoid = flock[i];
+            currBoid = flock[ i ];
             const dist = this.position.distanceTo(currBoid.position);
             // Apply force if near enough
             if (dist < neighborRange && dist > 0)
@@ -175,7 +173,7 @@ export class Boid
         // Find total weight for cohesion
         for (let i = 0; i < flock.length; i++)
         {
-            currBoid = flock[i];
+            currBoid = flock[ i ];
             const dist = this.position.distanceTo(currBoid.position);
             // Apply weight if near enough
             if (dist < neighborRange && dist > 0)

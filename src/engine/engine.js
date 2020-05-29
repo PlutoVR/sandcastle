@@ -3,9 +3,9 @@ import { PerspectiveCamera } from "three";
 import { EngineEditorCamera } from "./util/cameracontrols/EngineEditorCamera";
 import { VRButton } from "./util/webxr/SessionHandler";
 import { Renderer } from "./renderer";
-import { Physics } from "./physics";
+import { Physics } from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../examples/defaultscene"
+import { scene } from "../examples/artovr/scene"
 import { XRInput } from "./xrinput"
 
 // editor camera
@@ -29,15 +29,15 @@ Renderer.setAnimationLoop(() =>
     scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });
 });
 
+// DOM append
+document.querySelector(".app").appendChild(Renderer.domElement);
+
+// WebXR button
+document.querySelector(".app").appendChild(new VRButton(Renderer));
+
 window.addEventListener('resize', () =>
 {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     Renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
-// DOM append
-document.querySelector(".app").appendChild(Renderer.domElement);
-
-// WebXR button
-document.querySelector(".app").appendChild(new VRButton(Renderer));
