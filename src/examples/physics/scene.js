@@ -1,4 +1,4 @@
-import { state } from "../../engine/state"
+import { State } from "../../engine/state"
 import { Scene, Vector3, Group, MeshNormalMaterial, Mesh } from "three";
 import Brick from './brickCustomShader';
 import { Physics } from '../../engine/physics/physics';
@@ -24,7 +24,7 @@ scene.initGame = () =>
         networking.remoteSync.addSharedObject(controller);
 
         // create controller models
-        XRInput.CreateControllerModel(controller);
+        XRInput.CreateControllerModel(controller, scene);
 
         // add to scene
         scene.add(controller);
@@ -69,7 +69,7 @@ scene.initGame = () =>
     }
 }
 
-state.eventHandler.addEventListener("peerconnected", (e) =>
+State.eventHandler.addEventListener("peerconnected", (e) =>
 {
     scene.initGame();
 });
