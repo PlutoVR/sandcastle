@@ -1,3 +1,9 @@
+// AR-IN-VR sample code
+// important: test in metachromium which enables transparent WebXR rendering on desktop!
+// https://github.com/webaverse/metachromium-bin
+// squeeze trigger to toggle between a day/night cubemap and your external reality layer
+// (i.e SteamVR)
+
 import { Scene, Object3D, PlaneBufferGeometry, DirectionalLight, TextureLoader, RepeatWrapping, CubeCamera, WebGLCubeRenderTarget, RGBAFormat, LinearMipmapLinearFilter } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Renderer } from "../../engine/renderer"
