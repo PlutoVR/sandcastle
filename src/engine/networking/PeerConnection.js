@@ -6,7 +6,7 @@ import WebRTCClient from "./WebRTCClient";
 
 export class PeerConnection
 {
-    constructor(scene)
+    constructor(scene, stream)
     {
         this.scene = scene;
         // assign random id to URL
@@ -22,6 +22,7 @@ export class PeerConnection
                     authDomain: 'sandcastle-e07df.firebaseapp.com',
                     databaseURL: 'https://sandcastle-e07df.firebaseio.com'
                 }),
+                { stream: stream }
             )
         );
         this.remoteSync.addEventListener('open', this.onOpen.bind(this));
@@ -33,7 +34,7 @@ export class PeerConnection
         this.remoteSync.addEventListener('add', this.onAdd.bind(this));
         this.remoteSync.addEventListener('remove', this.onRemove.bind(this));
 
-        //add networking update Method
+        //add networking update method
         const networkingUpdate = new Object3D();
         networkingUpdate.Update = () =>
         {

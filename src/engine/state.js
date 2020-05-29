@@ -40,7 +40,7 @@ class EventHandler
 }
 
 // main state singleton
-class State
+class StateClass
 {
     constructor()
     {
@@ -65,12 +65,12 @@ class State
             switch (e.keyCode)
             {
                 case 192: // tilde
-                    state.debugPhysics = !state.debugPhysics;
-                    console.log("Physics Debug: " + state.debugPhysics);
+                    StateClass.debugPhysics = !StateClass.debugPhysics;
+                    console.log("Physics Debug: " + StateClass.debugPhysics);
                     break;
                 case 80: //"p"
-                    state.isPaused = !state.isPaused;
-                    console.log("Paused: " + state.isPaused);
+                    StateClass.isPaused = !StateClass.isPaused;
+                    console.log("Paused: " + StateClass.isPaused);
                     break;
                 default:
                     break;
@@ -79,4 +79,4 @@ class State
     }
 };
 
-export const state = new State();
+export const State = new StateClass();

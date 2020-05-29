@@ -1,8 +1,8 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
-import CannonDebugRenderer from "./util/CannonDebugRenderer";
+import CannonDebugRenderer from "./util/debughelpers/CannonDebugRenderer";
 import { Vector3 } from "three";
-import { state } from "./state";
-import { XRInput } from "../engine/xrinput"
+import { State } from "./state";
+import { XRInput } from "./xrinput"
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;
@@ -62,7 +62,7 @@ Physics.enableDebugger = (scene) =>
 
 Physics.updateControllers = () =>
 {
-    // if (state.isXRSession == true)
+    // if (State.isXRSession == true)
     // {
     if (XRInput.controllerGrips.length == 0 || Physics.controllerRigidbodies.length == 0) return;
     XRInput.controllerGrips.forEach((ctrl, i) =>
@@ -91,7 +91,7 @@ Physics.Update = () =>
         Physics.rigidbodies[ i ].position.copy(Physics.cannonWorld.bodies[ i ].position);
     });
 
-    if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(state.debugPhysics);
+    if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(State.debugPhysics);
 }
 
 Physics.resetScene = () =>

@@ -1,13 +1,14 @@
-import { state } from "./state"
-import { renderer } from './renderer';
+import { State } from "./state"
+import { Renderer } from './renderer';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 class XRInputClass
 {
     constructor()
     {
-        this.controllerGrips = [ renderer.xr.getControllerGrip(0), renderer.xr.getControllerGrip(1) ];
+        this.controllerGrips = [ Renderer.xr.getControllerGrip(0), Renderer.xr.getControllerGrip(1) ];
         this.controllers = [];
+        this.controllerModelFactory = new XRControllerModelFactory();
     }
     // trigger start
     onSelectStart(e)
@@ -55,14 +56,17 @@ class XRInputClass
     onDisconnected(e)
     {
         console.log("onDisconnected");
-        state.controllers = [];
+        State.controllers = [];
     }
 
-    CreateControllerModel(controllerGrip)
+    CreateControllerModel(controller, scene)
     {
-        const controllerModelFactory = new XRControllerModelFactory();
-        controllerGrip.add(controllerModelFactory.createControllerModel(controllerGrip));
+        // this.controllerGrips.forEach((e) =>
+        // {
+        controller.add(this.controllerModelFactory.createControllerModel(controller));
+        scene.add(controller);
     }
+
 
 
     Update()
@@ -101,18 +105,18 @@ class XRInputClass
 const XRInput = new XRInputClass();
 
 // init input on XR session start
-state.eventHandler.addEventListener("xrsessionstarted", (e) =>
+State.eventHandler.addEventListener("xrsessionstarted", (e) =>
 {
     console.warn("xr session started");
-    state.currentSession = e;
-    state.isXRSession = true;
+    State.currentSession = e;
+    State.isXRSession = true;
 
     //buggy on MC? Should replace arbitrary "2"
-    // const s = renderer.xr.getSession();
+    // const s = Renderer.xr.getSession();
     // console.log(s.inputSources);
     for (let i = 0; i < 2; i++)
     {
-        const c = renderer.xr.getController(i);
+        const c = Renderer.xr.getController(i);
         c.addEventListener('selectend', XRInput.onSelectEnd.bind(XRInput));
         c.addEventListener('selectstart', XRInput.onSelectStart.bind(XRInput));
         c.addEventListener('select', XRInput.onSelect.bind(XRInput));
@@ -123,10 +127,10 @@ state.eventHandler.addEventListener("xrsessionstarted", (e) =>
     }
 });
 
-state.eventHandler.addEventListener("xrsessionended", () =>
+State.eventHandler.addEventListener("xrsessionended", () =>
 {
     console.warn("xr session ended");
-    state.isXRSession = false;
+    State.isXRSession = false;
 });
 
 export { XRInput }

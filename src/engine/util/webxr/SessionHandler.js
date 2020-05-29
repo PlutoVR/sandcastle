@@ -4,7 +4,7 @@
  * gently modified by MichaelHazani / https://github.com/MichaelHazani
  */
 
-import { state } from "../state"
+import { State } from "../../state"
 
 class VRButton
 {
@@ -55,7 +55,7 @@ class VRButton
         {
             session.addEventListener('end', onSessionEnded);
             this.renderer.xr.setSession(session);
-            state.eventHandler.dispatchEvent('xrsessionstarted', session);
+            State.eventHandler.dispatchEvent('xrsessionstarted', session);
             this.button.textContent = 'EXIT VR';
             currentSession = session;
         }
@@ -63,7 +63,7 @@ class VRButton
         const onSessionEnded = ( /*event*/) =>
         {
             currentSession.removeEventListener('end', onSessionEnded);
-            state.eventHandler.dispatchEvent('xrsessionended');
+            State.eventHandler.dispatchEvent('xrsessionended');
             this.button.textContent = 'ENTER VR';
             currentSession = null;
         }

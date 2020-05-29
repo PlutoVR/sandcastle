@@ -1,10 +1,8 @@
 import
 {
-    Scene, MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, CylinderGeometry, Mesh, Geometry, Vector3, Face3
+    MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, CylinderGeometry, Mesh, Geometry, Vector3, Face3
 } from "three"
 import { Vec3, Shape, Sphere, Box, Plane, ConvexPolyhedron, Trimesh, Heightfield, World } from "cannon"
-
-import { state } from "../state"
 
 /* global CANNON,THREE,Detector */
 
