@@ -13,8 +13,7 @@
   "dependencies": {
     "cannon": "^0.6.2",
     "firebase": "^7.14.5",
-    "peerjs": "^1.2.0",
-    "three": "^0.116.1"
+    "three": "^0.117.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -35,11 +34,9 @@
     "script-ext-html-webpack-plugin": "^2.1.4",
     "shader-loader": "^1.3.1",
     "style-loader": "^1.2.1",
-    "terser-webpack-plugin": "^3.0.1",
     "webpack": "^4.43.0",
-    "webpack-bundle-analyzer": "^3.7.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3",
+    "webpack-dev-server": "^3.11.0",
     "webpack-glsl-loader": "^1.0.1",
     "webpack-merge": "^4.2.2",
     "worker-loader": "^2.0.0"

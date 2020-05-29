@@ -1,11 +1,6 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ScriptExtHtmlWebpackPlugin = require("script-ext-html-webpack-plugin");
-// const TerserPlugin = require('terser-webpack-plugin');
-
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
 
 const APP_DIR = path.resolve(__dirname, 'src/');
 const BUILD_DIR = path.resolve(__dirname, 'dist/');
@@ -36,7 +31,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
+                use: [ 'style-loader', 'css-loader' ],
             },
             {
                 test: /\.(js|jsx)$/,
@@ -44,12 +39,12 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ['@babel/preset-env']
+                        presets: [ '@babel/preset-env' ]
                     }
                 }
             },
             {
-                test: /\.(jpe?g|png|gif|svg)$/,
+                test: /\.(jpe?g|png|gif|bmp|svg)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -63,7 +58,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(gltf|glb)$/,
+                test: /\.(gltf|glb|obj|mtl|fbx|dae)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -72,6 +67,20 @@ module.exports = {
                             name: '[name].[ext]',
                             outputPath: 'assets/models/',
                             publicPath: 'assets/models/'
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(ogg|mp3|wav|mpe?g)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false,
+                            name: '[name].[ext]',
+                            outputPath: 'assets/audio/',
+                            publicPath: 'assets/audio/'
                         }
                     }
                 ]
@@ -96,6 +105,6 @@ module.exports = {
         // new BundleAnalyzerPlugin()
     ],
     resolve: {
-        extensions: ['.js', '.es6'],
+        extensions: [ '.js', '.es6' ],
     },
 };
