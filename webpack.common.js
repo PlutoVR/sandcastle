@@ -44,7 +44,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(jpe?g|png|gif|svg)$/,
+                test: /\.(jpe?g|png|gif|bmp|svg)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -58,7 +58,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(gltf|glb)$/,
+                test: /\.(gltf|glb|obj|mtl|fbx|dae)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -67,6 +67,20 @@ module.exports = {
                             name: '[name].[ext]',
                             outputPath: 'assets/models/',
                             publicPath: 'assets/models/'
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(ogg|mp3|wav|mpe?g)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false,
+                            name: '[name].[ext]',
+                            outputPath: 'assets/audio/',
+                            publicPath: 'assets/audio/'
                         }
                     }
                 ]

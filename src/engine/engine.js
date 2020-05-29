@@ -1,3 +1,7 @@
+// scene to run:
+
+import { scene } from "../examples/defaultscene"
+
 import { State } from "./state";
 import { PerspectiveCamera } from "three";
 import { EngineEditorCamera } from "./util/cameracontrols/EngineEditorCamera";
@@ -5,7 +9,6 @@ import { VRButton } from "./util/webxr/SessionHandler";
 import { Renderer } from "./renderer";
 import { Physics } from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../examples/artovr/scene"
 import { XRInput } from "./xrinput"
 
 // editor camera
