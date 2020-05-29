@@ -25,14 +25,6 @@ export default class WebRTCClient extends RemoteSync.NetworkClient
 
 		// ice servers for RTCPeerConnection.
 
-		this.ICE_SERVERS = [
-			{ urls: 'stun:stun.l.google.com:19302' },
-			{ urls: 'stun:stun1.l.google.com:19302' },
-			{ urls: 'stun:stun2.l.google.com:19302' },
-			{ urls: 'stun:stun3.l.google.com:19302' },
-			{ urls: 'stun:stun4.l.google.com:19302' }
-		];
-
 		this.init();
 
 	};
@@ -305,6 +297,13 @@ class WebRTCPeer
 	 */
 	createPeerConnection(stream)
 	{
+		this.ICE_SERVERS = [
+			{ urls: 'stun:stun.l.google.com:19302' },
+			{ urls: 'stun:stun1.l.google.com:19302' },
+			{ urls: 'stun:stun2.l.google.com:19302' },
+			{ urls: 'stun:stun3.l.google.com:19302' },
+			{ urls: 'stun:stun4.l.google.com:19302' }
+		];
 
 		var self = this;
 
@@ -319,9 +318,9 @@ class WebRTCPeer
 			throw new Error('WebRTCPeer.createPeerConnection: This browser does not seem to support WebRTC.');
 
 		}
+		const configuration = { iceServers: this.ICE_SERVERS }
 
-		var pc = new RTCPeerConnection({ 'iceServers': this.ICE_SERVERS });
-
+		var pc = new RTCPeerConnection(configuration);
 		if (stream !== null && stream !== undefined) pc.addStream(stream);
 
 		pc.onicecandidate = function (event)
@@ -329,7 +328,6 @@ class WebRTCPeer
 
 			if (event.candidate)
 			{
-
 				var params = {
 					id: self.id,
 					peer: self.peer,

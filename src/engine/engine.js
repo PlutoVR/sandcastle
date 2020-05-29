@@ -5,7 +5,7 @@ import { VRButton } from "./util/webxr/SessionHandler";
 import { Renderer } from "./renderer";
 import { Physics } from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
-import { scene } from "../examples/artovr/scene"
+import { scene } from "../examples/voicestreaming/scene"
 import { XRInput } from "./xrinput"
 
 // editor camera

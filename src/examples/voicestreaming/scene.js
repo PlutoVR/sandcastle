@@ -1,8 +1,7 @@
 import { Scene, Color, Mesh, SphereBufferGeometry, MeshNormalMaterial, Object3D, HemisphereLight, DirectionalLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage } from "three";
-import { state } from "../../engine/state"
+import { State } from "../../engine/state"
 import { XRInput } from "../../engine/xrinput"
 import { PeerConnection } from "../../engine/networking/PeerConnection"
-import { renderer } from "../../engine/renderer";
 const fs_partycles = require("./shaders/fs_partycles.glsl");
 const vs_partycles = require("./shaders/vs_partycles.glsl");
 const spark = require("./textures/spark1.png");
@@ -156,7 +155,7 @@ scene.init = () =>
     scene.add(data);
 
 }
-state.eventHandler.addEventListener("peerconnected", (e) =>
+State.eventHandler.addEventListener("peerconnected", (e) =>
 {
     scene.init();
 });

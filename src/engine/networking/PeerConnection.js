@@ -1,5 +1,5 @@
 import RS from "./RemoteSync";
-import { state } from "../state"
+import { State } from "../state"
 import { Object3D } from "three";
 import FirebaseSignalingServer from "./FirebaseSignalingServer";
 import WebRTCClient from "./WebRTCClient";
@@ -55,7 +55,7 @@ export class PeerConnection
         a.innerHTML = link;
         document.querySelector(".info").appendChild(a);
         this.connectFromURL();
-        state.eventHandler.dispatchEvent("peerconnected");
+        State.eventHandler.dispatchEvent("peerconnected");
     }
 
     onReceive(data)
