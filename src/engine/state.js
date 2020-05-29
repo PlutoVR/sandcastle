@@ -65,12 +65,12 @@ class StateClass
             switch (e.keyCode)
             {
                 case 192: // tilde
-                    StateClass.debugPhysics = !StateClass.debugPhysics;
-                    console.log("Physics Debug: " + StateClass.debugPhysics);
+                    this.debugPhysics = !this.debugPhysics;
+                    console.log("Physics Debug: " + this.debugPhysics);
                     break;
                 case 80: //"p"
-                    StateClass.isPaused = !StateClass.isPaused;
-                    console.log("Paused: " + StateClass.isPaused);
+                    this.isPaused = !this.isPaused;
+                    console.log("Paused: " + this.isPaused);
                     break;
                 default:
                     break;
