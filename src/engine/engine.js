@@ -1,6 +1,6 @@
 // scene to run:
 
-import { scene } from "../examples/voicestreaming/scene"
+import { scene } from "../examples/surgicalplanning/scene"
 
 import { State } from "./state";
 import { PerspectiveCamera } from "three";
@@ -12,7 +12,7 @@ import { Physics } from "./physics/physics";
 import { XRInput } from "./xrinput"
 
 // editor camera
-const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+export const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 scene.add(new EngineEditorCamera(camera, Renderer.domElement));
 scene.add(camera);
 

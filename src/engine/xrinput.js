@@ -6,6 +6,8 @@ class XRInputClass
 {
     constructor()
     {
+        this.showDebugOutput = true;
+
         this.controllerGrips = [ Renderer.xr.getControllerGrip(0), Renderer.xr.getControllerGrip(1) ];
         this.controllers = [];
         this.controllerModelFactory = new XRControllerModelFactory();
@@ -75,6 +77,9 @@ class XRInputClass
     }
     debugOutput()
     {
+        if (!this.showDebugOutput)
+            return;
+
         this.inputDebugString = "";
         this.controllers.forEach((e) =>
         {
