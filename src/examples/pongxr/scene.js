@@ -30,7 +30,7 @@ scene.init = () =>
     var plane = new Mesh(geometry, material);
     scene.add(plane);
 
-    Physics.addRigidBody(plane, Physics.RigidBodyType.Plane, 1);
+    Physics.addRigidBody(plane, Physics.RigidBodyShape.Plane, Physics.Body.KINEMATIC, 1);
 
 
 

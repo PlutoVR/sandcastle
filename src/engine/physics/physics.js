@@ -11,12 +11,13 @@ const YGRAVITY = -5;
 const Physics = {
     rigidbodies: new Array(),
     controllerRigidbodies: new Array(),
-    RigidBodyType: {
+    RigidBodyShape: {
         Box: 1,
         Sphere: 2,
         Plane: 3,
         Cylinder: 4
-    }
+    },
+    Body: Body
 }
 
 // Init Physics
@@ -104,7 +105,7 @@ Physics.resetScene = () =>
     }
 }
 
-Physics.addRigidBody = (mesh, rbShape, mass = 1) => 
+Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => 
 {
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();
@@ -115,19 +116,19 @@ Physics.addRigidBody = (mesh, rbShape, mass = 1) =>
 
     switch (rbShape)
     {
-        case Physics.RigidBodyType.Box:
+        case Physics.RigidBodyShape.Box:
             shape = new Box(new Vec3(bbSize.x, bbSize.y, bbSize.z));
             break;
 
-        case Physics.RigidBodyType.Sphere:
+        case Physics.RigidBodyShape.Sphere:
             shape = new Sphere(Math.max(bbSize.x, bbSize.y, bbSize.z));
             break;
 
-        case Physics.RigidBodyType.Plane:
+        case Physics.RigidBodyShape.Plane:
             shape = new Plane();
             break;
 
-        case Physics.RigidBodyType.Cylinder:
+        case Physics.RigidBodyShape.Cylinder:
             const minSize = Math.min(bbSize.x, bbSize.y, bbSize.z);
             const maxSize = Math.max(bbSize.x, bbSize.y, bbSize.z) * 2;
             shape = new Cylinder(minSize, minSize, maxSize, 16);
@@ -139,7 +140,8 @@ Physics.addRigidBody = (mesh, rbShape, mass = 1) =>
     }
 
     const body = new Body({
-        mass: mass
+        mass: mass,
+        type: type
     });
     body.addShape(shape);
     body.position.copy(mesh.position);
