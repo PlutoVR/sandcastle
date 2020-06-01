@@ -79,4 +79,5 @@ class StateClass
     }
 };
 
-export const State = new StateClass();
+const State = new StateClass();
+export default State;

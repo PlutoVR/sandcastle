@@ -1,6 +1,6 @@
 import { Vector3, Euler, Object3D } from "three"
 
-export class EngineEditorCamera extends Object3D
+class EngineEditorCamera extends Object3D
 {
     constructor(camera, domElement, params)
     {
@@ -139,3 +139,5 @@ export class EngineEditorCamera extends Object3D
         else this.moveForward(this.CAM_SPEED * -event.deltaY / 10);
     }
 }
+
+export default EngineEditorCamera;

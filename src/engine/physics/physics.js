@@ -1,8 +1,8 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
 import CannonDebugRenderer from "../util/debughelpers/CannonDebugRenderer";
 import { Vector3 } from "three";
-import { State } from "../state";
-import { XRInput } from "../../engine/xrinput"
+import State from "../state";
+import XRInput from "../../engine/xrinput"
 
 const TIMESTEP = 1 / 60;
 const YGRAVITY = -5;
@@ -148,4 +148,4 @@ Physics.addRigidBody = (mesh, rbShape, mass = 1) =>
     Physics.rigidbodies.push(mesh);
 }
 
-export { Physics }
+export default Physics;

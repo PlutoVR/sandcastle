@@ -1,15 +1,15 @@
 // scene to run:
 
-import { scene } from "../examples/defaultscene"
+import { scene } from "../examples/pongxr/scene"
 
-import { State } from "./state";
+import State from "./state";
 import { PerspectiveCamera } from "three";
-import { EngineEditorCamera } from "./util/cameracontrols/EngineEditorCamera";
-import { VRButton } from "./util/webxr/SessionHandler";
-import { Renderer } from "./renderer";
-import { Physics } from "./physics/physics";
+import EngineEditorCamera from "./util/cameracontrols/EngineEditorCamera";
+import VRButton from "./util/webxr/SessionHandler";
+import Renderer from "./renderer";
+import Physics from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
-import { XRInput } from "./xrinput"
+import XRInput from "./xrinput"
 
 // editor camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);

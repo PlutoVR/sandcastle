@@ -1,5 +1,5 @@
-import { State } from "./state"
-import { Renderer } from './renderer';
+import State from "./state"
+import Renderer from './renderer';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 class XRInputClass
@@ -133,4 +133,4 @@ State.eventHandler.addEventListener("xrsessionended", () =>
     State.isXRSession = false;
 });
 
-export { XRInput }
+export default XRInput
