@@ -1,6 +1,6 @@
 // scene to run:
 
-import { scene } from "../examples/voicestreaming/scene"
+import { scene } from "../examples/defaultscene"
 
 import { State } from "./state";
 import { PerspectiveCamera } from "three";
