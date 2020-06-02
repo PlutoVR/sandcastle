@@ -66,33 +66,35 @@ const createPaddle = (e, isLocal) =>
     const paddle = new Mesh(paddleGeo, paddleMat);
 
 
-    // paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
+    paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
 
     paddle.Update = () =>
     {
-        if (isLocal)
-        {
-            // if (e == null) return;
+        // if (isLocal)
+        // {
+        if (e == null) return;
+        paddle.rb.position.copy(Physics.convertPosition(e.position));
+        paddle.rb.quaternion.copy(e.quaternion);
+        paddle.position.copy(Physics.convertPosition(e.position));
+        paddle.quaternion.copy(e.quaternion);
 
-            // paddle.rb.position.copy(Physics.convertPosition(e.position));
-            // paddle.rb.quaternion.copy(e.quaternion);
-
-            // console.log(paddle.rb.position);
-            // console.log("reading controller RB");
-        }
+        // console.log(paddle.rb.position);
+        // console.log("reading controller RB");
     }
+    // }
     // networking.remoteSync.addLocalObject(paddle, { type: "paddle" }, true);
-    if (isLocal)
-    {
-        e.add(paddle);
-        // scene.add(e);
-        return e;
-    }
-    else
-    {
-        // scene.add(paddle);
-        return paddle;
-    }
+
+    // if (isLocal)
+    // {
+    // e.add(paddle);
+    //     // scene.add(e);
+    // return e;
+    // }
+    // else
+    // {
+    scene.add(paddle);
+    return paddle;
+    // }
 
 }
 
@@ -142,12 +144,6 @@ const createPongCube = (position, rotation) =>
 
     scene.add(scene.pongCube);
 
-
-
-
-
-    // networking.remoteSync.addSharedObject(ball, true);
-
     // offset all rigidbodies by starting position
     scene.pongCube.children.forEach(e =>
     {
@@ -156,7 +152,6 @@ const createPongCube = (position, rotation) =>
             e.rb.position.vadd(Physics.convertPosition(position), e.rb.position);
         }
     });
-
 }
 
 
@@ -179,7 +174,7 @@ State.eventHandler.addEventListener("peerconnected", (e) =>
         if (networking.remoteSync.master == true)
         {
 
-            const ball = new Ball(new Vec3(.5, 0, 0), true);
+            const ball = new Ball(new Vector3(.5, 0, 0), true);
             scene.pongCube.add(ball);
             networking.remoteSync.addLocalObject(ball, { type: "ball" }, true);
         }
@@ -190,8 +185,6 @@ networking.remoteSync.addEventListener('add', onAdd);
 
 function onAdd(destId, objectId, info)
 {
-    console.log(info);
-
     switch (info.type)
     {
 
@@ -211,7 +204,6 @@ function onAdd(destId, objectId, info)
 
         default:
             return;
-
     }
 
     // scene.add(mesh);

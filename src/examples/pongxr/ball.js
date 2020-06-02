@@ -43,7 +43,7 @@ class Ball
                 });
             }, 0);
 
-            if (position != undefined) ball.rb.position.copy(position);
+            if (position != undefined) ball.rb.position.copy(Physics.convertPosition(position));
         }
 
         // shader update
