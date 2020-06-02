@@ -3,7 +3,7 @@
 import { scene } from "../examples/pongxr/scene"
 
 import State from "./state";
-import { PerspectiveCamera } from "three";
+import { PerspectiveCamera, AudioListener } from "three";
 import EngineEditorCamera from "./util/cameracontrols/EngineEditorCamera";
 import VRButton from "./util/webxr/SessionHandler";
 import Renderer from "./renderer";
@@ -11,9 +11,12 @@ import Physics from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
 import XRInput from "./xrinput"
 
-// editor camera
+// editor camera + audiolistener
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+
 scene.add(new EngineEditorCamera(camera, Renderer.domElement));
+const listener = new AudioListener();
+camera.add(listener);
 scene.add(camera);
 
 // main app render loop

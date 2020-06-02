@@ -1,9 +1,10 @@
 // default scene loaded in src/engine/engine.js
 import { Vec3 } from "cannon";
 import frictionlessMat from "./frictionlessMaterial"
-import { Scene, SphereBufferGeometry, BoxBufferGeometry, PointLight, ShaderMaterial, Mesh, MathUtils, DoubleSide, Vector3, MeshStandardMaterial, Object3D, MeshBasicMaterial } from "three";
+import { Scene, SphereBufferGeometry, PositionalAudio, AudioLoader, BoxBufferGeometry, PointLight, ShaderMaterial, Mesh, MathUtils, DoubleSide, Vector3, MeshStandardMaterial, Object3D, MeshBasicMaterial } from "three";
 import Physics from "../../engine/physics/physics"
 import XRInput from "../../engine/xrinput"
+const hitAudioFile = require("./assets/audio/elecping.ogg");
 import ball from "./ball"
 
 
@@ -97,13 +98,38 @@ const createPongCube = (position, rotation) =>
     bottom.position.y += 1;
     scene.pongCube.add(bottom);
 
-    scene.add(scene.pongCube);
     scene.updateMatrixWorld();
     scene.pongCube.children.forEach(e =>
     {
         e.rb = Physics.addRigidBody(e, Physics.RigidBodyShape.Box, Physics.Body.STATIC, 0);
         if (e.rb != undefined) { e.rb.material = frictionlessMat; }
     });
+
+    scene.add(scene.pongCube);
+
+    // dumb Audiolistener hack
+    setTimeout(function ()
+    {
+        // cam doesn't exist at runtime, so...
+        // TODO: solve more cleanly.
+        const listener = scene.children[ 4 ].children[ 0 ];
+        const hitAudio = new PositionalAudio(listener);
+
+        const audioLoader = new AudioLoader();
+        audioLoader.load(hitAudioFile, function (buffer)
+        {
+            hitAudio.setBuffer(buffer);
+            hitAudio.setRefDistance(20);
+            //     // hitAudio.play();
+            console.log(hitAudio);
+            ball.rb.addEventListener("collide", function (e)
+            {
+                if (hitAudio.isPlaying) hitAudio.stop();
+                hitAudio.play();
+
+            });
+        });
+    }, 0);
 
     scene.pongCube.add(ball);
 
