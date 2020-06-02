@@ -4,7 +4,7 @@
  * gently modified by MichaelHazani / https://github.com/MichaelHazani
  */
 
-import { State } from "../../state"
+import State from "../../state"
 
 class VRButton
 {

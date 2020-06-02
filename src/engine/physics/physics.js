@@ -5,7 +5,7 @@ import State from "../state";
 import XRInput from "../../engine/xrinput"
 
 const TIMESTEP = 1 / 60;
-const YGRAVITY = -5;
+const YGRAVITY = 0;
 
 // Physics singleton
 const Physics = {
@@ -27,18 +27,10 @@ Physics.cannonWorld.broadphase = new NaiveBroadphase();
 Physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
 Physics.cannonWorld.solver.iterations = 50; //50
 Physics.cannonWorld.solver.tolerance = 0.00001;
-console.log("CannonJS world created");
+
+if (State.debugPhysics) console.log("CannonJS world created");
 
 
-//Plane. TODO: RELO TO SCENE!
-const groundShape = new Plane();
-const groundBody = new Body({
-    mass: 0
-});
-groundBody.addShape(groundShape);
-groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
-Physics.cannonWorld.add(groundBody);
-Physics.rigidbodies.push(groundBody);
 
 Physics.addControllerRigidBody = (controller) =>
 {
@@ -53,7 +45,7 @@ Physics.addControllerRigidBody = (controller) =>
     Physics.cannonWorld.add(_cRB);
     Physics.controllerRigidbodies.push(_cRB);
     Physics.rigidbodies.push(_cRB);
-    console.log(_cRB.name + " created");
+    if (State.debugPhysics) console.log(_cRB.name + " created");
 }
 
 Physics.enableDebugger = (scene) =>
@@ -107,6 +99,14 @@ Physics.resetScene = () =>
 
 Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => 
 {
+    let WorldPos = new Vector3();
+    mesh.getWorldPosition(WorldPos);
+    if (mesh.geometry == undefined)
+    {
+        if (State.debugPhysics) console.error("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
+        return;
+    }
+
     mesh.geometry.computeBoundingBox();
     const bbSize = new Vector3();
     mesh.geometry.boundingBox.getSize(bbSize);
@@ -144,10 +144,15 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
         type: type
     });
     body.addShape(shape);
-    body.position.copy(mesh.position);
+    body.position.set(WorldPos.x, WorldPos.y, WorldPos.z);
+
     body.quaternion.copy(mesh.quaternion);
     Physics.cannonWorld.addBody(body);
+
+    body.addEventListener("collide", function (e) { if (State.debugPhysics) console.log("body collided"); });
     Physics.rigidbodies.push(mesh);
+
+    return body;
 }
 
 export default Physics;

@@ -13,6 +13,17 @@ const networking = new PeerConnection(scene);
 Physics.enableDebugger(scene);
 
 
+// //Plane. TODO: fix relo!
+// const groundShape = new Plane();
+// const groundBody = new Body({
+//     mass: 0
+// });
+// groundBody.addShape(groundShape);
+// groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
+// Physics.cannonWorld.add(groundBody);
+// Physics.rigidbodies.push(groundBody);
+
+
 scene.initGame = () =>
 {
     XRInput.controllerGrips.forEach((controller, i) => 
