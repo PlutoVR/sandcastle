@@ -82,7 +82,7 @@ Physics.Update = () =>
         if (Physics.cannonWorld.bodies[ i ].type == Body.KINEMATIC) return;
         Physics.rigidbodies[ i ].quaternion.copy(Physics.cannonWorld.bodies[ i ].quaternion);
         Physics.rigidbodies[ i ].position.copy(Physics.cannonWorld.bodies[ i ].position);
-    });
+    })
 
     if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(State.debugPhysics);
 }
@@ -103,7 +103,7 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
     mesh.getWorldPosition(WorldPos);
     if (mesh.geometry == undefined)
     {
-        if (State.debugPhysics) console.error("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
+        if (State.debugPhysics) console.warn("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
         return;
     }
 
@@ -154,5 +154,24 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
 
     return body;
 }
+
+// helpers to convert THREE rotations and quaternions to CannonJS
+Physics.convertPosition = (Data) =>
+{
+    if (Data.constructor.name == "Vec3") 
+    {
+        return new Vector3(Data.x, Data.y, Data.z);
+    }
+    else if (Data.constructor.name == "Vector3")
+    {
+        return new Vec3(Data.x, Data.y, Data.z);
+    }
+    else
+    {
+        console.error("Can't convert data type!");
+        return;
+    }
+}
+
 
 export default Physics;
