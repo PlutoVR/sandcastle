@@ -1,19 +1,21 @@
-// default scene loaded in src/engine/engine.js
+import State from "../../engine/state"
 import { Vec3 } from "cannon";
+
 import frictionlessMat from "./frictionlessMaterial"
 import { Scene, SphereBufferGeometry, PositionalAudio, AudioLoader, BoxBufferGeometry, PointLight, ShaderMaterial, Mesh, MathUtils, DoubleSide, Vector3, MeshStandardMaterial, Object3D, MeshBasicMaterial } from "three";
 import Physics from "../../engine/physics/physics"
 import XRInput from "../../engine/xrinput"
-const hitAudioFile = require("./assets/audio/elecping.ogg");
-import ball from "./ball"
+import Ball from "./ball"
+import PeerConnection from '../../engine/networking/PeerConnection'
 
 
 const scene = new Scene();
+const networking = new PeerConnection(scene);
 
 /* TODO:
 - PADDLES ( & RESTART WITH BUTTON PRESS)
 - PLACEHOLDER CUBE, PLACEMENT LOGIC & SESSION INIT
-- NETWORKED scene.PONGCUBE & BALL
+- NETWORKED PONGCUBE & BALL
 
 
 ****
@@ -40,25 +42,58 @@ const createPongLevel = (position = new Vector3(0, 0, 0), rotation) =>
     // REMOVEOLDGAME(){}
     //////////
     createPongCube(position, rotation);
-    XRInput.controllerGrips.forEach(e => createPaddles(e));
+    // XRInput.controllerGrips.forEach(e => createPaddle(e, true));
+    const paddle1 = createPaddle(XRInput.controllerGrips[ 0 ], true);
+    const paddle2 = createPaddle(XRInput.controllerGrips[ 1 ], true);
+    scene.add(paddle1);
+    scene.add(paddle2);
+
+    // won't be generating unique IDs
+    // networking.remoteSync.addSharedObject(paddle1, true);
+    // networking.remoteSync.addSharedObject(paddle2, true);
+
+    networking.remoteSync.addLocalObject(paddle1, { type: "paddle" }, true);
+    networking.remoteSync.addLocalObject(paddle2, { type: "paddle" }, true);
+
 
 }
 
-const createPaddles = (e) =>
+const createPaddle = (e, isLocal) =>
 {
     console.log("creating paddles");
     const paddleGeo = new BoxBufferGeometry(.25, .25, .001);
     const paddleMat = new MeshStandardMaterial({ color: 0x222222, wireframe: false, side: DoubleSide });
     const paddle = new Mesh(paddleGeo, paddleMat);
-    e.add(paddle);
-    paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
+
+
+    // paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
+
     paddle.Update = () =>
     {
-        // translate Vec3 and Vector3 back and forth
-        paddle.rb.position.copy(Physics.convertPosition(e.position));
-        paddle.rb.quaternion.copy(e.quaternion);
+        if (isLocal)
+        {
+            // if (e == null) return;
+
+            // paddle.rb.position.copy(Physics.convertPosition(e.position));
+            // paddle.rb.quaternion.copy(e.quaternion);
+
+            // console.log(paddle.rb.position);
+            // console.log("reading controller RB");
+        }
     }
-    scene.add(e);
+    // networking.remoteSync.addLocalObject(paddle, { type: "paddle" }, true);
+    if (isLocal)
+    {
+        e.add(paddle);
+        // scene.add(e);
+        return e;
+    }
+    else
+    {
+        // scene.add(paddle);
+        return paddle;
+    }
+
 }
 
 
@@ -107,47 +142,21 @@ const createPongCube = (position, rotation) =>
 
     scene.add(scene.pongCube);
 
-    // dumb Audiolistener hack
-    setTimeout(function ()
-    {
-        // cam doesn't exist at runtime, so...
-        // TODO: solve more cleanly.
-        const listener = scene.children[ 4 ].children[ 0 ];
-        const hitAudio = new PositionalAudio(listener);
-
-        const audioLoader = new AudioLoader();
-        audioLoader.load(hitAudioFile, function (buffer)
-        {
-            hitAudio.setBuffer(buffer);
-            hitAudio.setRefDistance(20);
-            //     // hitAudio.play();
-            console.log(hitAudio);
-            ball.rb.addEventListener("collide", function (e)
-            {
-                if (hitAudio.isPlaying) hitAudio.stop();
-                hitAudio.play();
-
-            });
-        });
-    }, 0);
-
-    scene.pongCube.add(ball);
 
 
+
+
+    // networking.remoteSync.addSharedObject(ball, true);
 
     // offset all rigidbodies by starting position
     scene.pongCube.children.forEach(e =>
     {
         if (e.rb != undefined)
         {
-            e.rb.position.x += position.x;
-            e.rb.position.y += position.y;
-            e.rb.position.z += position.z;
+            e.rb.position.vadd(Physics.convertPosition(position), e.rb.position);
         }
     });
 
-    //TESTING
-    ball.rb.applyImpulse(new Vec3(13, 4, 0), ball.rb.position);
 }
 
 
@@ -155,9 +164,61 @@ const createPongCube = (position, rotation) =>
 scene.init = () =>
 {
     Physics.enableDebugger(scene);
-    createPongLevel(new Vec3(0, 0, 0));
+
+    createPongLevel(new Vector3(0, 0, 0));
 }
 
-scene.init();
+State.eventHandler.addEventListener("peerconnected", (e) =>
+{
+    scene.init();
+
+    // hack w/setTimeOut to solve isMaster bug
+    setTimeout(() =>
+    {
+        console.log("ismaster? " + networking.remoteSync.master);
+        if (networking.remoteSync.master == true)
+        {
+
+            const ball = new Ball(new Vec3(.5, 0, 0), true);
+            scene.pongCube.add(ball);
+            networking.remoteSync.addLocalObject(ball, { type: "ball" }, true);
+        }
+    }, 2000);
+});
+
+networking.remoteSync.addEventListener('add', onAdd);
+
+function onAdd(destId, objectId, info)
+{
+    console.log(info);
+
+    switch (info.type)
+    {
+
+        case 'ball':
+            const ball = new Ball(new Vec3(.5, 0, 0), false);
+            console.log("adding local ball from onAdd");
+            networking.remoteSync.addRemoteObject(destId, objectId, ball);
+            scene.pongCube.add(ball);
+            break;
+
+        case 'paddle':
+            console.log("adding local paddle from onAdd");
+            const p = createPaddle(null, false);
+            networking.remoteSync.addRemoteObject(destId, objectId, p);
+            scene.add(p);
+            break;
+
+        default:
+            return;
+
+    }
+
+    // scene.add(mesh);
+
+
+
+}
+
 
 export { scene }

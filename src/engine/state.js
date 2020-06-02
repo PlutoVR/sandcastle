@@ -44,6 +44,7 @@ class StateClass
 {
     constructor()
     {
+        this.globals = {};
         this.isXRSession = false;
         this.isPaused = false;
         this.currentSession = null;

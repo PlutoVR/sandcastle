@@ -466,6 +466,7 @@ class RemoteSync
 	addSharedObject(object, recursive)
 	{
 		const id = this.sharedObjectID++;
+		console.log("id! " + id);
 
 		if (this.sharedObjectTable[ id ] !== undefined)
 		{

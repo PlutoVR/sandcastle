@@ -1,10 +1,10 @@
 import RS from "./RemoteSync";
-import { State } from "../state"
+import State from "../state"
 import { Object3D } from "three";
 import FirebaseSignalingServer from "./FirebaseSignalingServer";
 import WebRTCClient from "./WebRTCClient";
 
-export class PeerConnection
+class PeerConnection
 {
     constructor(scene, stream)
     {
@@ -121,3 +121,5 @@ export class PeerConnection
 
     showMessage(str) { console.log(str); }
 }
+
+export default PeerConnection;

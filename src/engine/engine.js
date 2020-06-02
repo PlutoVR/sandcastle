@@ -18,6 +18,7 @@ scene.add(new EngineEditorCamera(camera, Renderer.domElement));
 const listener = new AudioListener();
 camera.add(listener);
 scene.add(camera);
+State.globals.AudioListener = listener;
 
 // main app render loop
 Renderer.setAnimationLoop(() =>
