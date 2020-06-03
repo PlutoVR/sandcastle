@@ -1,7 +1,6 @@
 // scene to run:
 
 import { scene } from "../examples/surgicalplanning/scene"
-
 import { State } from "./state";
 import { PerspectiveCamera } from "three";
 import { EngineEditorCamera } from "./util/cameracontrols/EngineEditorCamera";
