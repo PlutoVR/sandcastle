@@ -2,7 +2,7 @@
 // important: test in metachromium which enables transparent WebXR rendering on desktop!
 // https://github.com/webaverse/metachromium-bin
 
-import { Scene, Color, Mesh, SphereBufferGeometry, MeshNormalMaterial, Object3D, HemisphereLight, DirectionalLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage, Vector3 } from "three";
+import { Scene, Color, Mesh, Plane, DoubleSide, SphereBufferGeometry, MeshNormalMaterial, MeshPhongMaterial, Object3D, HemisphereLight, DirectionalLight, SpotLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { camera} from "../../engine/engine"
 import { Renderer } from "../../engine/renderer"
@@ -17,6 +17,36 @@ const networking = new PeerConnection(scene);
 
 scene.init = () =>
 {
+    var spotLight = new SpotLight( 0xffffff );
+    spotLight.angle = Math.PI / 5;
+    spotLight.penumbra = 0.2;
+    spotLight.position.set( 2, 3, 3 );
+    spotLight.castShadow = true;
+    spotLight.shadow.camera.near = 3;
+    spotLight.shadow.camera.far = 10;
+    spotLight.shadow.mapSize.width = 1024;
+    spotLight.shadow.mapSize.height = 1024;
+    scene.add( spotLight );
+
+    var dirLight = new DirectionalLight( 0x55505a, 1 );
+    dirLight.position.set( 0, 3, 0 );
+    dirLight.castShadow = true;
+    dirLight.shadow.camera.near = 1;
+    dirLight.shadow.camera.far = 10;
+
+    dirLight.shadow.camera.right = 1;
+    dirLight.shadow.camera.left = - 1;
+    dirLight.shadow.camera.top	= 1;
+    dirLight.shadow.camera.bottom = - 1;
+
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+    scene.add( dirLight );
+
+    var localPlane = new Plane( new Vector3( 0, 0, 0.5 ), 0.8 );
+    Renderer.clippingPlanes = [localPlane]
+    Renderer.localClippingEnabled = true;
+
     const loader = new GLTFLoader();
 
     // "A simulated heart" developed by Ryan James
@@ -24,15 +54,23 @@ scene.init = () =>
     loader.load(GLTFHeart, function (gltf)
     {
         heart = gltf.scene.children[ 0 ];
-        heart.position.x = 0;
-        heart.position.y = 0;
-        heart.position.z = -0.5;
-
-        heart.scale.x = .1;
-        heart.scale.y = .1;
-        heart.scale.z = .1;
+        heart.position.set(0, 0, -0.5);
+        heart.scale.set(0.1, 0.1, 0.1);
 
         networking.remoteSync.addSharedObject(heart);
+
+        var heartMaterial = new MeshPhongMaterial( {
+            color: 'red',
+            shininess: 100,
+            side: DoubleSide,
+
+            // ***** Clipping setup (material): *****
+            clippingPlanes: [ localPlane ],
+            clipShadows: true
+
+        });
+
+        heart.material = heartMaterial;
 
         camera.add(heart);
     });
