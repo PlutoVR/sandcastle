@@ -1,17 +1,3 @@
-import State from "../../engine/state"
-import { Vec3 } from "cannon";
-
-import frictionlessMat from "./frictionlessMaterial"
-import { Scene, SphereBufferGeometry, PositionalAudio, AudioLoader, BoxBufferGeometry, PointLight, ShaderMaterial, Mesh, MathUtils, DoubleSide, Vector3, MeshStandardMaterial, Object3D, MeshBasicMaterial } from "three";
-import Physics from "../../engine/physics/physics"
-import XRInput from "../../engine/xrinput"
-import Ball from "./ball"
-import PeerConnection from '../../engine/networking/PeerConnection'
-
-
-const scene = new Scene();
-const networking = new PeerConnection(scene);
-
 /* TODO:
 - PADDLES ( & RESTART WITH BUTTON PRESS)
 - PLACEHOLDER CUBE, PLACEMENT LOGIC & SESSION INIT
@@ -33,171 +19,192 @@ device: "xr-enabled" / "mobile" / "desktop"
 score?
 */
 
+import State from "../../engine/state"
+import Physics from "../../engine/physics/physics"
+import XRInput from "../../engine/xrinput"
+import PeerConnection from '../../engine/networking/PeerConnection'
+import Ball from "./ball"
+import
+{
+    Scene, Mesh, Object3D, Vector3,
+    BoxBufferGeometry, PointLight,
+    MathUtils, DoubleSide, Matrix4,
+    MeshStandardMaterial, Quaternion as THREEQuaternion, Euler
+} from "three";
+import { Vec3, Quaternion } from "cannon";
+import frictionlessMat from "./frictionlessMaterial"
+
+const scene = new Scene();
+const networking = new PeerConnection(scene);
+Physics.enableDebugger(scene);
+let paddle1, paddle2;
 
 const createPongLevel = (position = new Vector3(0, 0, 0), rotation) =>
 {
-    console.log("starting pong level");
-
     //////////
     // REMOVEOLDGAME(){}
     //////////
+    console.log("creating pong level");
     createPongCube(position, rotation);
-    // XRInput.controllerGrips.forEach(e => createPaddle(e, true));
-    const paddle1 = createPaddle(XRInput.controllerGrips[ 0 ], true);
-    const paddle2 = createPaddle(XRInput.controllerGrips[ 1 ], true);
+
+    paddle1 = Paddle(true);
     scene.add(paddle1);
-    scene.add(paddle2);
-
-    // won't be generating unique IDs
-    // networking.remoteSync.addSharedObject(paddle1, true);
-    // networking.remoteSync.addSharedObject(paddle2, true);
-
     networking.remoteSync.addLocalObject(paddle1, { type: "paddle" }, true);
+
+    paddle2 = Paddle(true);
+    scene.add(paddle2);
     networking.remoteSync.addLocalObject(paddle2, { type: "paddle" }, true);
 
+    let c1pos, c1rot, c2pos, c2rot;
+    const LocalPaddleController = new Object3D();
+    LocalPaddleController.Update = () =>
+    {
+        c1pos = Physics.convertPosition(XRInput.controllerGrips[ 0 ].position);
+        c1rot = XRInput.controllerGrips[ 0 ].quaternion;
+        paddle1.position.copy(Physics.convertPosition(c1pos));
+        paddle1.quaternion.copy(c1rot);
 
+        c2pos = Physics.convertPosition(XRInput.controllerGrips[ 1 ].position);
+        c2rot = XRInput.controllerGrips[ 1 ].quaternion;
+        paddle2.position.copy(Physics.convertPosition(c2pos));
+        paddle2.quaternion.copy(c2rot);
+    }
+    scene.add(LocalPaddleController)
 }
 
-const createPaddle = (e, isLocal) =>
+const Paddle = () =>
 {
-    console.log("creating paddles");
+    console.log("creating paddle");
     const paddleGeo = new BoxBufferGeometry(.25, .25, .001);
     const paddleMat = new MeshStandardMaterial({ color: 0x222222, wireframe: false, side: DoubleSide });
     const paddle = new Mesh(paddleGeo, paddleMat);
-
-
+    paddle.name = "paddle";
     paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
 
     paddle.Update = () =>
     {
-        // if (isLocal)
-        // {
-        if (e == null) return;
-        paddle.rb.position.copy(Physics.convertPosition(e.position));
-        paddle.rb.quaternion.copy(e.quaternion);
-        paddle.position.copy(Physics.convertPosition(e.position));
-        paddle.quaternion.copy(e.quaternion);
-
-        // console.log(paddle.rb.position);
-        // console.log("reading controller RB");
+        paddle.rb.position.copy(Physics.convertPosition(paddle.position));
+        paddle.rb.quaternion.copy(paddle.quaternion);
     }
-    // }
-    // networking.remoteSync.addLocalObject(paddle, { type: "paddle" }, true);
-
-    // if (isLocal)
-    // {
-    // e.add(paddle);
-    //     // scene.add(e);
-    // return e;
-    // }
-    // else
-    // {
-    scene.add(paddle);
     return paddle;
-    // }
-
 }
 
-
-const createPongCube = (position, rotation) =>
+const createPongCube = (position, quaternion) =>
 {
-
-
     scene.pongCube = new Object3D();
     const light = new PointLight(0xffffff, 4);
     scene.pongCube.add(light);
 
     const geometry1 = new BoxBufferGeometry(4, 2, .02);
     const material = new MeshStandardMaterial({ color: 0x222222, wireframe: false, side: DoubleSide });
-
     const sideLength = new Mesh(geometry1, material);
 
+    const side1 = sideLength.clone();
+    side1.name = "side1";
+    side1.position.set(1, 0, 0);
+    side1.rotateOnAxis(new Vector3(0, 1, 0), MathUtils.degToRad(90));
+    scene.pongCube.add(side1);
 
-    const side3 = sideLength.clone();
-    side3.position.set(1, 0, 0);
-    side3.rotateOnAxis(new Vector3(0, 1, 0), MathUtils.degToRad(90));
-    scene.pongCube.add(side3);
-
-    const side4 = sideLength.clone();
-    side4.position.set(-1, 0, 0);
-    side4.rotateOnAxis(new Vector3(0, 1, 0), MathUtils.degToRad(90));
-    scene.pongCube.add(side4);
+    const side2 = sideLength.clone();
+    side2.name = "side2";
+    side2.position.set(-1, 0, 0);
+    side2.rotateOnAxis(new Vector3(0, 1, 0), MathUtils.degToRad(90));
+    scene.pongCube.add(side2);
 
     const top = sideLength.clone();
+    top.name = "top";
     top.rotateOnAxis(new Vector3(1, 0, 0), MathUtils.degToRad(90));
     top.rotateOnAxis(new Vector3(0, 0, 1), MathUtils.degToRad(90));
     top.position.y -= 1;
     scene.pongCube.add(top);
 
     const bottom = sideLength.clone();
+    bottom.name = "bottom";
     bottom.rotateOnAxis(new Vector3(1, 0, 0), MathUtils.degToRad(90));
     bottom.rotateOnAxis(new Vector3(0, 0, 1), MathUtils.degToRad(90));
     bottom.position.y += 1;
     scene.pongCube.add(bottom);
 
+    // scene.updateMatrixWorld();
+
+    scene.pongCube.name = "Pong Cube";
+
+    scene.pongCube.position.copy(position);
+    scene.pongCube.quaternion.copy(quaternion);
+
+    scene.pongCube.updateMatrixWorld();
     scene.updateMatrixWorld();
-    scene.pongCube.children.forEach(e =>
-    {
-        e.rb = Physics.addRigidBody(e, Physics.RigidBodyShape.Box, Physics.Body.STATIC, 0);
-        if (e.rb != undefined) { e.rb.material = frictionlessMat; }
-    });
 
-    scene.add(scene.pongCube);
-
-    // offset all rigidbodies by starting position
-    scene.pongCube.children.forEach(e =>
-    {
-        if (e.rb != undefined)
-        {
-            e.rb.position.vadd(Physics.convertPosition(position), e.rb.position);
-        }
-    });
-}
-
-
-
-scene.init = () =>
-{
-    Physics.enableDebugger(scene);
-
-    createPongLevel(new Vector3(0, 0, 0));
-}
-
-State.eventHandler.addEventListener("peerconnected", (e) =>
-{
-    scene.init();
-
-    // hack w/setTimeOut to solve isMaster bug
+    //addaball
+    // "master" bug workaround
     setTimeout(() =>
     {
-        console.log("ismaster? " + networking.remoteSync.master);
+        // console.log("ismaster? " + networking.remoteSync.master);
         if (networking.remoteSync.master == true)
         {
 
-            const ball = new Ball(new Vector3(.5, 0, 0), true);
+            const ball = new Ball(position, true);
             scene.pongCube.add(ball);
             networking.remoteSync.addLocalObject(ball, { type: "ball" }, true);
         }
     }, 2000);
+
+
+    scene.pongCube.children.forEach(e =>
+    {
+        var wPos = new Vector3();
+        var wQua = new THREEQuaternion();
+        var wSca = new Vector3();
+        e.matrixWorld.decompose(wPos, wQua, wSca);
+        console.log(wPos);
+        e.position.copy(wPos);
+        e.quaternion.copy(wQua);
+        e.scale.copy(wSca);
+        // console.log(e);
+    });
+    scene.pongCube.position.copy(new Vector3());
+    scene.pongCube.quaternion.copy(new Quaternion());
+    scene.add(scene.pongCube);
+
+
+    // Physics.cannonWorld.allowSleep = true;
+    // offset all rigidbodies by starting position
+    scene.pongCube.children.forEach(e =>
+    {
+        e.rb = Physics.addRigidBody(e, Physics.RigidBodyShape.Box, Physics.Body.STATIC, 0);
+        if (e.rb != undefined)
+        {
+            e.rb.material = frictionlessMat;
+        }
+    });
+}
+
+scene.init = () =>
+{
+    createPongLevel(new Vector3(.4, 0, 0), new THREEQuaternion().setFromEuler(new Euler(0, 0, 0)));
+    // hack w/setTimeOut to solve isMaster bug
+}
+
+// on connection
+State.eventHandler.addEventListener("peerconnected", (e) =>
+{
+    scene.init();
+
 });
 
-networking.remoteSync.addEventListener('add', onAdd);
-
-function onAdd(destId, objectId, info)
+// on add
+networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
 {
     switch (info.type)
     {
-
         case 'ball':
-            const ball = new Ball(new Vec3(.5, 0, 0), false);
-            console.log("adding local ball from onAdd");
+            const ball = new Ball(new Vec3(4, 0, 2), false);
             networking.remoteSync.addRemoteObject(destId, objectId, ball);
             scene.pongCube.add(ball);
             break;
 
         case 'paddle':
-            console.log("adding local paddle from onAdd");
-            const p = createPaddle(null, false);
+            const p = Paddle();
             networking.remoteSync.addRemoteObject(destId, objectId, p);
             scene.add(p);
             break;
@@ -205,12 +212,6 @@ function onAdd(destId, objectId, info)
         default:
             return;
     }
-
-    // scene.add(mesh);
-
-
-
-}
-
+});
 
 export { scene }

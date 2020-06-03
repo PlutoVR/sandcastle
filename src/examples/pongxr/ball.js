@@ -12,11 +12,12 @@ class Ball
     constructor(position, addRigidBody)
     {
         const ball = new Mesh(new SphereBufferGeometry(.2, 13, 13), new ShaderMaterial({ uniforms: { time: { value: 0.0 } }, vertexShader: vs, fragmentShader: fs_puddles }));
+        ball.position.copy(position);
 
         // physics 
         if (addRigidBody == true)
         {
-            console.log("adding RB");
+            console.log("adding RB to Ball");
             ball.rb = Physics.addRigidBody(ball, Physics.RigidBodyShape.Sphere, Physics.Body.DYNAMIC, 1);
 
             ball.rb.material = frictionlessMat;
@@ -43,7 +44,7 @@ class Ball
                 });
             }, 0);
 
-            if (position != undefined) ball.rb.position.copy(Physics.convertPosition(position));
+            // if (position != undefined) ball.rb.position.copy(Physics.convertPosition(position));
         }
 
         // shader update

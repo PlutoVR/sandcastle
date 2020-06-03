@@ -1,6 +1,6 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
 import CannonDebugRenderer from "../util/debughelpers/CannonDebugRenderer";
-import { Vector3 } from "three";
+import { Vector3, Quaternion as THREEQuaternion } from "three";
 import State from "../state";
 import XRInput from "../../engine/xrinput"
 
@@ -80,8 +80,8 @@ Physics.Update = () =>
     Physics.cannonWorld.bodies.forEach((body, i) =>
     {
         if (Physics.cannonWorld.bodies[ i ].type == Body.KINEMATIC) return;
-        Physics.rigidbodies[ i ].quaternion.copy(Physics.cannonWorld.bodies[ i ].quaternion);
-        Physics.rigidbodies[ i ].position.copy(Physics.cannonWorld.bodies[ i ].position);
+        Physics.rigidbodies[ i ].quaternion.copy(body.quaternion);
+        Physics.rigidbodies[ i ].position.copy(body.position);
     })
 
     if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(State.debugPhysics);
@@ -99,8 +99,16 @@ Physics.resetScene = () =>
 
 Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => 
 {
-    let WorldPos = new Vector3();
-    mesh.getWorldPosition(WorldPos);
+    console.log(mesh.parent);
+
+    // mesh.updateMatrixWorld();
+    // let a = new Vector3();
+    // console.log("mesh: ");
+    // console.log(mesh.position);
+    // console.log("meshWorld: ");
+    // mesh.getWorldPosition(a);
+    // console.log(a);
+
     if (mesh.geometry == undefined)
     {
         if (State.debugPhysics) console.warn("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
@@ -144,27 +152,45 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
         type: type
     });
     body.addShape(shape);
-    body.position.set(WorldPos.x, WorldPos.y, WorldPos.z);
 
+    // mesh.updateMatrixWorld();
+    // let WorldPos = new Vector3();
+
+    // mesh.getWorldPosition(WorldPos);
+    // console.log(mesh.position);
+    // console.log(WorldPos);
+
+
+    // scene.updateMatrixWorld();
+    // const v = new Vector3();
+    // e.getWorldPosition(v);
+    // var eposition = new Vector3();
+    // var equaternion = new THREEQuaternion();
+    // var escale = new Vector3();
+    // mesh.matrixWorld.decompose(eposition, equaternion, escale);
+
+    body.position.copy(mesh.position);// = new Vec3(WorldPos.x, WorldPos.y, WorldPos.z);
+    // Physics.convertPosition(eposition);
     body.quaternion.copy(mesh.quaternion);
     Physics.cannonWorld.addBody(body);
 
     body.addEventListener("collide", function (e) { if (State.debugPhysics) console.log("body collided"); });
     Physics.rigidbodies.push(mesh);
 
+
     return body;
 }
 
 // helpers to convert THREE rotations and quaternions to CannonJS
-Physics.convertPosition = (Data) =>
+Physics.convertPosition = (position) =>
 {
-    if (Data.constructor.name == "Vec3") 
+    if (position.constructor.name == "Vec3") 
     {
-        return new Vector3(Data.x, Data.y, Data.z);
+        return new Vector3(position.x, position.y, position.z);
     }
-    else if (Data.constructor.name == "Vector3")
+    else if (position.constructor.name == "Vector3")
     {
-        return new Vec3(Data.x, Data.y, Data.z);
+        return new Vec3(position.x, position.y, position.z);
     }
     else
     {
