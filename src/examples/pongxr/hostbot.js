@@ -34,7 +34,7 @@ class HostBot
 
     onOpen()
     {
-        this.speech.speak({ text: "Signaling server connection opened!" });
+        this.speech.speak({ text: "Connected to Signaling Server!" });
     }
     onClose()
     {
@@ -55,8 +55,6 @@ class HostBot
         const errorMsg = "Error!" + e.error.message;
         this.speech.speak({ text: errorMsg });
     }
-
-
 }
 
 export default HostBot;

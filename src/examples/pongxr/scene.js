@@ -62,6 +62,7 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
 
     // local paddle controller to control player's networked paddle
     // note: we're NOT directly hooking up any XRInput data to networking 
+    // only connecting the object impacted by it
 
     const LocalPaddleController = new Object3D();
 
@@ -74,6 +75,7 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
         paddle2.quaternion.copy(XRInput.controllerGrips[ 1 ].quaternion);
     }
     scene.add(LocalPaddleController)
+
 
     // Ball
 
@@ -95,36 +97,49 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
 scene.init = () =>
 {
     createPongLevel(new Vector3(0.4, 0, 0));
-
 }
 
 
-// game events
+
+////////// CUSTOM EVENTS //////////
+
+/// GAME STATE
 
 State.eventHandler.addEventListener("gameover", (e) =>
 {
-
-    console.log("RAWWWWWRWRRRRRRRRR i am a SMART and PRETTYY one");
-
-
     // reset
-    // ball.reset();
-    scene.traverse(e =>
+    // scene.traverse(e =>
+    // {
+    //     console.log(e.name);
+    //     if (e.name == "ball")
+    //     {
+    if (ball != undefined)
     {
-        console.log(e.name);
-        if (e.name == "ball")
-        {
-            console.log("ball found!");
-            console.log(e);
-            e.reset();
-        }
-    });
-
+        ball.reset();
+    } else
+    {
+        console.error("can't reset; no ball found!");
+    }
+    // });
 });
 
+/// INPUT
+XRInput.controllerGrips.forEach(ctrl =>
+{
+    ctrl.addEventListener("selectstart", e =>
+    {
+        if (ball != undefined)
+        {
+            ball.kickoff();
+        } else
+        {
+            console.error("can't kickoff; no ball found!");
+        }
 
+    })
+});
 
-/// networking events
+/// NETWORKING 
 
 // on connection
 networking.remoteSync.addEventListener("open", (e) =>

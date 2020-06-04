@@ -71,8 +71,19 @@ class Ball
             console.log(ball.rb);
             Physics.resetRigidbody(ball.rb);
             ball.rb.position.copy(this.initPos);
+
+
+        }
+        ball.kickoff = () =>
+        {
+            ball.rb.velocity.set(rnd(-2, 2), rnd(-2, 2), rnd(-2, 2));
+
         }
 
+        const rnd = (min, max) =>
+        {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
         return ball;
     }
 
