@@ -1,5 +1,6 @@
 import { BoxBufferGeometry, MeshStandardMaterial, DoubleSide, Mesh } from "three";
 import Physics from "../../engine/physics/physics";
+import { Vec3 } from "cannon"
 
 class Paddle
 {
@@ -11,10 +12,10 @@ class Paddle
         const paddle = new Mesh(paddleGeo, paddleMat);
         paddle.name = "paddle";
         paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
-
+        this.curPos = new Vec3();
         paddle.Update = () =>
         {
-            paddle.rb.position.copy(Physics.convertPosition(paddle.position));
+            paddle.rb.position.copy(paddle.position);
             paddle.rb.quaternion.copy(paddle.quaternion);
         }
         return paddle;
