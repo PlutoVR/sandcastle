@@ -9,6 +9,7 @@ const common = require('./webpack.common');
 
 module.exports = merge(common, {
     mode: 'production',
+    devtool: "eval-source-map",
     optimization: {
         minimize: true,
         splitChunks: {
@@ -21,9 +22,9 @@ module.exports = merge(common, {
             pngquant: ({ // lossy png compressor, remove for default lossless
                 quality: '75'
             }),
-            plugins: [imageminMozjpeg({ // lossy jpg compressor, remove for default lossless
+            plugins: [ imageminMozjpeg({ // lossy jpg compressor, remove for default lossless
                 quality: '75'
-            })]
+            }) ]
         }),
         new CompressionPlugin({
             test: /\.(html|css|js)(\?.*)?$/i // only compressed html/css/js, skips compressing sourcemaps etc

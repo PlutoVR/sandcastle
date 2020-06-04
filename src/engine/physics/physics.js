@@ -99,16 +99,6 @@ Physics.resetScene = () =>
 
 Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => 
 {
-    console.log(mesh.parent);
-
-    // mesh.updateMatrixWorld();
-    // let a = new Vector3();
-    // console.log("mesh: ");
-    // console.log(mesh.position);
-    // console.log("meshWorld: ");
-    // mesh.getWorldPosition(a);
-    // console.log(a);
-
     if (mesh.geometry == undefined)
     {
         if (State.debugPhysics) console.warn("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
@@ -153,24 +143,7 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
     });
     body.addShape(shape);
 
-    // mesh.updateMatrixWorld();
-    // let WorldPos = new Vector3();
-
-    // mesh.getWorldPosition(WorldPos);
-    // console.log(mesh.position);
-    // console.log(WorldPos);
-
-
-    // scene.updateMatrixWorld();
-    // const v = new Vector3();
-    // e.getWorldPosition(v);
-    // var eposition = new Vector3();
-    // var equaternion = new THREEQuaternion();
-    // var escale = new Vector3();
-    // mesh.matrixWorld.decompose(eposition, equaternion, escale);
-
-    body.position.copy(mesh.position);// = new Vec3(WorldPos.x, WorldPos.y, WorldPos.z);
-    // Physics.convertPosition(eposition);
+    body.position.copy(mesh.position);
     body.quaternion.copy(mesh.quaternion);
     Physics.cannonWorld.addBody(body);
 

@@ -145,30 +145,27 @@ const createPongCube = (position, quaternion) =>
 
             const ball = new Ball(position, true);
             scene.pongCube.add(ball);
-            networking.remoteSync.addLocalObject(ball, { type: "ball" }, true);
+            networking.remoteSync.addLocalObject(ball, { type: "ball", position: position }, true);
         }
     }, 2000);
 
 
+    // move worldRot offset to children, reset parent offset
+    // necessary for proper RB creation
     scene.pongCube.children.forEach(e =>
     {
         var wPos = new Vector3();
         var wQua = new THREEQuaternion();
         var wSca = new Vector3();
         e.matrixWorld.decompose(wPos, wQua, wSca);
-        console.log(wPos);
         e.position.copy(wPos);
         e.quaternion.copy(wQua);
         e.scale.copy(wSca);
-        // console.log(e);
     });
     scene.pongCube.position.copy(new Vector3());
     scene.pongCube.quaternion.copy(new Quaternion());
     scene.add(scene.pongCube);
 
-
-    // Physics.cannonWorld.allowSleep = true;
-    // offset all rigidbodies by starting position
     scene.pongCube.children.forEach(e =>
     {
         e.rb = Physics.addRigidBody(e, Physics.RigidBodyShape.Box, Physics.Body.STATIC, 0);
@@ -181,15 +178,13 @@ const createPongCube = (position, quaternion) =>
 
 scene.init = () =>
 {
-    createPongLevel(new Vector3(.4, 0, 0), new THREEQuaternion().setFromEuler(new Euler(0, 0, 0)));
-    // hack w/setTimeOut to solve isMaster bug
+    createPongLevel(new Vector3(0.4, 0, 0), new THREEQuaternion().setFromEuler(new Euler(0, 0, 0)));
 }
 
 // on connection
 State.eventHandler.addEventListener("peerconnected", (e) =>
 {
     scene.init();
-
 });
 
 // on add
@@ -198,9 +193,9 @@ networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
     switch (info.type)
     {
         case 'ball':
-            const ball = new Ball(new Vec3(4, 0, 2), false);
+            const ball = new Ball(info.position, false);
             networking.remoteSync.addRemoteObject(destId, objectId, ball);
-            scene.pongCube.add(ball);
+            scene.add(ball);
             break;
 
         case 'paddle':
