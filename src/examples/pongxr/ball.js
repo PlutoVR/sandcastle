@@ -1,5 +1,5 @@
 import State from "../../engine/state"
-import { SphereBufferGeometry, ShaderMaterial, PositionalAudio, AudioLoader, Mesh, PointLight } from "three";
+import { SphereBufferGeometry, ShaderMaterial, PositionalAudio, AudioLoader, Mesh, PointLight, BackSide } from "three";
 import Physics from "../../engine/physics/physics"
 import frictionlessMat from "./frictionlessMaterial"
 
@@ -45,6 +45,11 @@ class Ball
             }, 0);
 
             // if (position != undefined) ball.rb.position.copy(Physics.convertPosition(position));
+        }
+        else
+        {
+            //quickfix for other ball?
+            // ball.material.side = BackSide;
         }
 
         // shader update

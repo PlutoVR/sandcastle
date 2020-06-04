@@ -23,12 +23,13 @@ import State from "../../engine/state"
 import Physics from "../../engine/physics/physics"
 import XRInput from "../../engine/xrinput"
 import PeerConnection from '../../engine/networking/PeerConnection'
+import Paddle from "./paddle"
 import Ball from "./ball"
 import
 {
     Scene, Mesh, Object3D, Vector3,
     BoxBufferGeometry, PointLight,
-    MathUtils, DoubleSide, Matrix4,
+    MathUtils, DoubleSide,
     MeshStandardMaterial, Quaternion as THREEQuaternion, Euler
 } from "three";
 import { Vec3, Quaternion } from "cannon";
@@ -37,56 +38,41 @@ import frictionlessMat from "./frictionlessMaterial"
 const scene = new Scene();
 const networking = new PeerConnection(scene);
 Physics.enableDebugger(scene);
+
 let paddle1, paddle2;
 
-const createPongLevel = (position = new Vector3(0, 0, 0), rotation) =>
+const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion()) =>
 {
     //////////
     // REMOVEOLDGAME(){}
     //////////
+
     console.log("creating pong level");
     createPongCube(position, rotation);
 
-    paddle1 = Paddle(true);
+    paddle1 = new Paddle(true);
     scene.add(paddle1);
     networking.remoteSync.addLocalObject(paddle1, { type: "paddle" }, true);
 
-    paddle2 = Paddle(true);
+    paddle2 = new Paddle(true);
     scene.add(paddle2);
     networking.remoteSync.addLocalObject(paddle2, { type: "paddle" }, true);
 
-    let c1pos, c1rot, c2pos, c2rot;
+
+    // local paddle controller to control player's networked paddle
+    // note: we're NOT directly hooking up any XRInput data to networking 
+
     const LocalPaddleController = new Object3D();
+
     LocalPaddleController.Update = () =>
     {
-        c1pos = Physics.convertPosition(XRInput.controllerGrips[ 0 ].position);
-        c1rot = XRInput.controllerGrips[ 0 ].quaternion;
-        paddle1.position.copy(Physics.convertPosition(c1pos));
-        paddle1.quaternion.copy(c1rot);
+        paddle1.position.copy(XRInput.controllerGrips[ 0 ].position);
+        paddle1.quaternion.copy(XRInput.controllerGrips[ 0 ].quaternion);
 
-        c2pos = Physics.convertPosition(XRInput.controllerGrips[ 1 ].position);
-        c2rot = XRInput.controllerGrips[ 1 ].quaternion;
-        paddle2.position.copy(Physics.convertPosition(c2pos));
-        paddle2.quaternion.copy(c2rot);
+        paddle2.position.copy(XRInput.controllerGrips[ 1 ].position);
+        paddle2.quaternion.copy(XRInput.controllerGrips[ 1 ].quaternion);
     }
     scene.add(LocalPaddleController)
-}
-
-const Paddle = () =>
-{
-    console.log("creating paddle");
-    const paddleGeo = new BoxBufferGeometry(.25, .25, .001);
-    const paddleMat = new MeshStandardMaterial({ color: 0x222222, wireframe: false, side: DoubleSide });
-    const paddle = new Mesh(paddleGeo, paddleMat);
-    paddle.name = "paddle";
-    paddle.rb = Physics.addRigidBody(paddle, Physics.RigidBodyShape.Box, Physics.Body.KINEMATIC, 0);
-
-    paddle.Update = () =>
-    {
-        paddle.rb.position.copy(Physics.convertPosition(paddle.position));
-        paddle.rb.quaternion.copy(paddle.quaternion);
-    }
-    return paddle;
 }
 
 const createPongCube = (position, quaternion) =>
@@ -125,8 +111,6 @@ const createPongCube = (position, quaternion) =>
     bottom.position.y += 1;
     scene.pongCube.add(bottom);
 
-    // scene.updateMatrixWorld();
-
     scene.pongCube.name = "Pong Cube";
 
     scene.pongCube.position.copy(position);
@@ -135,23 +119,9 @@ const createPongCube = (position, quaternion) =>
     scene.pongCube.updateMatrixWorld();
     scene.updateMatrixWorld();
 
-    //addaball
-    // "master" bug workaround
-    setTimeout(() =>
-    {
-        // console.log("ismaster? " + networking.remoteSync.master);
-        if (networking.remoteSync.master == true)
-        {
-
-            const ball = new Ball(position, true);
-            scene.pongCube.add(ball);
-            networking.remoteSync.addLocalObject(ball, { type: "ball", position: position }, true);
-        }
-    }, 2000);
-
-
-    // move worldRot offset to children, reset parent offset
-    // necessary for proper RB creation
+    // transfer sceneCube offset directly to children
+    // necessary for RigidBody alignment
+    //  since mesh parent offset isn't a factor
     scene.pongCube.children.forEach(e =>
     {
         var wPos = new Vector3();
@@ -169,11 +139,27 @@ const createPongCube = (position, quaternion) =>
     scene.pongCube.children.forEach(e =>
     {
         e.rb = Physics.addRigidBody(e, Physics.RigidBodyShape.Box, Physics.Body.STATIC, 0);
-        if (e.rb != undefined)
+        if (e.rb != undefined) // not light, etc
         {
             e.rb.material = frictionlessMat;
         }
     });
+
+    //addaball
+    // "master" bug workaround
+    setTimeout(() =>
+    {
+        console.log("ismaster? " + networking.remoteSync.master);
+        if (networking.remoteSync.master == true)
+        {
+
+            const ball = new Ball(position, true);
+            scene.pongCube.add(ball);
+            networking.remoteSync.addLocalObject(ball, { type: "ball", position: position }, true);
+        }
+    }, 1);
+
+
 }
 
 scene.init = () =>
@@ -182,7 +168,7 @@ scene.init = () =>
 }
 
 // on connection
-State.eventHandler.addEventListener("peerconnected", (e) =>
+networking.remoteSync.addEventListener("open", (e) =>
 {
     scene.init();
 });
@@ -193,13 +179,13 @@ networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
     switch (info.type)
     {
         case 'ball':
-            const ball = new Ball(info.position, false);
+            const ball = new Ball(info.position, false); // only add RB once to fake server-client physics model
             networking.remoteSync.addRemoteObject(destId, objectId, ball);
             scene.add(ball);
             break;
 
         case 'paddle':
-            const p = Paddle();
+            const p = new Paddle();
             networking.remoteSync.addRemoteObject(destId, objectId, p);
             scene.add(p);
             break;

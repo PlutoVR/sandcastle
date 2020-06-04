@@ -154,7 +154,7 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
     return body;
 }
 
-// helpers to convert THREE rotations and quaternions to CannonJS
+// a helper to convert between THREE.Vector3() CANNON.Vec3()
 Physics.convertPosition = (position) =>
 {
     if (position.constructor.name == "Vec3") 
