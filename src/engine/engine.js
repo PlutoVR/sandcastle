@@ -1,5 +1,4 @@
 // scene to run:
-
 import { scene } from "../examples/pongxr/scene"
 
 import State from "./state";
@@ -13,7 +12,6 @@ import XRInput from "./xrinput"
 
 // editor camera + audiolistener
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-
 scene.add(new EngineEditorCamera(camera, Renderer.domElement));
 const listener = new AudioListener();
 camera.add(listener);
@@ -32,7 +30,7 @@ Renderer.setAnimationLoop(() =>
     // PHYSICS
     if (!State.isPaused) Physics.Update();
 
-    // TRAVERSE UPDATE LOOPS IN SCENE OBJECTS
+    // TRAVERSE UPDATE METHODS IN SCENE OBJECTS
     scene.traverse(obj => { typeof obj.Update === 'function' ? obj.Update() : false });
 });
 
@@ -48,3 +46,5 @@ window.addEventListener('resize', () =>
     camera.updateProjectionMatrix();
     Renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+export { camera }

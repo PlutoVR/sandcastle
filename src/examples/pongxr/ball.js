@@ -43,8 +43,6 @@ class Ball
                     });
                 });
             }, 0);
-
-            // if (position != undefined) ball.rb.position.copy(Physics.convertPosition(position));
         }
         else
         {
@@ -53,7 +51,6 @@ class Ball
         }
 
         // shader update
-
         const startTime = Date.now();
         ball.Update = () =>
         {
@@ -62,7 +59,6 @@ class Ball
         }
 
         //innerlight
-
         const bLight = new PointLight(0x6a0dad, 3);
         ball.add(bLight);
 
