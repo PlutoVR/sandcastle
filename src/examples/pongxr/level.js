@@ -145,9 +145,6 @@ class Level
                 e.rb.addEventListener("collide", endGame);
             }
         })
-
-
-
         return levelInstance;
     };
 }

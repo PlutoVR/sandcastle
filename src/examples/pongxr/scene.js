@@ -1,7 +1,5 @@
 /* TODO:
-- PADDLES ( & RESTART WITH BUTTON PRESS)
 - PLACEHOLDER CUBE, PLACEMENT LOGIC & SESSION INIT
-
 
 ****
 WHEN CORE IS WORKING:
@@ -42,9 +40,6 @@ let paddle1, paddle2;
 
 const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion()) =>
 {
-
-    // LEVEL
-
     const level = new Level(position, rotation);
     scene.add(level);
 
@@ -76,10 +71,9 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
     }
     scene.add(LocalPaddleController)
 
+    // BALL
 
-    // Ball
-
-    // "master" bug workaround
+    // "ismaster" bug workaround
     setTimeout(() =>
     {
         console.log("ismaster? " + networking.remoteSync.master);
