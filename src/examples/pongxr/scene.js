@@ -1,7 +1,6 @@
 /* TODO:
 - PADDLES ( & RESTART WITH BUTTON PRESS)
 - PLACEHOLDER CUBE, PLACEMENT LOGIC & SESSION INIT
-- NETWORKED PONGCUBE & BALL
 
 
 ****
@@ -29,11 +28,13 @@ import Paddle from "./paddle"
 import Ball from "./ball"
 import Level from "./level"
 import HostBot from "./hostbot"
+import State from "../../engine/state";
 
 
 const scene = new Scene();
 const networking = new PeerConnection(scene);
 const hostBot = new HostBot(networking);
+let ball;
 
 Physics.enableDebugger(scene);
 
@@ -41,9 +42,6 @@ let paddle1, paddle2;
 
 const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion()) =>
 {
-    //////////
-    // REMOVEOLDGAME(){}
-    //////////
 
     // LEVEL
 
@@ -86,7 +84,8 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
         if (networking.remoteSync.master == true)
         {
 
-            const ball = new Ball(position, true);
+            ball = new Ball(position, true);
+            ball.initPos = position;
             scene.add(ball);
             networking.remoteSync.addLocalObject(ball, { type: "ball", position: position }, true);
         }
@@ -96,7 +95,36 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
 scene.init = () =>
 {
     createPongLevel(new Vector3(0.4, 0, 0));
+
 }
+
+
+// game events
+
+State.eventHandler.addEventListener("gameover", (e) =>
+{
+
+    console.log("RAWWWWWRWRRRRRRRRR i am a SMART and PRETTYY one");
+
+
+    // reset
+    // ball.reset();
+    scene.traverse(e =>
+    {
+        console.log(e.name);
+        if (e.name == "ball")
+        {
+            console.log("ball found!");
+            console.log(e);
+            e.reset();
+        }
+    });
+
+});
+
+
+
+/// networking events
 
 // on connection
 networking.remoteSync.addEventListener("open", (e) =>

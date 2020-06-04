@@ -4,6 +4,7 @@ import Physics from "../../engine/physics/physics"
 import frictionlessMat from "./frictionlessMaterial"
 
 const hitAudioFile = require("./assets/audio/elecping.ogg");
+
 const vs = require('./assets/shaders/vs_defaultVertex.glsl');
 const fs_puddles = require('./assets/shaders/fs_puddles.glsl');
 
@@ -13,6 +14,8 @@ class Ball
     {
         const ball = new Mesh(new SphereBufferGeometry(.2, 13, 13), new ShaderMaterial({ uniforms: { time: { value: 0.0 } }, vertexShader: vs, fragmentShader: fs_puddles }));
         ball.position.copy(position);
+        ball.name = "ball";
+        this.initPos = position;
 
         // physics 
         if (addRigidBody == true)
@@ -62,8 +65,18 @@ class Ball
         const bLight = new PointLight(0x6a0dad, 3);
         ball.add(bLight);
 
+
+        ball.reset = () =>
+        {
+            console.log(ball.rb);
+            Physics.resetRigidbody(ball.rb);
+            ball.rb.position.copy(this.initPos);
+        }
+
         return ball;
     }
+
+
 }
 
 export default Ball;

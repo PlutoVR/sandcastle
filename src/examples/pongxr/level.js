@@ -1,7 +1,13 @@
+import State from "../../engine/state"
 import Physics from "../../engine/physics/physics";
 import frictionlessMat from "./frictionlessMaterial";
-import { Object3D, PointLight, BoxBufferGeometry, MeshStandardMaterial, DoubleSide, MathUtils, Mesh, Vector3, Quaternion as THREEQuaternion } from "three";
+import { Object3D, PointLight, BoxBufferGeometry, MeshStandardMaterial, DoubleSide, MathUtils, Mesh, Vector3, Quaternion as THREEQuaternion, PositionalAudio, AudioLoader, ShaderMaterial } from "three";
 import { Quaternion } from "cannon";
+
+const vs = require('./assets/shaders/vs_defaultVertex.glsl');
+const fs_goal = require('./assets/shaders/fs_goal.glsl');
+
+const crashAudioFile = require("./assets/audio/hitgoal.ogg");
 
 class Level
 {
@@ -42,8 +48,37 @@ class Level
         bottom.position.y += 1;
         levelInstance.add(bottom);
 
-        levelInstance.name = "levelInstance";
+        const uniforms = { time: { value: 0.0 } };
+        const goalGeo = new BoxBufferGeometry(4, 4, .002, 2, 2);
+        const goalMat = new ShaderMaterial({
+            uniforms,
+            vertexShader: vs,
+            fragmentShader: fs_goal,
+            transparent: true
+        });
 
+        // const goalMat = new MeshBasicMaterial({ color: 0x000000, wireframe: true, side: DoubleSide, emissive: 0x00ff00 });
+        const goal = new Mesh(goalGeo, goalMat);
+        goal.name = "goal";
+        // goalMat.rotateOnAxis(new Vector3(1, 0, 0), MathUtils.degToRad(90));
+        goal.rotateOnAxis(new Vector3(0, 0, 1), MathUtils.degToRad(90));
+        goal.position.z = 3;
+
+        const startTime = Date.now();
+        goal.Update = () =>
+        {
+            if (goalMat.uniforms == undefined) return;
+            goalMat.uniforms.time.value = 6. * (Date.now() - startTime) / 1000.;
+        }
+
+
+        levelInstance.add(goal);
+
+        const goal2 = goal.clone();
+        goal2.position.z = -3;
+        levelInstance.add(goal2);
+
+        levelInstance.name = "levelInstance";
         levelInstance.position.copy(position);
         levelInstance.quaternion.copy(quaternion);
 
@@ -66,6 +101,34 @@ class Level
         levelInstance.position.copy(new Vector3());
         levelInstance.quaternion.copy(new Quaternion());
 
+        let crashAudio;
+
+
+        setTimeout(function ()
+        {
+            // Audiolistener setTimeOut hack
+            // it doesn't exist until after scene load time, so...
+            // (also see src/engine/engine.js)
+            // TODO: solve more cleanly.
+
+            crashAudio = new PositionalAudio(State.globals.AudioListener);
+            const audioLoader = new AudioLoader();
+            audioLoader.load(crashAudioFile, function (buffer)
+            {
+                crashAudio.setBuffer(buffer);
+                crashAudio.setRefDistance(20);
+                //     // hitAudio.play();
+            });
+        }, 0);
+
+        const endGame = () =>
+        {
+            if (crashAudio == undefined) return;
+            if (crashAudio.isPlaying) crashAudio.stop();
+            crashAudio.play();
+
+            State.eventHandler.dispatchEvent("gameover");
+        };
 
         levelInstance.children.forEach(e =>
         {
@@ -74,7 +137,16 @@ class Level
             {
                 e.rb.material = frictionlessMat;
             }
+
+
+            // game logic
+            if (e.name == "goal")
+            {
+                e.rb.addEventListener("collide", endGame);
+            }
         })
+
+
 
         return levelInstance;
     };

@@ -48,12 +48,13 @@ class StateClass
         this.isXRSession = false;
         this.isPaused = false;
         this.currentSession = null;
-        this.debugPhysics = true;
+        this.debugPhysics = false;
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEvent('xrsessionstarted');
         this.eventHandler.registerEvent('xrsessionended');
         this.eventHandler.registerEvent('peerconnected');
         this.eventHandler.registerEvent('peerdisconnected');
+        this.eventHandler.registerEvent('gameover');
         this.bindDebugKeys();
     }
 
