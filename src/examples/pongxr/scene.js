@@ -28,15 +28,18 @@ import Level from "./level"
 import HostBot from "./hostbot"
 import State from "../../engine/state";
 
-
 const scene = new Scene();
 const networking = new PeerConnection(scene);
 const hostBot = new HostBot(networking);
 let ball;
 
-Physics.enableDebugger(scene);
+//register custom States & events
 
-let paddle1, paddle2;
+State.eventHandler.registerEvent('gameover');
+State.eventHandler.registerEvent('gameover');
+
+
+Physics.enableDebugger(scene);
 
 const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion()) =>
 {
@@ -46,21 +49,20 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
 
     // PADDLES 
 
-    paddle1 = new Paddle(true);
+    const paddle1 = new Paddle(true);
     scene.add(paddle1);
     networking.remoteSync.addLocalObject(paddle1, { type: "paddle" }, true);
 
-    paddle2 = new Paddle(true);
+    const paddle2 = new Paddle(true);
     scene.add(paddle2);
     networking.remoteSync.addLocalObject(paddle2, { type: "paddle" }, true);
 
 
-    // local paddle controller to control player's networked paddle
+    // local paddle controller component to control player's networked paddle
     // note: we're NOT directly hooking up any XRInput data to networking 
     // only connecting the object impacted by it
 
     const LocalPaddleController = new Object3D();
-
     LocalPaddleController.Update = () =>
     {
         paddle1.position.copy(XRInput.controllerGrips[ 0 ].position);
@@ -70,6 +72,7 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
         paddle2.quaternion.copy(XRInput.controllerGrips[ 1 ].quaternion);
     }
     scene.add(LocalPaddleController)
+
 
     // BALL
 
@@ -93,20 +96,12 @@ scene.init = () =>
     createPongLevel(new Vector3(0.4, 0, 0));
 }
 
-
-
 ////////// CUSTOM EVENTS //////////
 
 /// GAME STATE
 
 State.eventHandler.addEventListener("gameover", (e) =>
 {
-    // reset
-    // scene.traverse(e =>
-    // {
-    //     console.log(e.name);
-    //     if (e.name == "ball")
-    //     {
     if (ball != undefined)
     {
         ball.reset();
@@ -114,10 +109,10 @@ State.eventHandler.addEventListener("gameover", (e) =>
     {
         console.error("can't reset; no ball found!");
     }
-    // });
 });
 
 /// INPUT
+
 XRInput.controllerGrips.forEach(ctrl =>
 {
     ctrl.addEventListener("selectstart", e =>
@@ -135,13 +130,11 @@ XRInput.controllerGrips.forEach(ctrl =>
 
 /// NETWORKING 
 
-// on connection
 networking.remoteSync.addEventListener("open", (e) =>
 {
     scene.init();
 });
 
-// on add
 networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
 {
     switch (info.type)
@@ -161,6 +154,11 @@ networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
         default:
             return;
     }
+});
+
+networking.remoteSync.addEventListener('remove', function (remotePeerId, objectId, object)
+{
+    if (object.parent !== null) object.parent.remove(object);
 });
 
 export { scene }

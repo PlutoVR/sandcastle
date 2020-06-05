@@ -54,7 +54,6 @@ class StateClass
         this.eventHandler.registerEvent('xrsessionended');
         this.eventHandler.registerEvent('peerconnected');
         this.eventHandler.registerEvent('peerdisconnected');
-        this.eventHandler.registerEvent('gameover');
         this.bindDebugKeys();
     }
 
