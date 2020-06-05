@@ -1,5 +1,7 @@
 import Speech from 'speak-tts'
 
+const messageType = { log: 1, warn: 2, error: 3 };
+
 class HostBot
 {
     constructor(networking)
@@ -16,8 +18,6 @@ class HostBot
             'splitSentences': true,
         }).then((data) =>
         {
-            // The "data" object contains the list of available voices and the voice synthesis params
-            console.log("Speech is ready, voices are available", data)
         }).catch(e =>
         {
             console.error("An error occured while initializing : ", e)
@@ -27,6 +27,7 @@ class HostBot
         this.networking.remoteSync.addEventListener('error', this.onError.bind(this));
         this.networking.remoteSync.addEventListener('connect', this.onConnect.bind(this));
         this.networking.remoteSync.addEventListener('disconnect', this.onDisconnect.bind(this));
+        console.log("HostBot ready")
         // this.networking.remoteSync.addEventListener('receive', this.onReceive.bind(this));
         // this.networking.remoteSync.addEventListener('add', this.onAdd.bind(this));
         // this.networking.remoteSync.addEventListener('remove', this.onRemove.bind(this));
@@ -34,26 +35,47 @@ class HostBot
 
     onOpen()
     {
-        this.speech.speak({ text: "Connected to Signaling Server!" });
+        this.log("Connected to Signaling server", messageType.log);
     }
     onClose()
     {
-        this.speech.speak({ text: "Disconnected from signaling server!" });
+        this.log("Disconnected from Signaling server", messageType.log);
     }
     onConnect()
     {
-        this.speech.speak({ text: "A new player has joined!" });
+        this.log("A new player has joined!", messageType.log);
     }
 
     onDisconnect()
     {
-        this.speech.speak({ text: "Player disconnected!" });
+        this.log("Player disconnected!", messageType.log);
     }
     onError(e)
     {
-        console.log(e);
         const errorMsg = "Error!" + e.error.message;
-        this.speech.speak({ text: errorMsg });
+        this.log(errorMsg, messageType.error);
+    }
+
+    log(message, type)
+    {
+        this.speech.speak({ text: message });
+        switch (type)
+        {
+            default:
+
+            case messageType.log:
+                console.log(message);
+                break;
+
+            case messageType.warn:
+                console.warn(message);
+                break;
+
+            case messageType.error:
+                console.error(message);
+                break;
+        }
+
     }
 }
 

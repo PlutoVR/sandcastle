@@ -20,7 +20,7 @@ class Ball
         // physics 
         if (addRigidBody == true)
         {
-            console.log("adding RB to Ball");
+            // console.log("adding RB to Ball");
             ball.rb = Physics.addRigidBody(ball, Physics.RigidBodyShape.Sphere, Physics.Body.DYNAMIC, 1);
 
             ball.rb.material = frictionlessMat;
@@ -68,12 +68,10 @@ class Ball
 
         ball.reset = () =>
         {
-            console.log(ball.rb);
             Physics.resetRigidbody(ball.rb);
             ball.rb.position.copy(this.initPos);
-
-
         }
+
         ball.kickoff = () =>
         {
             ball.rb.velocity.set(rnd(-2, 2), rnd(-2, 2), rnd(-2, 2));

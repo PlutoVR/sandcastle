@@ -16,44 +16,65 @@ device: "xr-enabled" / "mobile" / "desktop"
 score?
 */
 
-import { Scene, Object3D, Vector3, Quaternion as THREEQuaternion } from "three";
+import { Scene, Clock, Object3D, Vector3, Quaternion as THREEQuaternion, Mesh, BoxBufferGeometry, Color, MeshBasicMaterial } from "three";
 
-import Physics from "../../engine/physics/physics"
 import XRInput from "../../engine/xrinput"
 import PeerConnection from '../../engine/networking/PeerConnection'
 
 import Paddle from "./paddle"
 import Ball from "./ball"
 import Level from "./level"
-import HostBot from "./hostbot"
+import HostBot from "../../engine/util/hostbot"
 import State from "../../engine/state";
+import { camera } from "../../engine/engine"
+
+State.isMaster = true; // assume until proven otherwise
 
 const scene = new Scene();
+const c = new Clock();
 const networking = new PeerConnection(scene);
+
 const hostBot = new HostBot(networking);
 let ball;
+let placementCube, level;
 
-//register custom States & events
+// Register custom States & events
 
 State.eventHandler.registerEvent('gameover');
-State.eventHandler.registerEvent('gameover');
+const GameState = { placement: 1, play: 2 }
 
 
-Physics.enableDebugger(scene);
+// Physics.enableDebugger(scene);
 
-const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion()) =>
+const createPongLevel = (placementCube) =>
 {
-    const level = new Level(position, rotation);
+    const targetPosition = placementCube.position;
+    const targetRotation = placementCube.rotation;
+
+    State.GameState = GameState.play;
+    const curPosRot = { position: targetPosition, rotation: targetRotation }
+    level = new Level(curPosRot);
     scene.add(level);
+    networking.remoteSync.addLocalObject(level, { type: "level", posRot: curPosRot }, true);
+
+    // dumb h a c k for the other side 
+    placementCube.scale.set(0, 0, 0);
+    console.log(placementCube);
+
+    // not working
+    networking.remoteSync.removeSharedObject(3);
+
+    // local
+    scene.remove(placementCube);
 
 
     // PADDLES 
 
-    const paddle1 = new Paddle(true);
+    const paddle1 = new Paddle();
     scene.add(paddle1);
     networking.remoteSync.addLocalObject(paddle1, { type: "paddle" }, true);
 
-    const paddle2 = new Paddle(true);
+    const paddle2 = new Paddle();
     scene.add(paddle2);
     networking.remoteSync.addLocalObject(paddle2, { type: "paddle" }, true);
 
@@ -73,27 +94,66 @@ const createPongLevel = (position = new Vector3, rotation = new THREEQuaternion(
     }
     scene.add(LocalPaddleController)
 
-
+    // console.log(State.isMaster);
     // BALL
-
-    // "ismaster" bug workaround
-    setTimeout(() =>
+    if (State.isMaster)
     {
-        console.log("ismaster? " + networking.remoteSync.master);
-        if (networking.remoteSync.master == true)
-        {
+        ball = new Ball(targetPosition, true);
+        ball.initPos = targetPosition;
+        scene.add(ball);
+        networking.remoteSync.addLocalObject(ball, { type: "ball", position: targetPosition }, true);
+    }
+}
 
-            ball = new Ball(position, true);
-            ball.initPos = position;
-            scene.add(ball);
-            networking.remoteSync.addLocalObject(ball, { type: "ball", position: position }, true);
+const PlacementCube = () =>
+{
+    // fix for world cam dir querying
+    let forwardOffset = new Vector3();
+    let CamForward = new Vector3();
+    let empty = new Object3D();
+    camera.add(empty);
+    const placementCubeInstance = new Mesh(new BoxBufferGeometry(2, 2, 4, 8, 8, 16), new MeshBasicMaterial({ color: new Color("rgb(0, 255, 0)"), wireframe: true }));
+
+    placementCubeInstance.Update = function ()
+    {
+        this.material.color.g = Math.cos(c.getElapsedTime() * 5) / 2 + .5;
+        this.position.add(forwardOffset);
+
+        if (State.isMaster && XRInput.XRinputSources.length > 0)
+        {
+            XRInput.XRinputSources.forEach((e, i) =>
+            {
+                if (Math.abs(e.gamepad.axes[ 2 ]) > 0.5) this.rotation.y += e.gamepad.axes[ 2 ] > 0 ? -.01 : .01;
+
+                if (e.gamepad.axes[ 3 ] != 0)
+                {
+
+                    XRInput.controllerGrips[ i ].getWorldDirection(CamForward);
+                    forwardOffset = CamForward.multiplyScalar(e.gamepad.axes[ 3 ] > 0 ? .02 : -.02)
+                    this.position.add(forwardOffset);
+                    forwardOffset.x = forwardOffset.y = forwardOffset.z = 0;
+                }
+                this.position.y = XRInput.controllerGrips[ 0 ].position.y;
+            });
         }
-    }, 1);
+    }
+    return placementCubeInstance;
+
+}
+
+
+const initPlacement = () =>
+{
+    State.GameState = GameState.placement;
+
+    placementCube = PlacementCube();
+    scene.add(placementCube);
+    networking.remoteSync.addSharedObject(placementCube, 3, true);
 }
 
 scene.init = () =>
 {
-    createPongLevel(new Vector3(0.4, 0, 0));
+    initPlacement();
 }
 
 ////////// CUSTOM EVENTS //////////
@@ -112,20 +172,44 @@ State.eventHandler.addEventListener("gameover", (e) =>
 });
 
 /// INPUT
-
+let doubleClick = false;
 XRInput.controllerGrips.forEach(ctrl =>
 {
     ctrl.addEventListener("selectstart", e =>
     {
-        if (ball != undefined)
+        switch (State.GameState)
         {
-            ball.kickoff();
-        } else
-        {
-            console.error("can't kickoff; no ball found!");
-        }
+            case (GameState.placement):
+                if (State.isMaster)
+                {
+                    createPongLevel(placementCube);
+                }
+                break;
 
-    })
+            case (GameState.play):
+            default:
+                if (!doubleClick)
+                {
+                    doubleClick = true;
+                    setTimeout(function ()
+                    {
+                        if (ball == undefined)
+                        {
+                            console.error("can't kickoff; no ball found!");
+                            return;
+                        }
+                        ball.kickoff();
+                        doubleClick = false;
+                    }, 200);
+                }
+                else
+                {
+                    // TOOD: implement dclick
+                    // location.reload();
+                }
+                break;
+        }
+    });
 });
 
 /// NETWORKING 
@@ -133,7 +217,20 @@ XRInput.controllerGrips.forEach(ctrl =>
 networking.remoteSync.addEventListener("open", (e) =>
 {
     scene.init();
+
 });
+
+networking.remoteSync.addEventListener("connect", (e) =>
+{
+
+    // setTimeout due to weird isMaster bug
+    setTimeout(function () 
+    {
+        State.isMaster = networking.remoteSync.master;
+    }, 1);
+});
+
+
 
 networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
 {
@@ -151,13 +248,26 @@ networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
             scene.add(p);
             break;
 
+        case 'level':
+
+            const l = new Level(info.posRot);
+            networking.remoteSync.addRemoteObject(destId, objectId, l);
+            scene.add(l);
+            break;
+
+        case 'placementcube':
+            const pc = PlacementCube();
+            networking.remoteSync.addRemoteObject(destId, objectId, pc);
+            scene.add(pc);
         default:
             return;
     }
 });
 
-networking.remoteSync.addEventListener('remove', function (remotePeerId, objectId, object)
+networking.remoteSync.addEventListener('remove', (remotePeerId, objectId, object) =>
 {
+    console.log("removing");
+    scene.remove(object);
     if (object.parent !== null) object.parent.remove(object);
 });
 

@@ -460,14 +460,17 @@ class RemoteSync
 	 * It synchronizes with a remote object which has the same
 	 * shared id.
 	 * @param {Object3D} object
-	 * @param {string} id - shared id.
 	 * @param {boolean} recursive - recursively adds children if true
 	 */
-	addSharedObject(object, recursive)
+	addSharedObject(object, id, recursive)
 	{
-		const id = this.sharedObjectID++;
-		console.log("id! " + id);
+		// this.sharedObjectID++;
+		// const id = this.sharedObjectID;
+		// console.log("adding shared ");
+		// console.log(object);
+		// console.log("id: " + id);
 
+		// object.rsid = id;
 		if (this.sharedObjectTable[ id ] !== undefined)
 		{
 
@@ -530,7 +533,7 @@ class RemoteSync
 	 */
 	removeSharedObject(id)
 	{
-
+		console.log("murk");
 		if (this.sharedObjectTable[ id ] === undefined)
 		{
 
@@ -540,7 +543,7 @@ class RemoteSync
 		}
 
 		var object = this.sharedObjectTable[ id ];
-
+		console.log(object);
 		delete this.sharedObjectTable[ id ];
 
 		removeObjectFromArray(this.sharedObjects, object);
@@ -917,11 +920,11 @@ class RemoteSync
 
 			var objectId = list[ i ].id;
 
-			var object = objests[ objectId ];
+			var object = objects[ objectId ];
 
 			if (object === undefined) continue;
 
-			this.removeRemoveObject(destId, objectId, object);
+			this.removeObject(destId, objectId, object);
 
 		}
 

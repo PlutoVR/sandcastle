@@ -66,11 +66,15 @@ class PeerConnection
 
     onAdd(destId, objectId, info)
     {
-        console.log("onAdd: connected to " + destId);
+        console.log("onAdd: adding " + objectId);
+        console.log(info);
     }
 
     onRemove(destId, objectId, object)
     {
+        console.log("onRemove: removing " + objectId);
+        console.log(object);
+
         if (object.parent !== null) object.parent.remove(object);
     }
 

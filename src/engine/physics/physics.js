@@ -30,8 +30,6 @@ Physics.cannonWorld.solver.tolerance = 0.00001;
 
 if (State.debugPhysics) console.log("CannonJS world created");
 
-
-
 Physics.addControllerRigidBody = (controller) =>
 {
     const _cRB = new Body({

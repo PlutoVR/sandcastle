@@ -11,9 +11,10 @@ const crashAudioFile = require("./assets/audio/hitgoal.ogg");
 
 class Level
 {
-    constructor(position = new Vector3(), quaternion = new Quaternion())
+    constructor(posRot)
     {
-        console.log("creating Level");
+
+        // console.log("creating Level");
         const levelInstance = new Object3D();
         const light = new PointLight(0xffffff, 4);
         levelInstance.add(light);
@@ -79,8 +80,8 @@ class Level
         levelInstance.add(goal2);
 
         levelInstance.name = "levelInstance";
-        levelInstance.position.copy(position);
-        levelInstance.quaternion.copy(quaternion);
+        levelInstance.position.copy(posRot.position);
+        levelInstance.rotation.copy(posRot.rotation);
 
         levelInstance.updateMatrixWorld();
         // scene.updateMatrixWorld();

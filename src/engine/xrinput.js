@@ -7,7 +7,7 @@ class XRInputClass
     constructor()
     {
         this.controllerGrips = [ Renderer.xr.getControllerGrip(0), Renderer.xr.getControllerGrip(1) ];
-        this.controllers = [];
+        this.XRinputSources = [];
         this.controllerModelFactory = new XRControllerModelFactory();
     }
     // trigger start
@@ -49,14 +49,15 @@ class XRInputClass
     onConnected(e)
     {
         console.log("onConnected");
-        this.controllers.push(e.data);
+        this.XRinputSources.push(e.data);
+        // this.controllerGrips.push();
     }
 
     // controller disconnection
     onDisconnected(e)
     {
         console.log("onDisconnected");
-        State.controllers = [];
+        this.XRinputSources = [];
     }
 
     CreateControllerModel(controller, scene)
@@ -76,7 +77,7 @@ class XRInputClass
     debugOutput()
     {
         this.inputDebugString = "";
-        this.controllers.forEach((e) =>
+        this.XRinputSources.forEach((e) =>
         {
             // console.log(e);
             e.gamepad.buttons.forEach((f, i) =>
