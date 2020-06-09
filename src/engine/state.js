@@ -48,16 +48,20 @@ class StateClass
         this.isXRSession = false;
         this.isPaused = false;
         this.currentSession = null;
-        this.debugPhysics = false;
+        this.debugMode = true;
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEvent('xrsessionstarted');
         this.eventHandler.registerEvent('xrsessionended');
+        this.eventHandler.registerEvent('inputsourceschange');
+        this.eventHandler.registerEvent('selectend');
+        this.eventHandler.registerEvent('selectstart');
+        this.eventHandler.registerEvent('select');
         this.eventHandler.registerEvent('peerconnected');
         this.eventHandler.registerEvent('peerdisconnected');
-        this.bindDebugKeys();
+        this.bindKeys();
     }
 
-    bindDebugKeys()
+    bindKeys()
     {
         document.addEventListener('keydown', (e) =>
         {
@@ -66,8 +70,8 @@ class StateClass
             switch (e.keyCode)
             {
                 case 192: // tilde
-                    this.debugPhysics = !this.debugPhysics;
-                    console.log("Physics Debug: " + this.debugPhysics);
+                    this.debugMode = !this.debugMode;
+                    console.log("Debug: " + this.debugMode);
                     break;
                 case 80: //"p"
                     this.isPaused = !this.isPaused;

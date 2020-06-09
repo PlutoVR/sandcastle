@@ -28,7 +28,7 @@ Physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
 Physics.cannonWorld.solver.iterations = 50; //50
 Physics.cannonWorld.solver.tolerance = 0.00001;
 
-if (State.debugPhysics) console.log("CannonJS world created");
+if (State.debugMode) console.log("CannonJS world created");
 
 Physics.addControllerRigidBody = (controller) =>
 {
@@ -43,7 +43,7 @@ Physics.addControllerRigidBody = (controller) =>
     Physics.cannonWorld.add(_cRB);
     Physics.controllerRigidbodies.push(_cRB);
     Physics.rigidbodies.push(_cRB);
-    if (State.debugPhysics) console.log(_cRB.name + " created");
+    if (State.debugMode) console.log(_cRB.name + " created");
 }
 
 Physics.enableDebugger = (scene) =>
@@ -53,15 +53,12 @@ Physics.enableDebugger = (scene) =>
 
 Physics.updateControllers = () =>
 {
-    // if (State.isXRSession == true)
-    // {
-    if (XRInput.controllerGrips.length == 0 || Physics.controllerRigidbodies.length == 0) return;
+    if (XRInput.controllerGrips == null || XRInput.controllerGrips.length == 0 || Physics.controllerRigidbodies.length == 0) return;
     XRInput.controllerGrips.forEach((ctrl, i) =>
     {
         Physics.controllerRigidbodies[ i ].position.copy(XRInput.controllerGrips[ i ].position);
         Physics.controllerRigidbodies[ i ].quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
     });
-    // }
 }
 
 Physics.Update = () =>
@@ -82,7 +79,7 @@ Physics.Update = () =>
         Physics.rigidbodies[ i ].position.copy(body.position);
     })
 
-    if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(State.debugPhysics);
+    if (Physics.debugRenderer != undefined) Physics.debugRenderer.update(State.debugMode);
 }
 
 Physics.resetScene = () =>
@@ -99,7 +96,7 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
 {
     if (mesh.geometry == undefined)
     {
-        if (State.debugPhysics) console.warn("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
+        if (State.debugMode) console.warn("no mesh geometry found for " + mesh.type + ", aborting rigibdoy creation");
         return;
     }
 
@@ -139,13 +136,13 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) =>
         mass: mass,
         type: type
     });
-    body.addShape(shape);
 
+    body.addShape(shape);
     body.position.copy(mesh.position);
     body.quaternion.copy(mesh.quaternion);
     Physics.cannonWorld.addBody(body);
 
-    body.addEventListener("collide", function (e) { if (State.debugPhysics) console.log("body collided"); });
+    body.addEventListener("collide", function (e) { if (State.debugMode) console.log("body collided"); });
     Physics.rigidbodies.push(mesh);
 
 

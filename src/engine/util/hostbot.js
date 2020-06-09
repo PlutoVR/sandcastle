@@ -35,7 +35,7 @@ class HostBot
 
     onOpen()
     {
-        this.log("Connected to Signaling server", messageType.log);
+        // this.log("Connected to Signaling server", messageType.log);
     }
     onClose()
     {

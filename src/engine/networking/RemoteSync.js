@@ -533,7 +533,6 @@ class RemoteSync
 	 */
 	removeSharedObject(id)
 	{
-		console.log("murk");
 		if (this.sharedObjectTable[ id ] === undefined)
 		{
 
@@ -543,7 +542,6 @@ class RemoteSync
 		}
 
 		var object = this.sharedObjectTable[ id ];
-		console.log(object);
 		delete this.sharedObjectTable[ id ];
 
 		removeObjectFromArray(this.sharedObjects, object);

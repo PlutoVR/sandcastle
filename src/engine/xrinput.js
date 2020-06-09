@@ -6,98 +6,142 @@ class XRInputClass
 {
     constructor()
     {
-        this.controllerGrips = [ Renderer.xr.getControllerGrip(0), Renderer.xr.getControllerGrip(1) ];
-        this.XRinputSources = [];
+        this.controllerGrips = [];
+        this.inputSources = null;
         this.controllerModelFactory = new XRControllerModelFactory();
     }
+
     // trigger start
     onSelectStart(e)
     {
-        console.log("select started!");
+        if (State.debugMode)
+        {
+            console.log("select started!");
+            console.log(e);
+        }
+        State.eventHandler.dispatchEvent("selectstart");
     }
+
     // trigger end
     onSelectEnd(e)
     {
-        console.log("select ended!");
+        if (State.debugMode)
+        {
+            console.log("select ended!");
+            console.log(e);
+        }
+        State.eventHandler.dispatchEvent("selectend");
     }
 
     // trigger "event" (fully completed after release)
     onSelect(e) 
     {
-        console.log("select event!")
+        if (State.debugMode)
+        {
+            console.log("select event!");
+            console.log(e);
+        }
+        State.eventHandler.dispatchEvent("select");
     }
 
     // side button start
     onSqueezeStart(e)
     {
-        console.log("squeeze pressed!");
+        if (State.debugMode)
+        {
+            console.log("squeeze pressed!");
+            console.log(e);
+        }
+        State.eventHandler.dispatchEvent("squeezestart");
     }
 
     // side button end
     onSqueezeEnd(e)
     {
-        console.log("squeeze released!");
+        if (State.debugMode)
+        {
+            console.log("squeeze released!");
+            console.log(e);
+        }
+        State.eventHandler.dispatchEvent("squeezeend");
     }
 
     // side button "event" (fully completed after release)
     onSqueeze(e)
     {
-        console.log("squeeze event completed!")
+        if (State.debugMode)
+        {
+            console.log("squeeze event completed!");
+            console.log(e);
+        }
+        State.eventHandler.dispatchEvent("squeeze");
     }
 
     // controller connection
     onConnected(e)
     {
-        console.log("onConnected");
-        this.XRinputSources.push(e.data);
-        // this.controllerGrips.push();
+        if (State.debugMode)
+        {
+            console.log("Controller Connected");
+            console.log(e.data);
+        }
     }
 
     // controller disconnection
     onDisconnected(e)
     {
-        console.log("onDisconnected");
-        this.XRinputSources = [];
+        if (State.debugMode)
+        {
+            console.log("Controller Disconnected");
+            console.log(e.data);
+        }
     }
 
     CreateControllerModel(controller, scene)
     {
-        // this.controllerGrips.forEach((e) =>
-        // {
         controller.add(this.controllerModelFactory.createControllerModel(controller));
         scene.add(controller);
     }
 
-
-
     Update()
     {
-        this.debugOutput();
+        if (State.debugMode)
+        {
+            if (this.inputSources != null) this.debugOutput();
+        }
     }
+
     debugOutput()
     {
         this.inputDebugString = "";
-        this.XRinputSources.forEach((e) =>
+        this.inputSources.forEach((e) =>
         {
-            // console.log(e);
-            e.gamepad.buttons.forEach((f, i) =>
+            e.gamepad.buttons.forEach((button, i) =>
             {
-                if (f.pressed == true)
+                if (button.pressed == true)
                 {
                     this.inputDebugString += (e.handedness + " controller button " + i + "\n");
-                    this.inputDebugString += ("value: " + f.value + "\n");
+                    this.inputDebugString += ("value: " + button.value + "\n");
                 }
             });
 
-            // axes 0 and 1 unused at least on the quest
-            if (e.gamepad.axes[ 2 ] != 0 || e.gamepad.axes[ 3 ] != 0)
+            e.gamepad.axes.forEach((axis, axisIndex) =>
             {
-                this.inputDebugString += e.handedness + " joystick:\n";
-                this.inputDebugString += "x: " + e.gamepad.axes[ 2 ] + "\n";
-                this.inputDebugString += "y: " + e.gamepad.axes[ 3 ] + "\n";
-            }
-        });
+                if (axis != 0)
+                {
+                    this.inputDebugString += e.handedness + " joystick:\n";
 
+                    if (axisIndex % 2 == 0) // X (typically 0 or 2)
+                    {
+                        this.inputDebugString += "x: " + axis + "\n";
+                    }
+                    else // Y (typically be 1 or 3)
+                    {
+                        this.inputDebugString += "y: " + axis + "\n";
+                    }
+                }
+            });
+        });
         return this.inputDebugString == "" ? 0 : console.log(this.inputDebugString);
     }
 }
@@ -108,30 +152,46 @@ const XRInput = new XRInputClass();
 // init input on XR session start
 State.eventHandler.addEventListener("xrsessionstarted", (e) =>
 {
-    console.warn("xr session started");
+    if (State.debugMode) console.warn("xr session started");
     State.currentSession = e;
     State.isXRSession = true;
 
-    //buggy on MC? Should replace arbitrary "2"
-    // const s = Renderer.xr.getSession();
-    // console.log(s.inputSources);
-    for (let i = 0; i < 2; i++)
+    e.addEventListener('selectend', XRInput.onSelectEnd.bind(XRInput));
+    e.addEventListener('selectstart', XRInput.onSelectStart.bind(XRInput));
+    e.addEventListener('select', XRInput.onSelect.bind(XRInput));
+    e.addEventListener('squeezestart', XRInput.onSqueezeStart.bind(XRInput));
+    e.addEventListener('squeezeend', XRInput.onSqueezeEnd.bind(XRInput));
+    e.addEventListener('connected', XRInput.onConnected.bind(XRInput));
+    e.addEventListener('disconnected', XRInput.onDisconnected.bind(XRInput));
+
+    // console.log(Renderer.xr.getSession().inputSources)
+
+});
+
+State.eventHandler.addEventListener("inputsourceschange", (e) =>
+{
+    XRInput.inputSources = e.session.inputSources;
+    const isUserAgentMetachromium = navigator.userAgent.indexOf("Mchr") !== -1;
+
+    // metachromium-specific hack to fix nonconformance bug
+    const inputNum = isUserAgentMetachromium !== -1 ? 2 : XRInput.inputSources.length
+    for (let i = 0; i < inputNum; i++)
     {
-        const c = Renderer.xr.getController(i);
-        c.addEventListener('selectend', XRInput.onSelectEnd.bind(XRInput));
-        c.addEventListener('selectstart', XRInput.onSelectStart.bind(XRInput));
-        c.addEventListener('select', XRInput.onSelect.bind(XRInput));
-        c.addEventListener('squeezestart', XRInput.onSqueezeStart.bind(XRInput));
-        c.addEventListener('squeezeend', XRInput.onSqueezeEnd.bind(XRInput));
-        c.addEventListener('connected', XRInput.onConnected.bind(XRInput));
-        c.addEventListener('disconnected', XRInput.onDisconnected.bind(XRInput));
+        if (typeof (isUserAgentMetachromium || XRInput.inputSources[ i ].gripSpace) != undefined)
+        {
+            if (State.debugMode) console.log("adding controller grip " + i);
+            XRInput.controllerGrips.push(Renderer.xr.getControllerGrip(i));
+        }
     }
 });
 
 State.eventHandler.addEventListener("xrsessionended", () =>
 {
-    console.warn("xr session ended");
+    if (State.debugMode) console.warn("xr session ended");
+    State.currentSession = null;
     State.isXRSession = false;
+    XRInput.controllerGrips = [];
+    XRInput.inputSources = null;
 });
 
 export default XRInput

@@ -55,10 +55,18 @@ class VRButton
         {
             session.addEventListener('end', onSessionEnded);
             this.renderer.xr.setSession(session);
+            session.addEventListener('inputsourceschange', onInputSourcesChange);
+
             State.eventHandler.dispatchEvent('xrsessionstarted', session);
             this.button.textContent = 'EXIT VR';
             currentSession = session;
         }
+        const onInputSourcesChange = (event) =>
+        {
+            State.eventHandler.dispatchEvent('inputsourceschange', event);
+            // console.log("input sources change");
+        }
+
 
         const onSessionEnded = ( /*event*/) =>
         {
