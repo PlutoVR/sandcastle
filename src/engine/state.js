@@ -45,6 +45,7 @@ class StateClass
     constructor()
     {
         this.globals = {};
+        this.isMaster = true // until claimed otherwise by a PeerConnection
         this.isXRSession = false;
         this.isPaused = false;
         this.currentSession = null;
@@ -56,6 +57,9 @@ class StateClass
         this.eventHandler.registerEvent('selectend');
         this.eventHandler.registerEvent('selectstart');
         this.eventHandler.registerEvent('select');
+        this.eventHandler.registerEvent('squeezeend');
+        this.eventHandler.registerEvent('squeezestart');
+        this.eventHandler.registerEvent('squeeze');
         this.eventHandler.registerEvent('peerconnected');
         this.eventHandler.registerEvent('peerdisconnected');
         this.bindKeys();

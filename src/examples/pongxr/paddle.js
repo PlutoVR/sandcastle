@@ -8,7 +8,6 @@ class Paddle
 {
     constructor()
     {
-        // console.log("creating paddle");
         const paddleGeo = new BoxBufferGeometry(.25, .001, .25);
         const paddleMat = new ShaderMaterial({ uniforms: { time: { value: 0.0 } }, vertexShader: vs, fragmentShader: fs_puddles })
 
@@ -27,7 +26,6 @@ class Paddle
             // shader update
             if (paddle.material.uniforms.time == undefined) return;
             paddle.material.uniforms.time.value = 6. * (Date.now() - startTime) / 500.;
-
         }
         return paddle;
     }

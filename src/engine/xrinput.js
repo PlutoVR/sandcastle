@@ -19,7 +19,7 @@ class XRInputClass
             console.log("select started!");
             console.log(e);
         }
-        State.eventHandler.dispatchEvent("selectstart");
+        State.eventHandler.dispatchEvent("selectstart", e);
     }
 
     // trigger end
@@ -30,7 +30,7 @@ class XRInputClass
             console.log("select ended!");
             console.log(e);
         }
-        State.eventHandler.dispatchEvent("selectend");
+        State.eventHandler.dispatchEvent("selectend", e);
     }
 
     // trigger "event" (fully completed after release)
@@ -41,7 +41,7 @@ class XRInputClass
             console.log("select event!");
             console.log(e);
         }
-        State.eventHandler.dispatchEvent("select");
+        State.eventHandler.dispatchEvent("select", e);
     }
 
     // side button start
@@ -52,7 +52,7 @@ class XRInputClass
             console.log("squeeze pressed!");
             console.log(e);
         }
-        State.eventHandler.dispatchEvent("squeezestart");
+        State.eventHandler.dispatchEvent("squeezestart", e);
     }
 
     // side button end
@@ -63,7 +63,7 @@ class XRInputClass
             console.log("squeeze released!");
             console.log(e);
         }
-        State.eventHandler.dispatchEvent("squeezeend");
+        State.eventHandler.dispatchEvent("squeezeend", e);
     }
 
     // side button "event" (fully completed after release)
@@ -71,10 +71,10 @@ class XRInputClass
     {
         if (State.debugMode)
         {
-            console.log("squeeze event completed!");
+            console.log("squeeze event!");
             console.log(e);
         }
-        State.eventHandler.dispatchEvent("squeeze");
+        State.eventHandler.dispatchEvent("squeeze", e);
     }
 
     // controller connection
@@ -105,14 +105,13 @@ class XRInputClass
 
     Update()
     {
-        if (State.debugMode)
-        {
-            if (this.inputSources != null) this.debugOutput();
-        }
+        if (State.debugMode) this.debugOutput();
     }
 
     debugOutput()
     {
+        if (this.inputSources == null) return;
+
         this.inputDebugString = "";
         this.inputSources.forEach((e) =>
         {
@@ -131,11 +130,12 @@ class XRInputClass
                 {
                     this.inputDebugString += e.handedness + " joystick:\n";
 
-                    if (axisIndex % 2 == 0) // X (typically 0 or 2)
+                    // regardless of axis count, odds will be X, evens will be Y
+                    if (axisIndex % 2 == 0)
                     {
                         this.inputDebugString += "x: " + axis + "\n";
                     }
-                    else // Y (typically be 1 or 3)
+                    else // Y (typically 1 or 3)
                     {
                         this.inputDebugString += "y: " + axis + "\n";
                     }
@@ -149,35 +149,30 @@ class XRInputClass
 //xrInput singleton
 const XRInput = new XRInputClass();
 
-// init input on XR session start
+// subscribe to input events on XR session start
 State.eventHandler.addEventListener("xrsessionstarted", (e) =>
 {
-    if (State.debugMode) console.warn("xr session started");
-    State.currentSession = e;
-    State.isXRSession = true;
-
     e.addEventListener('selectend', XRInput.onSelectEnd.bind(XRInput));
     e.addEventListener('selectstart', XRInput.onSelectStart.bind(XRInput));
     e.addEventListener('select', XRInput.onSelect.bind(XRInput));
     e.addEventListener('squeezestart', XRInput.onSqueezeStart.bind(XRInput));
     e.addEventListener('squeezeend', XRInput.onSqueezeEnd.bind(XRInput));
+    e.addEventListener('squeeze', XRInput.onSqueeze.bind(XRInput));
     e.addEventListener('connected', XRInput.onConnected.bind(XRInput));
     e.addEventListener('disconnected', XRInput.onDisconnected.bind(XRInput));
-
-    // console.log(Renderer.xr.getSession().inputSources)
-
 });
 
 State.eventHandler.addEventListener("inputsourceschange", (e) =>
 {
     XRInput.inputSources = e.session.inputSources;
-    const isUserAgentMetachromium = navigator.userAgent.indexOf("Mchr") !== -1;
 
     // metachromium-specific hack to fix nonconformance bug
-    const inputNum = isUserAgentMetachromium !== -1 ? 2 : XRInput.inputSources.length
+    const isUserAgentMetachromium = navigator.userAgent.indexOf("Mchr") !== -1;
+    const inputNum = isUserAgentMetachromium ? 2 : XRInput.inputSources.length
+
     for (let i = 0; i < inputNum; i++)
     {
-        if (typeof (isUserAgentMetachromium || XRInput.inputSources[ i ].gripSpace) != undefined)
+        if (isUserAgentMetachromium || XRInput.inputSources[ i ].gripSpace != undefined)
         {
             if (State.debugMode) console.log("adding controller grip " + i);
             XRInput.controllerGrips.push(Renderer.xr.getControllerGrip(i));
@@ -187,9 +182,6 @@ State.eventHandler.addEventListener("inputsourceschange", (e) =>
 
 State.eventHandler.addEventListener("xrsessionended", () =>
 {
-    if (State.debugMode) console.warn("xr session ended");
-    State.currentSession = null;
-    State.isXRSession = false;
     XRInput.controllerGrips = [];
     XRInput.inputSources = null;
 });

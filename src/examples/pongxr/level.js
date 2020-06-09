@@ -13,8 +13,6 @@ class Level
 {
     constructor(posRot)
     {
-
-        // console.log("creating Level");
         const levelInstance = new Object3D();
         const light = new PointLight(0xffffff, 4);
         levelInstance.add(light);
@@ -58,10 +56,9 @@ class Level
             transparent: true
         });
 
-        // const goalMat = new MeshBasicMaterial({ color: 0x000000, wireframe: true, side: DoubleSide, emissive: 0x00ff00 });
+
         const goal = new Mesh(goalGeo, goalMat);
         goal.name = "goal";
-        // goalMat.rotateOnAxis(new Vector3(1, 0, 0), MathUtils.degToRad(90));
         goal.rotateOnAxis(new Vector3(0, 0, 1), MathUtils.degToRad(90));
         goal.position.z = 3;
 
@@ -84,7 +81,6 @@ class Level
         levelInstance.rotation.copy(posRot.rotation);
 
         levelInstance.updateMatrixWorld();
-        // scene.updateMatrixWorld();
 
         // transfer sceneCube offset directly to children
         // necessary for RigidBody alignment
@@ -138,7 +134,6 @@ class Level
             {
                 e.rb.material = frictionlessMat;
             }
-
 
             // game logic
             if (e.name == "goal")

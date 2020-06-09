@@ -14,6 +14,7 @@ class PeerConnection
         {
             location.href += '?' + ((Math.random() * 10000) | 0);
         }
+
         this.remoteSync = new RS.RemoteSync(
             new WebRTCClient(
                 new FirebaseSignalingServer({
@@ -41,7 +42,6 @@ class PeerConnection
             this.remoteSync.sync();
         }
         this.scene.add(networkingUpdate);
-
     }
 
     onOpen(id)
@@ -66,49 +66,59 @@ class PeerConnection
 
     onAdd(destId, objectId, info)
     {
-        console.log("onAdd: adding " + objectId);
-        console.log(info);
+
+        if (State.debugMode)
+        {
+            console.log("onAdd: adding " + objectId);
+            console.log(info);
+        }
     }
 
     onRemove(destId, objectId, object)
     {
-        console.log("onRemove: removing " + objectId);
-        console.log(object);
-
+        if (State.debugMode)
+        {
+            console.log("onRemove: removing " + objectId);
+            console.log(object);
+        }
         if (object.parent !== null) object.parent.remove(object);
     }
 
-
     onClose(destId)
     {
-        console.log('Disconnected to ' + destId);
+        if (State.debugMode) console.log('Disconnected to ' + destId);
     }
 
     onError(error)
     {
-        console.log(error);
+        console.error(error);
     }
 
     onConnect(destId)
     {
-        console.log('onConnect: Connected with ' + destId);
+        if (State.debugMode) console.log('onConnect: Connected with ' + destId);
 
-
+        // weird race condition workaround 
+        setTimeout(function ()
+        {
+            State.isMaster = this.remoteSync.master;
+            if (State.debugMode) console.log("Master: " + State.isMaster);
+        }.bind(this), 1);
     }
 
     onDisconnect(destId, object)
     {
-        console.log('Disconnected with ' + destId);
+        if (State.debugMode) console.log('Disconnected with ' + destId);
     }
 
     connect(id)
     {
         if (id === this.clientId)
         {
-            console.log(id + ' is your id');
+            if (State.debugMode) console.log(id + ' is your id');
             return;
         }
-        console.log('Connecting with ' + id);
+        if (State.debugMode) console.log('Connecting with ' + id);
         this.remoteSync.connect(id);
     }
 
@@ -122,8 +132,6 @@ class PeerConnection
             this.connect(id);
         }
     }
-
-    showMessage(str) { console.log(str); }
 }
 
 export default PeerConnection;

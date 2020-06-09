@@ -1,22 +1,20 @@
 /**
  * @author mrdoob / http://mrdoob.com
  * @author Mugen87 / https://github.com/Mugen87
- * gently modified by MichaelHazani / https://github.com/MichaelHazani
+ * modified for Sandcastle by @author MichaelHazani / https://github.com/MichaelHazani
  */
 
 import State from "../../state"
+import Renderer from "../../renderer"
 
-class VRButton
+class SessionHandler
 {
-    constructor(renderer, options)
+    constructor()
     {
-        this.renderer = renderer;
+        this.renderer = Renderer;
         const that = this;
         this.showEnterVR = this.showEnterVR.bind(this);
-        if (options)
-        {
-            console.error('THREE.VRButton: The "options" parameter has been removed. Please set the reference space type via renderer.xr.setReferenceSpaceType() instead.');
-        }
+
         if ('xr' in navigator)
         {
             this.button = document.createElement('this.button');
@@ -50,7 +48,6 @@ class VRButton
     }
     showEnterVR( /*device*/) 
     {
-        let currentSession = null;
         const onSessionStarted = (session) =>
         {
             session.addEventListener('end', onSessionEnded);
@@ -58,22 +55,27 @@ class VRButton
             session.addEventListener('inputsourceschange', onInputSourcesChange);
 
             State.eventHandler.dispatchEvent('xrsessionstarted', session);
+            if (State.debugMode) console.warn("xr session started");
             this.button.textContent = 'EXIT VR';
-            currentSession = session;
-        }
-        const onInputSourcesChange = (event) =>
-        {
-            State.eventHandler.dispatchEvent('inputsourceschange', event);
-            // console.log("input sources change");
-        }
+            State.isXRSession = true;
+            State.currentSession = session;
 
+        }
 
         const onSessionEnded = ( /*event*/) =>
         {
-            currentSession.removeEventListener('end', onSessionEnded);
+            State.currentSession.removeEventListener('end', onSessionEnded);
             State.eventHandler.dispatchEvent('xrsessionended');
+            if (State.debugMode) console.warn("xr session ended");
             this.button.textContent = 'ENTER VR';
-            currentSession = null;
+            State.isXRSession = false;
+            State.currentSession = null;
+        }
+
+        const onInputSourcesChange = (event) =>
+        {
+            State.eventHandler.dispatchEvent('inputsourceschange', event);
+            if (State.debugMode) console.log("input sources change");
         }
 
         this.button.style.display = '';
@@ -95,7 +97,7 @@ class VRButton
 
         this.button.onclick = () =>
         {
-            if (currentSession === null)
+            if (State.currentSession === null)
             {
                 // WebXR's requestReferenceSpace only works if the corresponding feature
                 // was requested at session creation time. For simplicity, just ask for
@@ -106,15 +108,10 @@ class VRButton
                 var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
 
                 navigator.xr.requestSession('immersive-vr', sessionInit).then(onSessionStarted);
-                // navigator.xr.addEventListener('sessiongranted', function (evt)
-                // {
-                //     console.log("session granted!");
-                // })
-
             }
             else
             {
-                currentSession.end();
+                State.currentSession.end();
             }
         };
     }
@@ -153,4 +150,4 @@ class VRButton
     }
 }
 
-export default VRButton; 
+export default SessionHandler; 

@@ -4,7 +4,7 @@ import { scene } from "../examples/pongxr/scene"
 import State from "./state";
 import { PerspectiveCamera, AudioListener } from "three";
 import EngineEditorCamera from "./util/cameracontrols/EngineEditorCamera";
-import VRButton from "./util/webxr/SessionHandler";
+import SessionHandler from "./util/webxr/sessionhandler";
 import Renderer from "./renderer";
 import Physics from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
@@ -38,7 +38,7 @@ Renderer.setAnimationLoop(() =>
 document.querySelector(".app").appendChild(Renderer.domElement);
 
 // WebXR button
-document.querySelector(".app").appendChild(new VRButton(Renderer));
+document.querySelector(".app").appendChild(new SessionHandler());
 
 window.addEventListener('resize', () =>
 {

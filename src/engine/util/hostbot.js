@@ -1,4 +1,5 @@
 import Speech from 'speak-tts'
+import State from '../state';
 
 const messageType = { log: 1, warn: 2, error: 3 };
 
@@ -27,7 +28,7 @@ class HostBot
         this.networking.remoteSync.addEventListener('error', this.onError.bind(this));
         this.networking.remoteSync.addEventListener('connect', this.onConnect.bind(this));
         this.networking.remoteSync.addEventListener('disconnect', this.onDisconnect.bind(this));
-        console.log("HostBot ready")
+        if (State.debugMode) console.log("HostBot ready")
         // this.networking.remoteSync.addEventListener('receive', this.onReceive.bind(this));
         // this.networking.remoteSync.addEventListener('add', this.onAdd.bind(this));
         // this.networking.remoteSync.addEventListener('remove', this.onRemove.bind(this));
@@ -59,10 +60,11 @@ class HostBot
     log(message, type)
     {
         this.speech.speak({ text: message });
+        if (!State.debugMode) return;
+
         switch (type)
         {
             default:
-
             case messageType.log:
                 console.log(message);
                 break;

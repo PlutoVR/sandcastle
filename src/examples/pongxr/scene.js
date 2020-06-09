@@ -3,29 +3,26 @@ WHEN CORE IS WORKING:
 - TEST IN THE SOCIAL PLACES
 - RESPONSIVE DESIGN: PHONE
 - RESPONSIVE DESIGN: MAGIC LEAP
-
 */
 
 import { Scene, Object3D } from "three";
 import XRInput from "../../engine/xrinput"
 import PeerConnection from '../../engine/networking/PeerConnection'
-
-import Paddle from "./paddle"
-import Ball from "./ball"
-import Level from "./level"
-import PlacementCube from "./placementcube"
-import HostBot from "../../engine/util/hostbot"
 import State from "../../engine/state";
 import Physics from "../../engine/physics/physics"
 
+import HostBot from "../../engine/util/hostbot"
+import Level from "./level"
+import Paddle from "./paddle"
+import Ball from "./ball"
+import PlacementCube from "./placementcube"
 
 const scene = new Scene();
 const networking = new PeerConnection(scene);
 const hostBot = new HostBot(networking);
 let ball, placementCube;
 
-// Register custom States & events
-State.isMaster = true; // assume until proven otherwise
+// custom States & events
 State.eventHandler.registerEvent('gameover');
 const GameState = { placement: 1, play: 2 }
 
@@ -42,13 +39,13 @@ const createPongLevel = (placementCube) =>
     scene.add(level);
     networking.remoteSync.addLocalObject(level, { type: "level", posRot: curPosRot }, true);
 
-    // dumb h a c k for the other side 
+    // dumb hack for the other side 
     placementCube.scale.set(0, 0, 0);
 
     // local
     scene.remove(placementCube);
-    // remote placement cube removal, not working curretly
-    // networking.remoteSync.removeSharedObject(3);
+    // remote placement cube removal, not currently working on metachromium
+    networking.remoteSync.removeSharedObject(3);
 
     // BALL
     if (State.isMaster)
@@ -63,52 +60,10 @@ const createPongLevel = (placementCube) =>
 const initPlacement = () =>
 {
     State.GameState = GameState.placement;
-
-    // PLACEMENT CUBE
     placementCube = PlacementCube();
     scene.add(placementCube);
     networking.remoteSync.addSharedObject(placementCube, 3, true);
-
-    // PADDLES 
-
-    const paddle1 = new Paddle();
-    scene.add(paddle1);
-    networking.remoteSync.addLocalObject(paddle1, { type: "paddle" }, true);
-
-    const paddle2 = new Paddle();
-    scene.add(paddle2);
-    networking.remoteSync.addLocalObject(paddle2, { type: "paddle" }, true);
-
-
-    // local paddle controller component to control player's networked paddle
-    // note: we're NOT directly hooking up any XRInput data to networking 
-    // only connecting the object impacted by it
-    const LocalPaddleController = new Object3D();
-    LocalPaddleController.Update = () =>
-    {
-        if (XRInput.controllerGrips != null)
-        {
-            if (XRInput.controllerGrips[ 0 ] != undefined)
-            {
-                paddle1.position.copy(XRInput.controllerGrips[ 0 ].position);
-                paddle1.quaternion.copy(XRInput.controllerGrips[ 0 ].quaternion);
-            }
-            if (XRInput.controllerGrips[ 1 ] != undefined)
-            {
-                paddle2.position.copy(XRInput.controllerGrips[ 1 ].position);
-                paddle2.quaternion.copy(XRInput.controllerGrips[ 1 ].quaternion);
-            }
-        }
-    }
-    scene.add(LocalPaddleController)
 }
-
-scene.init = () =>
-{
-    initPlacement();
-}
-
-////////// CUSTOM EVENTS //////////
 
 /// GAME STATE
 
@@ -124,6 +79,7 @@ State.eventHandler.addEventListener("gameover", (e) =>
 });
 
 /// INPUT
+
 let doubleClick = false;
 
 State.eventHandler.addEventListener("select", e =>
@@ -155,7 +111,7 @@ State.eventHandler.addEventListener("select", e =>
             }
             else
             {
-                console.log("doubleclick");
+                if (State.debugMode) console.log("doubleclick");
                 // TOOD: implement dclick reset
                 // location.reload();
             }
@@ -163,21 +119,41 @@ State.eventHandler.addEventListener("select", e =>
     }
 });
 
+// Add paddles when we know our inputs
+State.eventHandler.addEventListener("inputsourceschange", e =>
+{
+    const paddles = [];
+    XRInput.controllerGrips.forEach((e, i) =>
+    {
+        const paddle = new Paddle();
+        scene.add(paddle);
+        paddles.push(paddle);
+        networking.remoteSync.addLocalObject(paddle, { type: "paddle" }, true);
+    });
+
+    // local paddle controller component to control player's networked paddle
+    // note: *all* XRInput data is local. 
+    // only the objects sync'd to it are networked.
+    const LocalPaddleController = new Object3D();
+    LocalPaddleController.Update = () =>
+    {
+        paddles.forEach((paddle, i) =>
+        {
+            if (XRInput.controllerGrips[ i ] != undefined)
+            {
+                paddle.position.copy(XRInput.controllerGrips[ i ].position);
+                paddle.quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
+            }
+        });
+    }
+    scene.add(LocalPaddleController)
+});
 
 /// NETWORKING 
 
 networking.remoteSync.addEventListener("open", (e) =>
 {
-    scene.init();
-});
-
-networking.remoteSync.addEventListener("connect", (e) =>
-{
-    // setTimeout due to weird isMaster bug
-    setTimeout(function () 
-    {
-        State.isMaster = networking.remoteSync.master;
-    }, 1);
+    initPlacement();
 });
 
 networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
@@ -214,7 +190,7 @@ networking.remoteSync.addEventListener('add', (destId, objectId, info) =>
 
 networking.remoteSync.addEventListener('remove', (remotePeerId, objectId, object) =>
 {
-    console.log("removing");
+    if (State.debugMode) console.log("removing");
     scene.remove(object);
     if (object.parent !== null) object.parent.remove(object);
 });
