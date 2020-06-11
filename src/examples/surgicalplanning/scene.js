@@ -2,9 +2,9 @@
 // important: test in metachromium which enables transparent WebXR rendering on desktop!
 // https://github.com/webaverse/metachromium-bin
 
-import { Scene, Color, Mesh, Plane, DoubleSide, SphereBufferGeometry, MeshNormalMaterial, MeshPhongMaterial, Object3D, HemisphereLight, DirectionalLight, SpotLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage, Vector3 } from "three";
+import { Scene, Color, Mesh, Plane, DoubleSide, SphereBufferGeometry, PlaneBufferGeometry, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, Object3D, HemisphereLight, DirectionalLight, SpotLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
-import { camera} from "../../engine/engine"
+import { camera } from "../../engine/engine"
 import { Renderer } from "../../engine/renderer"
 import { XRInput } from "../../engine/xrinput";
 import { State } from "../../engine/state";
@@ -47,6 +47,23 @@ scene.init = () =>
     Renderer.clippingPlanes = [localPlane]
     Renderer.localClippingEnabled = true;
 
+    var clippingPlaneGeometry = new PlaneBufferGeometry( localPlane.x, localPlane.y, localPlane.z, 1 )
+    var clippingPlaneMaterial = new MeshBasicMaterial( {
+        color: 'green',
+        side: DoubleSide,
+
+        opacity: 0.2,
+        transparent: true,
+    } );
+
+    var clippingPlaneMesh = new Mesh( clippingPlaneGeometry, clippingPlaneMaterial );
+    clippingPlaneMesh.matrixAutoUpdate = false;
+
+    scene.add( clippingPlaneMesh );
+    clippingPlaneMesh.Update = () => {
+        clippingPlaneMesh.set(localPlane.normal.x, localPlane.normal.y, localPlane.normal.z)
+    }
+
     const loader = new GLTFLoader();
 
     // "A simulated heart" developed by Ryan James
@@ -67,7 +84,6 @@ scene.init = () =>
             // ***** Clipping setup (material): *****
             clippingPlanes: [ localPlane ],
             clipShadows: true
-
         });
 
         heart.material = heartMaterial;
@@ -90,11 +106,10 @@ scene.init = () =>
 
             if (e.isSelecting) {
                 heart.position.copy(e.position);
-                heart.quaternion.copy(e.quaternion);
+                //heart.quaternion.copy(e.quaternion);
             }
 
             Renderer.xr.getController(gripIndex);
-            
         }
         networking.remoteSync.addSharedObject(sp);
         scene.add(sp);
