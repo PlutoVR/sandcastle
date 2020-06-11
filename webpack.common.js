@@ -58,7 +58,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(gltf|glb|obj|mtl|fbx|dae)$/,
+                test: /\.(gltf|glb|obj|mtl|fbx|dae|bin)$/,
                 use: [
                     {
                         loader: 'file-loader',

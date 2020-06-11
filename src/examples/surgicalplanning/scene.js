@@ -2,7 +2,7 @@
 // important: test in metachromium which enables transparent WebXR rendering on desktop!
 // https://github.com/webaverse/metachromium-bin
 
-import { Scene, Color, Mesh, Plane, DoubleSide, SphereBufferGeometry, PlaneBufferGeometry, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, Object3D, HemisphereLight, DirectionalLight, SpotLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage, Vector3 } from "three";
+import { AmbientLight, Scene, Color, Mesh, Plane, DoubleSide, SphereBufferGeometry, PlaneBufferGeometry, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, Object3D, HemisphereLight, DirectionalLight, SpotLight, ShaderMaterial, AdditiveBlending, BufferGeometry, TextureLoader, Float32BufferAttribute, Points, DynamicDrawUsage, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { camera } from "../../engine/engine"
 import { Renderer } from "../../engine/renderer"
@@ -17,6 +17,9 @@ const networking = new PeerConnection(scene);
 
 scene.init = () =>
 {
+    var light = new AmbientLight( 0x404040 ); // soft white light
+    scene.add( light );
+
     var spotLight = new SpotLight( 0xffffff );
     spotLight.angle = Math.PI / 5;
     spotLight.penumbra = 0.2;
@@ -61,7 +64,7 @@ scene.init = () =>
 
     scene.add( clippingPlaneMesh );
     clippingPlaneMesh.Update = () => {
-        clippingPlaneMesh.set(localPlane.normal.x, localPlane.normal.y, localPlane.normal.z)
+        //clippingPlaneMesh.set(localPlane.normal.x, localPlane.normal.y, localPlane.normal.z)
     }
 
     const loader = new GLTFLoader();
