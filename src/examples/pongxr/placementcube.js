@@ -1,5 +1,5 @@
 import { MeshBasicMaterial, BoxBufferGeometry, Color, Clock, Vector3, Mesh, Object3D } from "three";
-import { camera } from "../../engine/engine"
+import { Camera } from "../../engine/engine"
 import State from "../../engine/state"
 import XRInput from "../../engine/xrinput"
 
@@ -10,7 +10,7 @@ const PlacementCube = () =>
     let forwardOffset = new Vector3();
     let CamForward = new Vector3();
     let empty = new Object3D();
-    camera.add(empty);
+    Camera.add(empty);
     const placementCubeInstance = new Mesh(new BoxBufferGeometry(2, 2, 4, 8, 8, 16), new MeshBasicMaterial({ color: new Color("rgb(0, 255, 0)"), wireframe: true }));
 
     placementCubeInstance.Update = function ()

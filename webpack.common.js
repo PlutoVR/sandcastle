@@ -10,7 +10,6 @@ module.exports = {
     output: {
         path: BUILD_DIR,
         filename: './bundle.js',
-        // publicPath: '/'
     },
     module: {
         rules: [
@@ -58,7 +57,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(gltf|glb|obj|mtl|fbx|dae)$/,
+                test: /\.(gltf|glb|obj|mtl|fbx|dae|bin)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -102,7 +101,6 @@ module.exports = {
         new ScriptExtHtmlWebpackPlugin({
             defaultAttribute: 'defer'
         }),
-        // new BundleAnalyzerPlugin()
     ],
     resolve: {
         extensions: [ '.js', '.es6' ],

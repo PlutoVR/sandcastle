@@ -21,6 +21,7 @@ const scene = new Scene();
 const networking = new PeerConnection(scene);
 const hostBot = new HostBot(networking);
 let ball, placementCube;
+let paddles = [];
 
 // custom States & events
 State.eventHandler.registerEvent('gameover');
@@ -122,7 +123,8 @@ State.eventHandler.addEventListener("select", e =>
 // Add paddles when we know our inputs
 State.eventHandler.addEventListener("inputsourceschange", e =>
 {
-    const paddles = [];
+    if (paddles.length != 0) return //  avoid false positives, i.e headset put down, but paddles already instantiated
+
     XRInput.controllerGrips.forEach((e, i) =>
     {
         const paddle = new Paddle();
@@ -134,19 +136,19 @@ State.eventHandler.addEventListener("inputsourceschange", e =>
     // local paddle controller component to control player's networked paddle
     // note: *all* XRInput data is local. 
     // only the objects sync'd to it are networked.
-    const LocalPaddleController = new Object3D();
-    LocalPaddleController.Update = () =>
+    // note2: we don't add it to rAF via Update() due to accumulated rAF lagginess over time.
+
+    setInterval(function ()
     {
         paddles.forEach((paddle, i) =>
         {
             if (XRInput.controllerGrips[ i ] != undefined)
             {
-                paddle.position.copy(XRInput.controllerGrips[ i ].position);
-                paddle.quaternion.copy(XRInput.controllerGrips[ i ].quaternion);
+                paddle.position.lerp(XRInput.controllerGrips[ i ].position, .5);
+                paddle.quaternion.slerp(XRInput.controllerGrips[ i ].quaternion, .5);
             }
         });
-    }
-    scene.add(LocalPaddleController)
+    }, 50);
 });
 
 /// NETWORKING 

@@ -3,7 +3,7 @@ import { scene } from "../examples/pongxr/scene"
 
 import State from "./state";
 import { PerspectiveCamera, AudioListener } from "three";
-import EngineEditorCamera from "./util/cameracontrols/EngineEditorCamera";
+import EngineEditorCamera from "./util/Cameracontrols/EngineEditorCamera";
 import SessionHandler from "./util/webxr/sessionhandler";
 import Renderer from "./renderer";
 import Physics from "./physics/physics";
@@ -11,18 +11,18 @@ import Physics from "./physics/physics";
 import XRInput from "./xrinput"
 
 // editor camera + audiolistener
-const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-scene.add(new EngineEditorCamera(camera, Renderer.domElement));
+export const Camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+scene.add(new EngineEditorCamera(Camera, Renderer.domElement));
 const listener = new AudioListener();
-camera.add(listener);
-scene.add(camera);
+Camera.add(listener);
+scene.add(Camera);
 State.globals.AudioListener = listener;
 
 // main app render loop
 Renderer.setAnimationLoop(() =>
 {
     // RENDERING
-    Renderer.render(scene, camera);
+    Renderer.render(scene, Camera);
 
     // INPUT
     if (State.isXRSession) XRInput.Update();
@@ -42,9 +42,7 @@ document.querySelector(".app").appendChild(new SessionHandler());
 
 window.addEventListener('resize', () =>
 {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    Camera.aspect = window.innerWidth / window.innerHeight;
+    Camera.updateProjectionMatrix();
     Renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
-export { camera }
