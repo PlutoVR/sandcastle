@@ -1,6 +1,6 @@
 import { World, NaiveBroadphase, Body, Plane, Box, Sphere, Cylinder, Vec3 } from "cannon";
 import CannonDebugRenderer from "../util/debughelpers/CannonDebugRenderer";
-import { Vector3, Quaternion as THREEQuaternion } from "three";
+import { Vector3 } from "three";
 import State from "../state";
 import XRInput from "../../engine/xrinput"
 
