@@ -12,7 +12,7 @@ import { PeerConnection } from '../../engine/networking/PeerConnection'
 
 const GLTFOffice = require("./assets/models/office/ryans-home-office.gltf");
 const GLTFOfficeBin = require("./assets/models/office/ryans-home-office.bin");
-const GLTFOfficeJpg = require("./assets/models/office/ryans-home-office.jpg");
+const GLTFOfficePng = require("./assets/models/office/ryans-home-office.png");
 
 export const scene = new Scene();
 //const networking = new PeerConnection(scene);
@@ -32,9 +32,9 @@ scene.init = () =>
         // it thinks it is in the directory as the gltf file (i.e. /assets/models/)
         // However, in webpack.common.js we put images in /assets/images
         // so we need to point the image at the appropriate path
-        if (uri.includes("ryans-home-office.jpg"))
+        if (uri.includes("ryans-home-office.png"))
         {
-            uri = GLTFOfficeJpg
+            uri = GLTFOfficePng
         }
 
         return oldResolve(uri)

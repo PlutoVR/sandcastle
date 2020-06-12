@@ -1,1 +1,241 @@
-{"accessors":[{"bufferView":0,"componentType":5125,"count":177678,"type":"SCALAR"},{"bufferView":1,"componentType":5126,"count":177678,"max":[1.11131143569946,1.23632526397705,1.17549435082229e-38],"min":[-3.22227263450623,-1.84865629673004,-6.13941478729248],"type":"VEC3"},{"bufferView":2,"componentType":5126,"count":177678,"type":"VEC2"}],"asset":{"generator":"ply_to_gltf","version":"2.0"},"bufferViews":[{"buffer":0,"byteLength":710712,"target":34963},{"buffer":0,"byteLength":2132136,"byteOffset":710712,"target":34962},{"buffer":0,"byteLength":1421424,"byteOffset":2842848,"target":34962}],"buffers":[{"byteLength":4264272,"uri":"ryans-home-office.bin"}],"images":[{"uri":"ryans-home-office.jpg"}],"materials":[{"pbrMetallicRoughness":{"baseColorTexture":{"index":0}}}],"meshes":[{"primitives":[{"attributes":{"POSITION":1,"TEXCOORD_0":2},"indices":0,"material":0,"mode":4}]}],"nodes":[{"mesh":0}],"samplers":[{"magFilter":9728,"minFilter":9728,"wrapR":10497,"wrapS":33071,"wrapT":33071}],"scene":0,"scenes":[{"nodes":[0]}],"textures":[{"sampler":0,"source":0}]}
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.0.5",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Object_0"
+        }
+    ],
+    "materials" : [
+        {
+            "name" : "Material_0",
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 0,
+                    "texCoord" : 0
+                },
+                "metallicFactor" : 1,
+                "roughnessFactor" : 1
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Mesh_0",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                },
+                {
+                    "attributes" : {
+                        "POSITION" : 4,
+                        "NORMAL" : 5,
+                        "TEXCOORD_0" : 6
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                },
+                {
+                    "attributes" : {
+                        "POSITION" : 7,
+                        "NORMAL" : 8,
+                        "TEXCOORD_0" : 9
+                    },
+                    "indices" : 10,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "source" : 0
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "ryans-home-office",
+            "uri" : "ryans-home-office.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 65535,
+            "max" : [
+                3.107424259185791,
+                2.9375267028808594,
+                2.3338735103607178
+            ],
+            "min" : [
+                -3.0253734588623047,
+                -0.1320248693227768,
+                -1.996368646621704
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 65535,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 65535,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 65535,
+            "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 65535,
+            "max" : [
+                3.083371877670288,
+                2.5834414958953857,
+                2.401257038116455
+            ],
+            "min" : [
+                -2.548391580581665,
+                -0.12034652382135391,
+                -1.1427083015441895
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 5,
+            "componentType" : 5126,
+            "count" : 65535,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 6,
+            "componentType" : 5126,
+            "count" : 65535,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 7,
+            "componentType" : 5126,
+            "count" : 46608,
+            "max" : [
+                3.1146740913391113,
+                2.8516790866851807,
+                2.251183032989502
+            ],
+            "min" : [
+                -2.881847381591797,
+                -0.14745531976222992,
+                -1.9958205223083496
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 8,
+            "componentType" : 5126,
+            "count" : 46608,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 9,
+            "componentType" : 5126,
+            "count" : 46608,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 10,
+            "componentType" : 5123,
+            "count" : 46608,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 786420,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 786420,
+            "byteOffset" : 786420
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 524280,
+            "byteOffset" : 1572840
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 131070,
+            "byteOffset" : 2097120
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 786420,
+            "byteOffset" : 2228192
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 786420,
+            "byteOffset" : 3014612
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 524280,
+            "byteOffset" : 3801032
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 559296,
+            "byteOffset" : 4325312
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 559296,
+            "byteOffset" : 4884608
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 372864,
+            "byteOffset" : 5443904
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 93216,
+            "byteOffset" : 5816768
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 5909984,
+            "uri" : "ryans-home-office.bin"
+        }
+    ]
+}
