@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --open --config webpack.dev.js",
+    "start": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --progress --profile --colors --config webpack.prod.js"
   },
   "keywords": [],
