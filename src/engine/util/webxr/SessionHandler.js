@@ -11,12 +11,26 @@ class SessionHandler
 {
     constructor()
     {
-        this.renderer = Renderer;
         const that = this;
+        this.renderer = Renderer;
         this.showEnterVR = this.showEnterVR.bind(this);
 
         if ('xr' in navigator)
         {
+            // autostart session for XRPackages and general futureproofing  
+            navigator.xr.addEventListener('sessiongranted', e =>
+            {
+                navigator.xr.requestSession('immersive-vr', {
+                    optionalFeatures: [
+                        'local-floor',
+                        'bounded-floor',
+                    ],
+                }).then(session =>
+                {
+                    that.onSessionStarted(session);
+                });
+            });
+
             this.button = document.createElement('this.button');
             this.button.style.display = 'none';
             this.stylizeElement(this.button);
@@ -25,7 +39,6 @@ class SessionHandler
                 supported ? that.showEnterVR() : that.showWebXRNotFound();
             });
             return this.button;
-
         }
         else
         {
@@ -45,39 +58,40 @@ class SessionHandler
             this.stylizeElement(message);
             return message;
         }
+
     }
-    showEnterVR( /*device*/) 
+
+    onSessionStarted(session) 
     {
-        const onSessionStarted = (session) =>
-        {
-            session.addEventListener('end', onSessionEnded);
-            this.renderer.xr.setSession(session);
-            session.addEventListener('inputsourceschange', onInputSourcesChange);
+        session.addEventListener('end', this.onSessionEnded.bind(this));
+        this.renderer.xr.setSession(session);
+        session.addEventListener('inputsourceschange', this.onInputSourcesChange);
 
-            State.eventHandler.dispatchEvent('xrsessionstarted', session);
-            if (State.debugMode) console.warn("xr session started");
-            this.button.textContent = 'EXIT VR';
-            State.isXRSession = true;
-            State.currentSession = session;
+        State.eventHandler.dispatchEvent('xrsessionstarted', session);
+        if (State.debugMode) console.warn("xr session started");
+        this.button.textContent = 'EXIT VR';
+        State.isXRSession = true;
+        State.currentSession = session;
+    }
 
-        }
+    onSessionEnded( /*event*/) 
+    {
+        State.currentSession.removeEventListener('end', this.onSessionEnded);
+        State.eventHandler.dispatchEvent('xrsessionended');
+        if (State.debugMode) console.warn("xr session ended");
+        this.button.textContent = 'ENTER VR';
+        State.isXRSession = false;
+        State.currentSession = null;
+    }
 
-        const onSessionEnded = ( /*event*/) =>
-        {
-            State.currentSession.removeEventListener('end', onSessionEnded);
-            State.eventHandler.dispatchEvent('xrsessionended');
-            if (State.debugMode) console.warn("xr session ended");
-            this.button.textContent = 'ENTER VR';
-            State.isXRSession = false;
-            State.currentSession = null;
-        }
+    onInputSourcesChange(event)
+    {
+        State.eventHandler.dispatchEvent('inputsourceschange', event);
+        if (State.debugMode) console.log("input sources change");
+    }
 
-        const onInputSourcesChange = (event) =>
-        {
-            State.eventHandler.dispatchEvent('inputsourceschange', event);
-            if (State.debugMode) console.log("input sources change");
-        }
-
+    showEnterVR( /*device*/)
+    {
         this.button.style.display = '';
         this.button.style.cursor = 'pointer';
         this.button.style.left = 'calc(50% - 50px)';
@@ -105,9 +119,9 @@ class SessionHandler
                 // requestReferenceSpace call will fail if it turns out to be unavailable.
                 // ('local' is always available for immersive sessions and doesn't need to
                 // be requested separately.)
-                var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+                const sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
 
-                navigator.xr.requestSession('immersive-vr', sessionInit).then(onSessionStarted);
+                navigator.xr.requestSession('immersive-vr', sessionInit).then(this.onSessionStarted.bind(this));
             }
             else
             {
@@ -116,7 +130,7 @@ class SessionHandler
         };
     }
 
-    disableButton() 
+    disableButton()
     {
         this.button.style.display = '';
         this.button.style.cursor = 'auto';
