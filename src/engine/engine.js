@@ -18,19 +18,16 @@ export const Camera = new PerspectiveCamera(
   10000
 );
 scene.add(new EngineEditorCamera(Camera, Renderer.domElement));
-const listener = new AudioListener();
-Camera.add(listener);
+Camera.audioListener = new AudioListener();
+Camera.add(Camera.audioListener);
 scene.add(Camera);
-State.globals.AudioListener = listener;
 
 // main app render loop
 Renderer.setAnimationLoop(() => {
   // RENDERING
   Renderer.render(scene, Camera);
-
   // INPUT
   if (State.isXRSession) XRInput.Update();
-
   // PHYSICS
   if (!State.isPaused) Physics.Update();
 
@@ -42,7 +39,6 @@ Renderer.setAnimationLoop(() => {
 
 // DOM append
 document.querySelector(".app").appendChild(Renderer.domElement);
-
 // WebXR button
 document.querySelector(".app").appendChild(new SessionHandler());
 

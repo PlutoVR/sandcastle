@@ -1,4 +1,4 @@
-import { Scene, Object3D } from "three";
+import { Scene } from "three";
 import XRInput from "../../engine/xrinput";
 import PeerConnection from "../../engine/networking/PeerConnection";
 import State from "../../engine/state";
@@ -42,6 +42,7 @@ const createPongLevel = placementCube => {
 
   // local
   scene.remove(placementCube);
+
   // remote placement cube removal, not currently working on metachromium
   networking.remoteSync.removeSharedObject(PLACEMENTCUBEID);
 
@@ -60,7 +61,7 @@ const createPongLevel = placementCube => {
 
 const initPlacement = () => {
   State.GameState = GameState.placement;
-  placementCube = PlacementCube();
+  placementCube = new PlacementCube();
   scene.add(placementCube);
   networking.remoteSync.addSharedObject(placementCube, PLACEMENTCUBEID, true);
 };

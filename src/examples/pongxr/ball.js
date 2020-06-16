@@ -7,6 +7,8 @@ import {
   Mesh,
   PointLight,
 } from "three";
+
+import { Camera } from "../../engine/engine";
 import Physics from "../../engine/physics/physics";
 import frictionlessMat from "./frictionlessMaterial";
 
@@ -15,77 +17,75 @@ const hitAudioFile = require("./assets/audio/elecping.ogg");
 const vs = require("./assets/shaders/vs_defaultVertex.glsl");
 const fs_puddles = require("./assets/shaders/fs_puddles.glsl");
 
-class Ball {
-  constructor(position, addRigidBody) {
-    const ball = new Mesh(
-      new SphereBufferGeometry(0.2, 13, 13),
-      new ShaderMaterial({
-        uniforms: { time: { value: 0.0 } },
-        vertexShader: vs,
-        fragmentShader: fs_puddles,
-      })
-    );
-    ball.position.copy(position);
-    ball.name = "ball";
+class Ball extends Mesh {
+  constructor(position, addRigidBody, params) {
+    super(position, addRigidBody, params);
+    const geometry = new SphereBufferGeometry(0.2, 13, 13);
+    const material = new ShaderMaterial({
+      uniforms: { time: { value: 0.0 } },
+      vertexShader: vs,
+      fragmentShader: fs_puddles,
+    });
+    this.geometry = geometry;
+    this.material = material;
+
+    this.position.copy(position);
+    this.name = "ball";
     this.initPos = position;
 
     // physics
     if (addRigidBody == true) {
-      // console.log("adding RB to Ball");
-      ball.rb = Physics.addRigidBody(
-        ball,
+      // console.log("adding RB to ballRef");
+      this.rb = Physics.addRigidBody(
+        this,
         Physics.RigidBodyShape.Sphere,
         Physics.Body.DYNAMIC,
         1
       );
 
-      ball.rb.material = frictionlessMat;
-      setTimeout(function () {
-        // Audiolistener setTimeOut hack
-        // it doesn't exist until after scene load time, so...
-        // (also see src/engine/engine.js)
-        // TODO: solve more cleanly.
+      this.rb.material = frictionlessMat;
 
-        const hitAudio = new PositionalAudio(State.globals.AudioListener);
-        const audioLoader = new AudioLoader();
-        audioLoader.load(hitAudioFile, function (buffer) {
-          hitAudio.setBuffer(buffer);
-          hitAudio.setRefDistance(20);
-          ball.rb.addEventListener("collide", function (e) {
-            if (hitAudio.isPlaying) hitAudio.stop();
-            hitAudio.play();
-          });
+      // audio
+      const ballRef = this;
+      let hitAudio;
+      hitAudio = new PositionalAudio(Camera.audioListener);
+      const audioLoader = new AudioLoader();
+      audioLoader.load(hitAudioFile, function (buffer) {
+        hitAudio.setBuffer(buffer);
+        hitAudio.setRefDistance(20);
+        ballRef.rb.addEventListener("collide", function (e) {
+          if (hitAudio.isPlaying) hitAudio.stop();
+          hitAudio.play();
         });
-      }, 0);
-    } else {
-      //quickfix for other ball?
-      // ball.material.side = BackSide;
+      });
+
+      if (hitAudio === undefined) console.error("no AudioListener found!");
     }
 
-    // shader update
-    const startTime = Date.now();
-    ball.Update = () => {
-      if (ball.material.uniforms.time == undefined) return;
-      ball.material.uniforms.time.value = (6 * (Date.now() - startTime)) / 100;
-    };
-
-    //innerlight
+    // innerlight
     const bLight = new PointLight(0x6a0dad, 3);
-    ball.add(bLight);
+    this.add(bLight);
 
-    ball.reset = () => {
-      Physics.resetRigidbody(ball.rb);
-      ball.rb.position.copy(this.initPos);
-    };
+    this.startTime = Date.now();
+  }
 
-    ball.kickoff = () => {
-      ball.rb.velocity.set(rnd(-2, 2), rnd(-2, 2), rnd(-2, 2));
-    };
+  Update() {
+    if (this.material.uniforms.time == undefined) return;
+    this.material.uniforms.time.value =
+      (6 * (Date.now() - this.startTime)) / 100;
+  }
 
-    const rnd = (min, max) => {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
-    return ball;
+  reset() {
+    Physics.resetRigidbody(this.rb);
+    this.rb.position.copy(this.initPos);
+  }
+
+  kickoff() {
+    this.rb.velocity.set(this.rnd(-2, 2), this.rnd(-2, 2), this.rnd(-2, 2));
+  }
+
+  rnd(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
 

@@ -11,24 +11,30 @@ import { Camera } from "../../engine/engine";
 import State from "../../engine/state";
 import XRInput from "../../engine/xrinput";
 
-const PlacementCube = () => {
-  const c = new Clock();
-  // fix for world cam dir querying
-  let forwardOffset = new Vector3();
-  let CamForward = new Vector3();
-  let empty = new Object3D();
-  Camera.add(empty);
-  const placementCubeInstance = new Mesh(
-    new BoxBufferGeometry(2, 2, 4, 8, 8, 16),
-    new MeshBasicMaterial({
+class PlacementCube extends Mesh {
+  constructor(params) {
+    super(params);
+
+    this.c = new Clock();
+
+    // fix for world cam dir querying
+    this.forwardOffset = new Vector3();
+    this.CamForward = new Vector3();
+    let empty = new Object3D();
+    Camera.add(empty);
+
+    const pCubeGeo = new BoxBufferGeometry(2, 2, 4, 8, 8, 16);
+    const pCubeMat = new MeshBasicMaterial({
       color: new Color("rgb(0, 255, 0)"),
       wireframe: true,
-    })
-  );
+    });
 
-  placementCubeInstance.Update = function () {
-    this.material.color.g = Math.cos(c.getElapsedTime() * 5) / 2 + 0.5;
-    this.position.add(forwardOffset);
+    this.geometry = pCubeGeo;
+    this.material = pCubeMat;
+  }
+  Update() {
+    this.material.color.g = Math.cos(this.c.getElapsedTime() * 5) / 2 + 0.5;
+    this.position.add(this.forwardOffset);
     if (State.isMaster && XRInput.inputSources != null) {
       XRInput.inputSources.forEach((e, i) => {
         e.gamepad.axes.forEach((axis, axisIndex) => {
@@ -39,20 +45,19 @@ const PlacementCube = () => {
                 this.rotation.y += axis > 0 ? -0.01 : 0.01;
             } // Y
             else {
-              XRInput.controllerGrips[i].getWorldDirection(CamForward);
-              forwardOffset = CamForward.multiplyScalar(
+              XRInput.controllerGrips[i].getWorldDirection(this.CamForward);
+              this.forwardOffset = this.CamForward.multiplyScalar(
                 axis > 0 ? 0.02 : -0.02
               );
-              this.position.add(forwardOffset);
-              forwardOffset.x = forwardOffset.y = forwardOffset.z = 0;
+              this.position.add(this.forwardOffset);
+              this.forwardOffset.x = this.forwardOffset.y = this.forwardOffset.z = 0;
             }
             this.position.y = XRInput.controllerGrips[0].position.y;
           }
         });
       });
     }
-  };
-  return placementCubeInstance;
-};
+  }
+}
 
 export default PlacementCube;
