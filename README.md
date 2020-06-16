@@ -16,15 +16,17 @@
 
 - Tiny project build sizes (~250kb gzipped before assets, just a bit more than the logo image above!)
 
+
 ### Usage
 
-Run `npm init sandcastle NAMEOFPROJECT` _OR_ `npx create-sandcastle NAMEOFPROJECT`, where NAMEOFPROJECT is your desired project name. This will:
-
+Run `npm init sandcastle NAMEOFPROJECT` _OR_ `npx create-sandcastle NAMEOFPROJECT`, where NAMEOFPROJECT is your desired project name. 
+This will:
 1. clone this repo into a new folder of that name
 2. install Sandcastle's dependencies
 3. remove the `.git` repo
 4. launch the dev server and
 5. open the default scene (located at `./src/examples/defaultScene.js`) in your browser.
+
 
 #### Other useful commands:
 
