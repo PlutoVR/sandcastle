@@ -137,6 +137,7 @@ State.eventHandler.addEventListener("xrsessionstarted", e => {
 });
 
 State.eventHandler.addEventListener("inputsourceschange", e => {
+  XRInput.controllerGrips = [];
   XRInput.inputSources = e.session.inputSources;
 
   // metachromium-specific hack to fix nonconformance bug
