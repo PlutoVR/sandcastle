@@ -4,7 +4,7 @@
 // const PhysicsSolver = new PhysicsSolver();
 // PhysicsSolver.postMessage = PhysicsSolver.webkitPostMessage || PhysicsSolver.postMessage;
 
-// const sendDataToWorker = () => 
+// const sendDataToWorker = () =>
 // {
 //     PhysicsSolver.postMessage({
 //         // N: N,
@@ -44,7 +44,7 @@
 
 
 
-// function addBody(mesh) 
+// function addBody(mesh)
 // {
 //     const shape = new CANNON.Box(new CANNON.Vec3(.5, .5, .5));
 //     const body = new CANNON.Body({ mass: 1 });

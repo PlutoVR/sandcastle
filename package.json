@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --open --config webpack.dev.js",
+    "start": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --progress --profile --colors --config webpack.prod.js"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "dependencies": {
     "cannon": "^0.6.2",
     "firebase": "^7.14.5",
+    "speak-tts": "^2.0.8",
     "three": "^0.117.1"
   },
   "devDependencies": {
@@ -40,5 +41,13 @@
     "webpack-glsl-loader": "^1.0.1",
     "webpack-merge": "^4.2.2",
     "worker-loader": "^2.0.0"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": false,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "arrowParens": "avoid"
   }
 }
