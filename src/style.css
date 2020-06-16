@@ -1,30 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&display=swap');
-body 
-{
-    font-family: 'Montserrat', sans-serif;
-    font-size:1.25em;
-    overflow: hidden; 
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&display=swap");
+body {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25em;
+  overflow: hidden;
 }
 
-.info 
-{
-    width: 100%; 
-    z-index: 9; 
-    position: absolute;
-    bottom: 4em;
-    text-align: center;
+.info {
+  width: 100%;
+  z-index: 9;
+  position: absolute;
+  bottom: 4em;
+  text-align: center;
 }
 
-.app
-{
-    width: 100%;
-    height: 100%;            
-    position: absolute;
-    top: 0;
-    left: 0;
+.app {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-a 
-{
-color: hotpink;
+a {
+  color: hotpink;
 }

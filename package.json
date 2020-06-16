@@ -41,5 +41,13 @@
     "webpack-glsl-loader": "^1.0.1",
     "webpack-merge": "^4.2.2",
     "worker-loader": "^2.0.0"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": false,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "arrowParens": "avoid"
   }
 }
