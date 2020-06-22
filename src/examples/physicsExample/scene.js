@@ -32,9 +32,6 @@ scene.initGame = () => {
 
     // create controller models
     XRInput.CreateControllerModel(controller, scene);
-
-    // add to scene
-    scene.add(controller);
   });
 
   // BLOCK TOWER
