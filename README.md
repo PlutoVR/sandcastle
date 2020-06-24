@@ -35,6 +35,6 @@ This will:
 
 - `npm build-xrpk` will `npm build` and also place an [XR Package](https://github.com/webaverse/xrpackage) in the `dist` folder, so you can load it as a multiapp.
 
-Check out the [Wiki](https://github.com/MichaelHazani/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
+Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
 
 #### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_
