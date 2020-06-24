@@ -1,11 +1,12 @@
 const fs = require("fs");
+const path = require("path");
 const { execSync } = require("child_process");
 const inquirer = require("inquirer");
 
 let revisedJSON;
 
 (async () => {
-  console.log("------------\ninitalizing XRPK\n------------");
+  console.log("----------------\ninitalizing XRPK\n----------------");
   execSync("cd dist && xrpk init", {
     stdio: "inherit",
   });
@@ -16,16 +17,16 @@ let revisedJSON;
       return;
     }
     const jsonManifest = JSON.parse(str);
-    console.log("------------------------");
+    console.log("----------------");
 
     inquirer
       .prompt([
         {
           type: "input",
           name: "name",
-          message: "What is the package name?",
+          message: "XR Package name: ",
           default: function () {
-            return "sandcastle";
+            return path.basename(process.cwd());
           },
           validate: function (value) {
             const pass = value.match(/^[a-zA-Z]+$/i);
@@ -33,7 +34,7 @@ let revisedJSON;
               return true;
             }
 
-            return "package name must consist of letters only";
+            return "XR Package name must consist of letters only";
           },
           filter: function (val) {
             return val.toLowerCase();
@@ -42,7 +43,7 @@ let revisedJSON;
         {
           type: "input",
           name: "description",
-          message: "Describe your WebXR application",
+          message: "XR Package Description: ",
           default: function () {
             return "XR Package";
           },
@@ -50,7 +51,7 @@ let revisedJSON;
         {
           type: "list",
           name: "xr_type",
-          message: "Package Type (hit ENTER if unsure)",
+          message: "Package Type - hit ENTER if unsure",
           choices: [
             "webxr-site@0.0.1",
             new inquirer.Separator(),
@@ -67,7 +68,7 @@ let revisedJSON;
         {
           type: "input",
           name: "start_url",
-          message: "URL entry point (hit ENTER if unsure)",
+          message: "URL entry point - hit ENTER if unsure",
           default: function () {
             return "index.html";
           },
@@ -81,6 +82,7 @@ let revisedJSON;
         revisedJSON = JSON.stringify(jsonManifest);
       })
       .then(async () => {
+        await console.log("------------\nupdating manifest");
         await fs.promises.writeFile(
           "./dist/manifest.json",
           revisedJSON,
@@ -92,10 +94,15 @@ let revisedJSON;
             }
           }
         );
+        console.log("------------\nbuilding XR Package");
         execSync('cd dist && xrpk build . "' + jsonManifest.name + '.wbn"', {
           stdio: "inherit",
         });
-        console.log("XR Package " + jsonManifest.name + ".wbn created!");
+        console.log(
+          "-------------------\nXR Package " +
+            jsonManifest.name +
+            ".wbn created in ./dist!"
+        );
       });
   });
 })();
