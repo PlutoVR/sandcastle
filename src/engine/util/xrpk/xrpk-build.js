@@ -82,18 +82,15 @@ let revisedJSON;
         revisedJSON = JSON.stringify(jsonManifest);
       })
       .then(async () => {
-        await console.log("-------------------\nupdating manifest");
-        await fs.promises.writeFile(
-          "./dist/manifest.json",
-          revisedJSON,
-          err => {
-            if (err) {
-              console.error("Error writing file", err);
-            } else {
-              console.log("Manifest revised successfully");
-            }
-          }
-        );
+        console.log("-------------------\nupdating manifest");
+        try {
+          await fs.promises.writeFile("./dist/manifest.json", revisedJSON);
+          console.log("Manifest revised successfully");
+        } catch (error) {
+          console.error("Error writing file", error);
+          fs.unlinkSync("./dist/manifest.json");
+          console.log("Manifest deleted");
+        }
         console.log("-------------------\nbuilding XR Package");
         execSync('cd dist && xrpk build . "' + jsonManifest.name + '.wbn"', {
           stdio: "inherit",
