@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.js",
-    "build": "webpack --progress --profile --colors --config webpack.prod.js"
+    "build": "webpack --progress --profile --colors --config webpack.prod.js",
+    "build-xrpk": "npm run build && node ./src/engine/util/xrpk/xrpk-build.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,7 @@
   "dependencies": {
     "cannon": "^0.6.2",
     "firebase": "^7.14.5",
+    "inquirer": "^7.2.0",
     "speak-tts": "^2.0.8",
     "three": "^0.117.1"
   },
@@ -40,7 +42,8 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-glsl-loader": "^1.0.1",
     "webpack-merge": "^4.2.2",
-    "worker-loader": "^2.0.0"
+    "worker-loader": "^2.0.0",
+    "xrpk": "0.0.70"
   },
   "prettier": {
     "semi": true,
