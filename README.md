@@ -16,23 +16,24 @@
 
 - Tiny project build sizes (~250kb gzipped before assets, just a bit more than the logo image above!)
 
-
 ### Usage
 
-Run `npm init sandcastle NAMEOFPROJECT` _OR_ `npx create-sandcastle NAMEOFPROJECT`, where NAMEOFPROJECT is your desired project name. 
+Run `npm init sandcastle NAMEOFPROJECT` _OR_ `npx create-sandcastle NAMEOFPROJECT`, where NAMEOFPROJECT is your desired project name.
 This will:
+
 1. clone this repo into a new folder of that name
 2. install Sandcastle's dependencies
 3. remove the `.git` repo
 4. launch the dev server and
 5. open the default scene (located at `./src/examples/defaultScene.js`) in your browser.
 
-
 #### Other useful commands:
 
 - `npm start` from the project folder to launch the dev server (the initializer does this).
 
 - `npm build` will process and build your project into the `dist` folder.
+
+- `npm build-xrpk` will `npm build` and also place an [XR Package](https://github.com/webaverse/xrpackage) in the `dist` folder, so you can load it as a multiapp.
 
 Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
 
