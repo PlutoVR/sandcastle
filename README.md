@@ -34,6 +34,6 @@ This will:
 
 - `npm build` will process and build your project into the `dist` folder.
 
-Check out the [Wiki](https://github.com/MichaelHazani/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
+Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
 
 #### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_
