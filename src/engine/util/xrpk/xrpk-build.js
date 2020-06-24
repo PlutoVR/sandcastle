@@ -82,7 +82,7 @@ let revisedJSON;
         revisedJSON = JSON.stringify(jsonManifest);
       })
       .then(async () => {
-        await console.log("------------\nupdating manifest");
+        await console.log("-------------------\nupdating manifest");
         await fs.promises.writeFile(
           "./dist/manifest.json",
           revisedJSON,
@@ -94,7 +94,7 @@ let revisedJSON;
             }
           }
         );
-        console.log("------------\nbuilding XR Package");
+        console.log("-------------------\nbuilding XR Package");
         execSync('cd dist && xrpk build . "' + jsonManifest.name + '.wbn"', {
           stdio: "inherit",
         });
