@@ -3,8 +3,6 @@ import {
   Scene,
   TorusBufferGeometry,
   DirectionalLight,
-  AmbientLight,
-  HemisphereLight,
   Mesh,
   Vector3,
   MeshStandardMaterial,

@@ -26,6 +26,7 @@
     "compression-webpack-plugin": "^4.0.0",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
+    "gltf-webpack-loader": "^1.0.6",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
     "imagemin-jpegtran": "^6.0.0",

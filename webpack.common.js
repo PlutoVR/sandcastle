@@ -57,7 +57,15 @@ module.exports = {
         ],
       },
       {
-        test: /\.(gltf|glb|obj|mtl|fbx|dae|bin)$/,
+        test: /\.(gltf)$/,
+        use: [
+          {
+            loader: "gltf-webpack-loader",
+          },
+        ],
+      },
+      {
+        test: /\.(glb|obj|mtl|fbx|dae|bin)$/,
         use: [
           {
             loader: "file-loader",
