@@ -1,40 +1,41 @@
 // default scene loaded in src/engine/engine.js
-
 import {
   Scene,
   TorusBufferGeometry,
-  MeshNormalMaterial,
+  DirectionalLight,
   Mesh,
   Vector3,
+  MeshStandardMaterial,
+  Color,
 } from "three";
 const scene = new Scene();
 
-scene.init = () => {
-  scene.traverse(e => {
-    scene.remove(e);
-  });
+const ringsData = [
+  { axis: new Vector3(1, 0, 1), color: new Color(0xff0000), scale: 0.2 },
+  { axis: new Vector3(1, -1, 0), color: new Color(0x00ff00), scale: 0.15 },
+  { axis: new Vector3(0, 1, 0), color: new Color(0x0000ff), scale: 0.1 },
+];
 
-  const rots = [
-    new Vector3(-1, 0, 0),
-    new Vector3(1, 1, 0),
-    new Vector3(0, -1, 0),
-  ];
-  for (var i = 0; i < 3; i++) {
-    const placeholder = new Mesh(
-      new TorusBufferGeometry(1, 0.05, 16, 32),
-      new MeshNormalMaterial({ wireframe: true })
-    );
-    placeholder.position.z -= 5;
-    placeholder.scale.set(1 - i * 0.33, 1 - i * 0.33, 1 - i * 0.33);
-    const axis = new Vector3();
-    axis.copy(rots[i]);
-    placeholder.Update = () => {
-      placeholder.rotateOnAxis(axis, 0.007);
-    };
-    scene.add(placeholder);
-  }
-};
+ringsData.forEach((ringData, i) => {
+  const ring = new Mesh(
+    new TorusBufferGeometry(1, 0.065, 64, 64),
+    new MeshStandardMaterial({
+      metalness: 0.5,
+      roughness: 0.5,
+      color: ringData.color,
+    })
+  );
+  ring.position.z -= 1;
+  ring.scale.set(ringData.scale, ringData.scale, ringData.scale);
 
-scene.init();
+  ring.Update = () => {
+    ring.rotateOnAxis(ringData.axis, 0.0033 * (i + 1));
+  };
+  scene.add(ring);
+});
+
+const light = new DirectionalLight(0xffffff, 3.5);
+light.position.set(0, 13, 3);
+scene.add(light);
 
 export { scene };
