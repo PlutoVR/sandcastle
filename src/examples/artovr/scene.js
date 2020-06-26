@@ -1,7 +1,9 @@
-// AR-IN-VR sample code
-// important: test in metachromium which enables transparent WebXR rendering on desktop!
-// https://github.com/webaverse/metachromium-bin
-// squeeze trigger to toggle between a day/night cubemap and your external reality layer
+// AR-IN-VR sample
+// important: test in metachromium or build as an XR Package, to enables transparent WebXR rendering
+// https://webaverse.com/
+
+// Instructions:
+// squeeze trigger to toggle between a day/night skybox and your external reality layer
 // (i.e SteamVR)
 
 import {
@@ -17,8 +19,8 @@ import {
   LinearMipmapLinearFilter,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Renderer } from "../../engine/renderer";
-import { XRInput } from "../../engine/xrinput";
+import Renderer from "../../engine/renderer";
+import State from "../../engine/state";
 
 import { Boid } from "./boid";
 import { Water } from "./water";
@@ -26,11 +28,10 @@ import { Sky } from "./sky.js";
 const WaterNormalsTexture = require("./assets/textures/waternormals.jpg");
 const GLTFbird = require("./assets/models/polyCrow/polyCrow_updated.glb");
 
-export const scene = new Scene();
+const scene = new Scene();
 
 scene.init = () => {
   // Boids
-
   const loader = new GLTFLoader();
   // "Anonymous Bird" from https://poly.google.com/view/8Ph79kHbt9s
   let bird;
@@ -49,7 +50,6 @@ scene.init = () => {
   };
 
   // Ocean
-
   const light = new DirectionalLight(0xffffff, 0.8);
   scene.add(light);
   const waterGeometry = new PlaneBufferGeometry(10000, 10000);
@@ -73,7 +73,6 @@ scene.init = () => {
   scene.add(water);
 
   // Atmosphere / day-night cycle. Custom XRCubeCamera component that handles XR rendering, soon merged to threeJS:
-
   const sky = new Sky();
   const uniforms = sky.material.uniforms;
   uniforms["turbidity"].value = 10;
@@ -111,7 +110,7 @@ scene.init = () => {
 
     // day/night cycle
 
-    // long nights are boring:
+    // long nights are boring, speed through them:
     parameters.inclination =
       parameters.inclination <= -0.55 ? 0.55 : parameters.inclination - 0.00025;
     sunTheta = Math.PI * (parameters.inclination - 0.5);
@@ -135,10 +134,12 @@ scene.init = () => {
   scene.add(data);
 
   //toggle VR: day/night cycle vs. AR: transparent background
-  XRInput.onSelect = function () {
+  State.eventHandler.addEventListener("selectstart", e => {
     scene.background == null
       ? (scene.background = cubeCamera.renderTarget)
       : (scene.background = null);
-  };
+  });
 };
 scene.init();
+
+export { scene };

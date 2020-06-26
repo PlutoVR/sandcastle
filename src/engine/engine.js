@@ -1,5 +1,5 @@
 // scene to run:
-import { scene } from "../examples/defaultscene";
+import { scene } from "../examples/physicsExample/scene";
 
 import State from "./state";
 import { PerspectiveCamera, AudioListener } from "three";

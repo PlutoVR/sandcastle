@@ -1,78 +1,66 @@
-import { State } from "../../engine/state";
-import { Scene, Vector3, Group, MeshNormalMaterial, Mesh } from "three";
+import State from "../../engine/state";
+import {
+  Scene,
+  Vector3,
+  Group,
+  PlaneBufferGeometry,
+  MeshBasicMaterial,
+  Mesh,
+} from "three";
 import Brick from "./brickCustomShader";
-import { Physics } from "../../engine/physics/physics";
-import { XRInput } from "../../engine/xrinput";
-
-import { PeerConnection } from "../../engine/networking/PeerConnection";
+import Physics from "../../engine/physics/physics";
+import XRInput from "../../engine/xrinput";
 
 const scene = new Scene();
-const networking = new PeerConnection(scene);
 
-// start Physics debug
 Physics.enableDebugger(scene);
 
-// //Plane. TODO: fix relo!
-// const groundShape = new Plane();
-// const groundBody = new Body({
-//     mass: 0
-// });
-// groundBody.addShape(groundShape);
-// groundBody.quaternion.setFromAxisAngle(new Vec3(1, 0, 0), -Math.PI / 2);
-// Physics.cannonWorld.add(groundBody);
-// Physics.rigidbodies.push(groundBody);
+// Ground Plane
+const groundShape = new PlaneBufferGeometry(10, 10);
+const planeMat = new MeshBasicMaterial({ color: 0x000000, wireframe: true });
+const plane = new Mesh(groundShape, planeMat);
+plane.quaternion.setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2);
+scene.add(plane);
+Physics.addRigidBody(
+  plane,
+  Physics.RigidBodyShape.Plane,
+  Physics.Body.STATIC,
+  0
+);
 
-scene.initGame = () => {
-  XRInput.controllerGrips.forEach((controller, i) => {
-    // add controller RBs
+// once XR controllers are registered, add RigidBodies
+State.eventHandler.addEventListener("inputsourceschange", () => {
+  XRInput.controllerGrips.forEach(controller => {
     Physics.addControllerRigidBody(controller);
-
-    // network controllers
-    networking.remoteSync.addSharedObject(controller);
-
-    // create controller models
-    XRInput.CreateControllerModel(controller, scene);
   });
-
-  // BLOCK TOWER
-  const tower = new Group();
-
-  for (let y = 0; y < 13; y++) {
-    const level = new Group();
-    for (let x = 0; x < 3; x++) {
-      const brickPos = new Vector3((-1 + x) / 2 + x * 0.01, y / 1.9, 0);
-      const brick = new Brick(brickPos, y % 5);
-      level.add(brick);
-    }
-    if (y % 2 == 0) {
-      level.rotateOnAxis(new Vector3(0, 1, 0), 1.5708);
-    }
-    tower.add(level);
-
-    // 0 pos is more likely to clash w/viewer
-    tower.position.set(0, 0, -0.5);
-    scene.updateMatrixWorld();
-    tower.children.forEach((level, x) => {
-      level.children.forEach((brick, y) => {
-        if (!(brick instanceof Mesh)) return;
-        scene.attach(brick);
-        //dumb hack to avoid false positive for remoteSync.master
-        // setTimeout(e =>
-        // {
-        //     if (networking.remoteSync.master == true)
-        //     {
-        //         // Physics.addRigidBody(brick, Physics.RigidBodyType.Box);
-        //     }
-        // }, 5);
-        Physics.addRigidBody(brick, Physics.RigidBodyType.Box);
-        // networking.remoteSync.addSharedObject(brick);
-      });
-    });
-  }
-};
-
-State.eventHandler.addEventListener("peerconnected", e => {
-  scene.initGame();
 });
+
+// BLOCK TOWER
+const tower = new Group();
+
+for (let y = 0; y < 13; y++) {
+  const level = new Group();
+  for (let x = 0; x < 3; x++) {
+    const brickPos = new Vector3((-1 + x) / 2 + x * 0.01, y / 1.9, 0);
+    const brick = new Brick(brickPos, y % 5);
+    level.add(brick);
+  }
+  if (y % 2 == 0) {
+    level.rotateOnAxis(new Vector3(0, 1, 0), 1.5708);
+  }
+  tower.add(level);
+
+  // 0 pos is more likely to clash w/viewer
+  tower.position.set(0, 0, -0.5);
+  scene.updateMatrixWorld();
+  tower.children.forEach((level, x) => {
+    level.children.forEach((brick, y) => {
+      if (!(brick instanceof Mesh)) return;
+      scene.attach(brick);
+
+      Physics.addRigidBody(brick, Physics.RigidBodyShape.Box);
+    });
+  });
+}
 
 export { scene };

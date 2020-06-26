@@ -19,7 +19,7 @@
 ### Usage
 
 Run `npm init sandcastle NAMEOFPROJECT` _OR_ `npx create-sandcastle NAMEOFPROJECT`, where NAMEOFPROJECT is your desired project name.
-This will:
+This script will:
 
 1. clone this repo into a new folder of that name
 2. install Sandcastle's dependencies
@@ -29,12 +29,12 @@ This will:
 
 #### Other useful commands:
 
-- `npm start` from the project folder to launch the dev server (the initializer does this).
+- `npm start` from the project folder to launch the dev server (the initializer script does this).
 
 - `npm build` will process and build your project into the `dist` folder.
 
-- `npm build-xrpk` will `npm build` and also place an [XR Package](https://github.com/webaverse/xrpackage) in the `dist` folder, so you can load it as a multiapp.
+- `npm build-xrpk` will `npm build` and also create an [XR Package](https://github.com/webaverse/xrpackage) in the `dist` folder. Note that this script is interactive, as it will ask you for details about the various aspects of your XR Package.
 
-Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
+Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more. Sandcastle also includes several examples demonstrating how to easily set up physics, shared experiences, media streaming and other features.
 
 #### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_

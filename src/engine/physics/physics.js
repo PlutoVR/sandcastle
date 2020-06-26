@@ -13,8 +13,8 @@ import { Vector3 } from "three";
 import State from "../state";
 import XRInput from "../../engine/xrinput";
 
-const TIMESTEP = 1 / 60;
-const YGRAVITY = 0;
+const TIMESTEP = 1 / 120;
+const YGRAVITY = -9.81;
 
 // Physics singleton
 const Physics = {
@@ -35,7 +35,7 @@ Physics.cannonWorld = new World();
 Physics.cannonWorld.broadphase = new NaiveBroadphase();
 Physics.cannonWorld.gravity.set(0, YGRAVITY, 0);
 Physics.cannonWorld.solver.iterations = 50; //50
-Physics.cannonWorld.solver.tolerance = 0.00001;
+Physics.cannonWorld.solver.tolerance = 0;
 
 if (State.debugMode) console.log("CannonJS world created");
 
@@ -104,6 +104,13 @@ Physics.resetScene = () => {
   }
 };
 
+/**
+ * Add CannonJS Rigidbody and autoconfigure sizes
+ * @param  {} mesh
+ * @param  {} rbShape
+ * @param  {} type=Body.DYNAMIC
+ * @param  {} mass=1
+ */
 Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => {
   if (mesh.geometry == undefined) {
     if (State.debugMode)
@@ -151,6 +158,8 @@ Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => {
   const body = new Body({
     mass: mass,
     type: type,
+    allowSleep: true,
+    sleepSpeedLimit: 1.0,
   });
 
   body.addShape(shape);
