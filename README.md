@@ -29,16 +29,16 @@ This will automatically:
 
 ### Development & Building
 
-- `npm start` from the project folder to launch the dev server (the initializer script does this).
+- `npm start` will launch the dev server and open the sample scene.
 
-- `npm build` will process and build your project into the `dist` folder.
+- `npm build` will process and build your project into a `dist` folder.
 
-- `npm build-xrpk` will `npm build` and also create an [XR Package](https://github.com/webaverse/xrpackage) in the `dist` folder. (Note that this script runs an interactive CLI for details about the various aspects of your XR Package.)
+- `npm build-xrpk` will `npm build`, then create an [XR Package](https://github.com/webaverse/xrpackage) in `dist`. (Note that this script runs an interactive CLI for details about the various aspects of your XR Package.)
 
 ### Learning Resources
 
-- Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more. Sandcastle also includes several examples demonstrating how to easily set up physics, shared experiences, media streaming and other features.
+- Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
 
-- See the `examples` folder for usage examples of networking & streaming, physics, AR-in-VR experiences and more.
+- See the `examples` folder for usage examples of networking, media streaming, physics, AR-in-VR experiences and more.
 
 #### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_
