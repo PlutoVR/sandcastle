@@ -1,3 +1,7 @@
+// A simple physics-based game we all know
+// demonstrates basic RigidBody creation
+// (Note the Physics.addControllerRigidBody method, as well)
+
 import State from "../../engine/state";
 import {
   Scene,
