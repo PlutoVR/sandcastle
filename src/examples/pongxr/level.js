@@ -1,6 +1,6 @@
 import State from "../../engine/state";
 import Physics from "../../engine/physics/physics";
-import frictionlessMat from "./frictionlessMaterial";
+import frictionlessMat from "./frictionlessmaterial";
 import {
   Object3D,
   PointLight,

@@ -11,7 +11,7 @@ import {
   MeshBasicMaterial,
   Mesh,
 } from "three";
-import Brick from "./brickCustomShader";
+import Brick from "./brickcustomshader";
 import Physics from "../../engine/physics/physics";
 import XRInput from "../../engine/xrinput";
 

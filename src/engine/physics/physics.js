@@ -8,7 +8,7 @@ import {
   Cylinder,
   Vec3,
 } from "cannon";
-import CannonDebugRenderer from "../util/debughelpers/CannonDebugRenderer";
+import CannonDebugRenderer from "../util/debughelpers/cannondebugrenderer";
 import { Vector3 } from "three";
 import State from "../state";
 import XRInput from "../../engine/xrinput";

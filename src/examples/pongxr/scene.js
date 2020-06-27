@@ -6,7 +6,7 @@
 
 import { Scene } from "three";
 import XRInput from "../../engine/xrinput";
-import PeerConnection from "../../engine/networking/PeerConnection";
+import PeerConnection from "../../engine/networking/peerconnection";
 import State from "../../engine/state";
 import Physics from "../../engine/physics/physics";
 

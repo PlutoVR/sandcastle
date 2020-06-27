@@ -19,7 +19,7 @@ import {
 } from "three";
 import State from "../../engine/state";
 import XRInput from "../../engine/xrinput";
-import PeerConnection from "../../engine/networking/PeerConnection";
+import PeerConnection from "../../engine/networking/peerconnection";
 const fs_partycles = require("./shaders/fs_partycles.glsl");
 const vs_partycles = require("./shaders/vs_partycles.glsl");
 const spark = require("./textures/spark1.png");

@@ -1,8 +1,8 @@
-import RS from "./RemoteSync";
+import RS from "./remotesync";
 import State from "../state";
 import { Object3D } from "three";
-import FirebaseSignalingServer from "./FirebaseSignalingServer";
-import WebRTCClient from "./WebRTCClient";
+import FirebaseSignalingServer from "./firebasesignalingserver";
+import WebRTCClient from "./webrtcclient";
 
 class PeerConnection {
   constructor(scene, stream) {
