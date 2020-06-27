@@ -104,13 +104,6 @@ Physics.resetScene = () => {
   }
 };
 
-/**
- * Add CannonJS Rigidbody and autoconfigure sizes
- * @param  {} mesh
- * @param  {} rbShape
- * @param  {} type=Body.DYNAMIC
- * @param  {} mass=1
- */
 Physics.addRigidBody = (mesh, rbShape, type = Body.DYNAMIC, mass = 1) => {
   if (mesh.geometry == undefined) {
     if (State.debugMode)
