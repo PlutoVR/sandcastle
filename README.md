@@ -1,7 +1,7 @@
 <h1 align="center"> Sandcastle </h1>
 <h2 align="center"> A friendly framework for creating multi-user WebXR apps & multiapps </h2>
 
-![Sandcastle Samples](./sandcastlexr.png)
+![Sandcastle Samples](./sandcastleprojects.png)
 
 ### Features
 
