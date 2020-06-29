@@ -1,5 +1,5 @@
 // AR-IN-VR sample
-// important: test in metachromium or build as an XR Package, to enables transparent WebXR rendering
+// important: test in metachromium or build as an XR Package, to enable transparent WebXR rendering
 // https://webaverse.com/
 
 // Instructions:

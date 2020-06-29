@@ -7,11 +7,11 @@
 
 - Built on vanilla [threeJS](http://threejs.org/)
 
-- Made for WebXR (ergonomic XR [session & state management](https://github.com/plutovr/sandcastle/wiki#webxr-general) & easy [XR input event handling](https://github.com/plutovr/sandcastle/wiki#webxr-input))
+- Made for WebXR (ergonomic XR [session & state management](https://github.com/plutovr/sandcastle/wiki#webxr-general-1) & easy [XR input event handling](https://github.com/plutovr/sandcastle/wiki#webxr-input-1))
 
-- Built-in [Physics & Collision Detection](https://github.com/plutovr/sandcastle/wiki#physics) courtesy of [CannonJS](http://www.cannonjs.org/)
+- Built-in [Physics & Collision Detection](https://github.com/plutovr/sandcastle/wiki#physics-1) courtesy of [CannonJS](http://www.cannonjs.org/)
 
-- Easy, WebRTC-based [networking & media streaming](https://github.com/plutovr/sandcastle/wiki#networking) courtesy of [ThreeNetwork](https://github.com/takahirox/ThreeNetwork)
+- Easy, WebRTC-based [networking & media streaming](https://github.com/plutovr/sandcastle/wiki#networking-1) courtesy of [ThreeNetwork](https://github.com/takahirox/ThreeNetwork)
 
 - Tiny project build sizes (~250kb gzipped before assets, just a bit more than the logo image above!)
 
