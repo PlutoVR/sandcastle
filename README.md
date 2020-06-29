@@ -1,9 +1,9 @@
 <h1 align="center"> Sandcastle </h1>
-<h2 align="center"> A friendly framework for creating multi-user WebXR apps & multiapps </h2>
+<h2 align="center"> A friendly framework for creating spatial-first, multi-user WebXR apps </h2>
 
 ![Sandcastle Samples](./sandcastleprojects.png)
 
-### Features
+## Features
 
 - Built on vanilla [threeJS](http://threejs.org/)
 
@@ -13,9 +13,13 @@
 
 - Easy, WebRTC-based [networking & media streaming](https://github.com/plutovr/sandcastle/wiki#networking-1) courtesy of [ThreeNetwork](https://github.com/takahirox/ThreeNetwork)
 
-- Tiny project build sizes (~250kb gzipped before assets, just a bit more than the logo image above!)
+- Designed for [XR Packages](https://github.com/webaverse/xrpackage) and shared WebXR experiences/multiapps
 
-### Usage
+- Tiny project build sizes (~250kb gzipped before assets, way less than the image above!)
+
+---
+
+## Usage
 
 Run `npm init sandcastle NAMEOFPROJECT` _OR_ `npx create-sandcastle NAMEOFPROJECT`, where `NAMEOFPROJECT` is your desired project name.
 
@@ -27,7 +31,9 @@ This will automatically:
 4. launch the dev server and
 5. open the default scene (located at `./src/examples/defaultScene.js`) in your browser.
 
-### Development & Building
+---
+
+## Development & Building
 
 - `npm start` will launch the dev server and open the sample scene.
 
@@ -35,10 +41,12 @@ This will automatically:
 
 - `npm build-xrpk` will `npm build`, then create an [XR Package](https://github.com/webaverse/xrpackage) in `dist`. (Note that this script runs an interactive CLI for details about the various aspects of your XR Package.)
 
-### Learning Resources
+---
+
+## Learning Resources
 
 - Check out the [Wiki](https://github.com/plutovr/sandcastle/wiki) for a closer look at Sandcastle's Networking API, Physics API, event handling and state management, asset pipelines and more.
 
 - See the `examples` folder for usage examples of networking, media streaming, physics, AR-in-VR experiences and more.
 
-#### _This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!_
+#### This project is in pre-alpha and currently undergoes daily work. Is something broken or unclear? Please file an issue!
