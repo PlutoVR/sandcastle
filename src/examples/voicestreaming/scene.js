@@ -1,5 +1,6 @@
 // demonstrating basic voice streaming and networking shared objects over WebRTC
-// everything happens automatically once you enter the same room on two instances (XR not required)
+// everything happens automatically once you enter the same room on two instances
+// (XR not required for streaming)
 
 import {
   Scene,
@@ -8,8 +9,6 @@ import {
   SphereBufferGeometry,
   MeshNormalMaterial,
   Object3D,
-  HemisphereLight,
-  DirectionalLight,
   ShaderMaterial,
   AdditiveBlending,
   BufferGeometry,
@@ -18,9 +17,9 @@ import {
   Points,
   DynamicDrawUsage,
 } from "three";
-import { State } from "../../engine/state";
-import { XRInput } from "../../engine/xrinput";
-import { PeerConnection } from "../../engine/networking/PeerConnection";
+import State from "../../engine/state";
+import XRInput from "../../engine/xrinput";
+import PeerConnection from "../../engine/networking/peerconnection";
 const fs_partycles = require("./shaders/fs_partycles.glsl");
 const vs_partycles = require("./shaders/vs_partycles.glsl");
 const spark = require("./textures/spark1.png");
@@ -40,11 +39,9 @@ navigator.mediaDevices
   .getUserMedia({ audio: true, video: false })
   .then(function (stream) {
     // 2. create new peer connection instance, pass audiostream.
-    // on connection this will
-
     networking = new PeerConnection(scene, stream);
 
-    // play incoming audio
+    // on stream, play incoming audio
     networking.remoteSync.addEventListener("remote_stream", function (
       remoteStream
     ) {
@@ -73,8 +70,6 @@ scene.init = () => {
     };
     networking.remoteSync.addSharedObject(sp);
     scene.add(sp);
-
-    // XRInput.CreateControllerModel(e, scene);
   });
 
   uniforms = {

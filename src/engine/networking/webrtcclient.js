@@ -3,7 +3,7 @@
  * Gently modified by Michael Hazani
  */
 
-const RemoteSync = require("./RemoteSync");
+const RemoteSync = require("./remotesync");
 
 /**
  * WebRTCClient constructor.

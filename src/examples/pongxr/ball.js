@@ -1,4 +1,3 @@
-import State from "../../engine/state";
 import {
   SphereBufferGeometry,
   ShaderMaterial,
@@ -10,7 +9,7 @@ import {
 
 import { Camera } from "../../engine/engine";
 import Physics from "../../engine/physics/physics";
-import frictionlessMat from "./frictionlessMaterial";
+import frictionlessMat from "./frictionlessmaterial";
 
 const hitAudioFile = require("./assets/audio/elecping.ogg");
 

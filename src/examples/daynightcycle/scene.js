@@ -1,5 +1,4 @@
-// Day/night sycle, atmosphere, advanced noise-based cloud shader
-// TODO: refactor to glslify
+// Reusable Day/night sycle, atmosphere, advanced noise-based cloud shader
 
 import {
   Scene,
@@ -10,8 +9,8 @@ import {
   RGBAFormat,
   LinearMipmapLinearFilter,
 } from "three";
-import { Renderer } from "../../engine/renderer";
-import { XRInput } from "../../engine/xrinput";
+import Renderer from "../../engine/renderer";
+import XRInput from "../../engine/xrinput";
 
 import { Cloud } from "./cloud";
 import { Sky } from "./sky.js";

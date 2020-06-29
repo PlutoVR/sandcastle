@@ -1,6 +1,12 @@
+// A multiuser pong-clone
+// note the decoupling of XR Input data and networking - we use the inputs locally to control
+// the position and rotation of networked objects.
+// demonstrates both a Shared Object (plaecement cube) and a Local Object (paddle)
+// for more details, see: https://github.com/takahirox/ThreeNetwork
+
 import { Scene } from "three";
 import XRInput from "../../engine/xrinput";
-import PeerConnection from "../../engine/networking/PeerConnection";
+import PeerConnection from "../../engine/networking/peerconnection";
 import State from "../../engine/state";
 import Physics from "../../engine/physics/physics";
 
