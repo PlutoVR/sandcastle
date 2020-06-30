@@ -53,7 +53,7 @@ const createPongLevel = placementCube => {
   networking.remoteSync.removeSharedObject(PLACEMENTCUBEID);
 
   // BALL
-  if (State.isMaster) {
+  if (State.isPrimary) {
     ball = new Ball(targetPosition, true);
     ball.initPos = targetPosition;
     scene.add(ball);
@@ -89,7 +89,7 @@ let doubleClick = false;
 State.eventHandler.addEventListener("select", e => {
   switch (State.GameState) {
     case GameState.placement:
-      if (State.isMaster) {
+      if (State.isPrimary) {
         createPongLevel(placementCube);
       }
       break;

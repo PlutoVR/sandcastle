@@ -34,7 +34,7 @@ class EventHandler {
 class StateClass {
   constructor() {
     this.globals = {};
-    this.isMaster = true; // until claimed otherwise by a PeerConnection
+    this.isPrimary = true; // until claimed otherwise by a PeerConnection
     this.isXRSession = false;
     this.isPaused = false;
     this.currentSession = null;

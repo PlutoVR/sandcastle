@@ -35,7 +35,7 @@ class PlacementCube extends Mesh {
   Update() {
     this.material.color.g = Math.cos(this.c.getElapsedTime() * 5) / 2 + 0.5;
     this.position.add(this.forwardOffset);
-    if (State.isMaster && XRInput.inputSources != null) {
+    if (State.isPrimary && XRInput.inputSources != null) {
       XRInput.inputSources.forEach((e, i) => {
         e.gamepad.axes.forEach((axis, axisIndex) => {
           if (axis != 0) {
