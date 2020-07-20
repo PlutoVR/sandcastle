@@ -95,6 +95,7 @@ class XRInputClass {
 
     this.inputDebugString = "";
     this.inputSources.forEach(e => {
+      if (e.gamepad == null) return;
       e.gamepad.buttons.forEach((button, i) => {
         if (button.pressed == true) {
           this.inputDebugString +=
