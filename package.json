@@ -6,6 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --progress --profile --colors --config webpack.prod.js",
+    "dev-xrpk": "webpack --progress --profile --colors --config webpack.dev.js && node ./src/engine/util/xrpk/xrpk-build.js",
     "build-xrpk": "npm run build && node ./src/engine/util/xrpk/xrpk-build.js"
   },
   "keywords": [],
