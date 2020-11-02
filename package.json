@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "cannon": "^0.6.2",
-    "firebase": "^7.14.5",
+    "firebase": "^8.0.0",
     "inquirer": "^7.2.0",
     "speak-tts": "^2.0.8",
     "three": "^0.122.0"
