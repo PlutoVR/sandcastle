@@ -127,6 +127,7 @@ const XRInput = new XRInputClass();
 
 // subscribe to input events on XR session start
 State.eventHandler.addEventListener("xrsessionstarted", e => {
+  XRInput.inputSources = e.inputSources;
   e.addEventListener("selectend", XRInput.onSelectEnd.bind(XRInput));
   e.addEventListener("selectstart", XRInput.onSelectStart.bind(XRInput));
   e.addEventListener("select", XRInput.onSelect.bind(XRInput));
