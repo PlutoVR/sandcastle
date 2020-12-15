@@ -37,11 +37,11 @@ This will automatically:
 
 - `npm start` will launch the dev server and open the sample scene.
 
-- `npm build` will process and build your project into a `dist` folder.
+- `npm run build` will process and build your project into a `dist` folder.
 
-- `npm build-xrpk` will `npm build`, then create an [XR Package](https://github.com/webaverse/xrpackage) in `dist`. (Note that this script runs an interactive CLI for details about the various aspects of your XR Package.)
+- `npm run build-xrpk` will `npm build`, then create an [XR Package](https://github.com/webaverse/xrpackage) in `dist`. (Note that this script runs an interactive CLI for details about the various aspects of your XR Package.)
 
-- `npm dev-xrpk` will do the same but output an _unminified, source-mapped_ XR Package to help you debug your XR Package in your runtime of choice (we recommend [Chimera](https://chimera.pluto-api.com/)). Please note the resulting .wbn file size will be very large - don't use this in production!
+- `npm run dev-xrpk` will do the same but output an _unminified, source-mapped_ XR Package to help you debug your XR Package in your runtime of choice (we recommend [Chimera](https://chimera.pluto-api.com/)). Please note the resulting .wbn file size will be very large - don't use this in production!
 
 ---
 
