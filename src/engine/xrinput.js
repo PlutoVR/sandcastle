@@ -1,12 +1,36 @@
 import State from "./state";
 import Renderer from "./renderer";
-import { XRControllerModelFactory } from "three/examples/jsm/webxr/XRControllerModelFactory.js";
 
 class XRInputClass {
   constructor() {
+    /** Deprecated: Use leftControllerGrip or rightControllerGrip instead */
     this.controllerGrips = [];
     this.inputSources = null;
-    this.controllerModelFactory = new XRControllerModelFactory();
+
+    this._leftController = {};
+    this._leftControllerGrip = {};
+    this._rightController = {};
+    this._rightControllerGrip = {};
+  }
+
+  get hasInputSources() {
+    return !!XRInput.inputSources;
+  }
+
+  get leftController() {
+    return this._leftController;
+  }
+
+  get leftControllerGrip() {
+    return this._leftControllerGrip;
+  }
+
+  get rightController() {
+    return this._rightController;
+  }
+
+  get rightControllerGrip() {
+    return this._rightControllerGrip;
   }
 
   // trigger start
@@ -79,13 +103,6 @@ class XRInputClass {
     }
   }
 
-  CreateControllerModel(controller, scene) {
-    controller.add(
-      this.controllerModelFactory.createControllerModel(controller)
-    );
-    scene.add(controller);
-  }
-
   Update() {
     if (State.debugMode) this.debugOutput();
   }
@@ -142,6 +159,19 @@ State.eventHandler.addEventListener("inputsourceschange", e => {
   XRInput.controllerGrips = [];
   XRInput.inputSources = e.session.inputSources;
 
+  XRInput.inputSources.forEach((inputSource, controllerIndex) => {
+    let controller = Renderer.xr.getController(controllerIndex);
+    let controllerGrip = Renderer.xr.getControllerGrip(controllerIndex);
+
+    if (inputSource.handedness === "left") {
+      XRInput._leftController = controller;
+      XRInput._leftControllerGrip = controllerGrip;
+    } else if (inputSource.handedness === "right") {
+      XRInput._rightController = controller;
+      XRInput._rightControllerGrip = controllerGrip;
+    }
+  });
+
   // metachromium-specific hack to fix nonconformance bug
   const isUserAgentMetachromium = navigator.userAgent.indexOf("Mchr") !== -1;
   const inputNum = isUserAgentMetachromium ? 2 : XRInput.inputSources.length;
@@ -160,6 +190,10 @@ State.eventHandler.addEventListener("inputsourceschange", e => {
 State.eventHandler.addEventListener("xrsessionended", () => {
   XRInput.controllerGrips = [];
   XRInput.inputSources = null;
+  XRInput._leftController = {};
+  XRInput._leftControllerGrip = {};
+  XRInput._rightController = {};
+  XRInput._rightControllerGrip = {};
 });
 
 export default XRInput;
