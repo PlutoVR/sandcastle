@@ -1,4 +1,4 @@
-import { log, Matrix4, PerspectiveCamera, Quaternion, Vector3 } from "three";
+import { PerspectiveCamera } from "three";
 import State from "./state";
 
 class TrackingCamera extends PerspectiveCamera {
