@@ -7,10 +7,6 @@ class TrackingCamera extends PerspectiveCamera {
 
     this.xrReferenceSpace = null;
 
-    this.tempPos = new Vector3();
-    this.tempQuat = new Quaternion();
-    this.tempSca = new Vector3();
-
     this.startTime = 0;
     this.counter = 0;
     this.totalMS = 0;
@@ -63,11 +59,8 @@ class TrackingCamera extends PerspectiveCamera {
     // -------------------
 
     // -------------------
-    // * matrix decomp method (B): Michael timed ~0.02ms average *
-    this.matrixWorld.decompose(this.tempPos, this.tempQuat, this.tempSca);
-    this.position.copy(this.tempPos);
-    this.quaternion.copy(this.tempQuat);
-    this.scale.copy(this.tempSca);
+    // * matrix decomp method (B): Michael timed ~0.016ms average *
+    this.matrixWorld.decompose(this.position, this.quaternion, this.scale);
     // -------------------
 
     // end test
