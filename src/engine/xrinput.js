@@ -1,22 +1,27 @@
+import { Group } from "three";
 import State from "./state";
 import Renderer from "./renderer";
 
 class XRInputClass {
   constructor() {
-    /** Deprecated: Use leftControllerGrip or rightControllerGrip instead */
+    /** @deprecated Use `leftControllerGrip` or `rightControllerGrip` instead */
     this.controllerGrips = [];
     this.inputSources = null;
 
-    this._leftController = {};
-    this._leftControllerGrip = {};
-    this._rightController = {};
-    this._rightControllerGrip = {};
+    this._leftController = new Group();
+    this._leftControllerGrip = new Group();
+    this._rightController = new Group();
+    this._rightControllerGrip = new Group();
   }
 
   get hasInputSources() {
     return !!XRInput.inputSources;
   }
 
+  /** A Group containing controller data for the left controller. Empty until XR session has started and there are input sources.
+   *
+   * Use {@link hasInputSources} [named of the method](file-name #hasInputSources) to determine when controller data is provided.
+   */
   get leftController() {
     return this._leftController;
   }
@@ -25,6 +30,7 @@ class XRInputClass {
     return this._leftControllerGrip;
   }
 
+  /** A Group containing controller data for the right controller. Empty until the XR session has started and the input sources change. */
   get rightController() {
     return this._rightController;
   }
@@ -144,7 +150,7 @@ const XRInput = new XRInputClass();
 
 // subscribe to input events on XR session start
 State.eventHandler.addEventListener("xrsessionstarted", e => {
-  XRInput.inputSources = e.inputSources;
+  InputSourcesChanged(e.inputSources);
   e.addEventListener("selectend", XRInput.onSelectEnd.bind(XRInput));
   e.addEventListener("selectstart", XRInput.onSelectStart.bind(XRInput));
   e.addEventListener("select", XRInput.onSelect.bind(XRInput));
@@ -155,9 +161,22 @@ State.eventHandler.addEventListener("xrsessionstarted", e => {
   e.addEventListener("disconnected", XRInput.onDisconnected.bind(XRInput));
 });
 
-State.eventHandler.addEventListener("inputsourceschange", e => {
+State.eventHandler.addEventListener("inputsourceschange", e =>
+  InputSourcesChanged(e.session.inputSources)
+);
+
+State.eventHandler.addEventListener("xrsessionended", () => {
   XRInput.controllerGrips = [];
-  XRInput.inputSources = e.session.inputSources;
+  XRInput.inputSources = null;
+  XRInput._leftController = new Group();
+  XRInput._leftControllerGrip = new Group();
+  XRInput._rightController = new Group();
+  XRInput._rightControllerGrip = new Group();
+});
+
+const InputSourcesChanged = inputSources => {
+  XRInput.controllerGrips = [];
+  XRInput.inputSources = inputSources;
 
   XRInput.inputSources.forEach((inputSource, controllerIndex) => {
     let controller = Renderer.xr.getController(controllerIndex);
@@ -185,15 +204,6 @@ State.eventHandler.addEventListener("inputsourceschange", e => {
       XRInput.controllerGrips[i] = Renderer.xr.getControllerGrip(i);
     }
   }
-});
-
-State.eventHandler.addEventListener("xrsessionended", () => {
-  XRInput.controllerGrips = [];
-  XRInput.inputSources = null;
-  XRInput._leftController = {};
-  XRInput._leftControllerGrip = {};
-  XRInput._rightController = {};
-  XRInput._rightControllerGrip = {};
-});
+};
 
 export default XRInput;
