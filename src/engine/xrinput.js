@@ -1,12 +1,42 @@
+import { Group } from "three";
 import State from "./state";
 import Renderer from "./renderer";
-import { XRControllerModelFactory } from "three/examples/jsm/webxr/XRControllerModelFactory.js";
 
 class XRInputClass {
   constructor() {
+    /** @deprecated Use `leftControllerGrip` or `rightControllerGrip` instead */
     this.controllerGrips = [];
     this.inputSources = null;
-    this.controllerModelFactory = new XRControllerModelFactory();
+
+    this._leftController = new Group();
+    this._leftControllerGrip = new Group();
+    this._rightController = new Group();
+    this._rightControllerGrip = new Group();
+  }
+
+  get hasInputSources() {
+    return !!XRInput.inputSources;
+  }
+
+  /** A Group containing controller data for the left controller. Empty until XR session has started and there are input sources.
+   *
+   * Use {@link hasInputSources} [named of the method](file-name #hasInputSources) to determine when controller data is provided.
+   */
+  get leftController() {
+    return this._leftController;
+  }
+
+  get leftControllerGrip() {
+    return this._leftControllerGrip;
+  }
+
+  /** A Group containing controller data for the right controller. Empty until the XR session has started and the input sources change. */
+  get rightController() {
+    return this._rightController;
+  }
+
+  get rightControllerGrip() {
+    return this._rightControllerGrip;
   }
 
   // trigger start
@@ -79,13 +109,6 @@ class XRInputClass {
     }
   }
 
-  CreateControllerModel(controller, scene) {
-    controller.add(
-      this.controllerModelFactory.createControllerModel(controller)
-    );
-    scene.add(controller);
-  }
-
   Update() {
     if (State.debugMode) this.debugOutput();
   }
@@ -127,7 +150,7 @@ const XRInput = new XRInputClass();
 
 // subscribe to input events on XR session start
 State.eventHandler.addEventListener("xrsessionstarted", e => {
-  XRInput.inputSources = e.inputSources;
+  InputSourcesChanged(e.inputSources);
   e.addEventListener("selectend", XRInput.onSelectEnd.bind(XRInput));
   e.addEventListener("selectstart", XRInput.onSelectStart.bind(XRInput));
   e.addEventListener("select", XRInput.onSelect.bind(XRInput));
@@ -138,9 +161,35 @@ State.eventHandler.addEventListener("xrsessionstarted", e => {
   e.addEventListener("disconnected", XRInput.onDisconnected.bind(XRInput));
 });
 
-State.eventHandler.addEventListener("inputsourceschange", e => {
+State.eventHandler.addEventListener("inputsourceschange", e =>
+  InputSourcesChanged(e.session.inputSources)
+);
+
+State.eventHandler.addEventListener("xrsessionended", () => {
   XRInput.controllerGrips = [];
-  XRInput.inputSources = e.session.inputSources;
+  XRInput.inputSources = null;
+  XRInput._leftController = new Group();
+  XRInput._leftControllerGrip = new Group();
+  XRInput._rightController = new Group();
+  XRInput._rightControllerGrip = new Group();
+});
+
+const InputSourcesChanged = inputSources => {
+  XRInput.controllerGrips = [];
+  XRInput.inputSources = inputSources;
+
+  XRInput.inputSources.forEach((inputSource, controllerIndex) => {
+    let controller = Renderer.xr.getController(controllerIndex);
+    let controllerGrip = Renderer.xr.getControllerGrip(controllerIndex);
+
+    if (inputSource.handedness === "left") {
+      XRInput._leftController = controller;
+      XRInput._leftControllerGrip = controllerGrip;
+    } else if (inputSource.handedness === "right") {
+      XRInput._rightController = controller;
+      XRInput._rightControllerGrip = controllerGrip;
+    }
+  });
 
   // metachromium-specific hack to fix nonconformance bug
   const isUserAgentMetachromium = navigator.userAgent.indexOf("Mchr") !== -1;
@@ -155,11 +204,6 @@ State.eventHandler.addEventListener("inputsourceschange", e => {
       XRInput.controllerGrips[i] = Renderer.xr.getControllerGrip(i);
     }
   }
-});
-
-State.eventHandler.addEventListener("xrsessionended", () => {
-  XRInput.controllerGrips = [];
-  XRInput.inputSources = null;
-});
+};
 
 export default XRInput;
