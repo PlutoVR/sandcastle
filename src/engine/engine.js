@@ -4,7 +4,7 @@ import { AudioListener } from "three";
 import EngineEditorCamera from "./util/cameracontrols/engineeditorcamera";
 import SessionHandler from "./util/webxr/sessionhandler";
 import Renderer from "./renderer";
-import Physics from "./physics/physics";
+// import Physics from "./physics/physics";
 // import PhysicsSolver from './physics.worker.js';
 import XRInput from "./xrinput";
 
@@ -21,7 +21,7 @@ export function loadScene(scene) {
     // INPUT
     if (State.isXRSession) XRInput.Update();
     // PHYSICS
-    if (!State.isPaused) Physics.Update();
+    // if (!State.isPaused) Physics.Update();
 
     // TRAVERSE UPDATE METHODS IN SCENE OBJECTS
     scene.traverse(obj => {
@@ -39,4 +39,4 @@ export function loadScene(scene) {
     Camera.updateProjectionMatrix();
     Renderer.setSize(window.innerWidth, window.innerHeight);
   });
-};
+}
