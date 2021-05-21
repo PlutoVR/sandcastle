@@ -6,7 +6,7 @@ const APP_DIR = path.resolve(__dirname, "src/");
 const BUILD_DIR = path.resolve(__dirname, "dist/");
 
 module.exports = {
-  entry: APP_DIR + "/index.js",
+  entry: APP_DIR + "/index.ts",
   output: {
     path: BUILD_DIR,
     filename: "./bundle.js",
@@ -17,6 +17,11 @@ module.exports = {
       //     test: /\.worker\.js$/,
       //     use: { loader: 'worker-loader' }
       // },
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
       {
         test: /\.html$/,
         use: [
@@ -111,6 +116,6 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: [".js", ".es6"],
+    extensions: [".js", ".es6", "ts"],
   },
 };

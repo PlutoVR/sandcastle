@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Vector3 } from "@types/three";
 
 export class SCRaycaster {
   constructor(
