@@ -116,6 +116,6 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: [".js", ".es6", "ts"],
+    extensions: [".js", ".es6", ".ts"],
   },
 };

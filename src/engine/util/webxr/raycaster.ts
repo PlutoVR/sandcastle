@@ -7,7 +7,7 @@ import {
   Matrix4,
 } from "three";
 
-/** ThreeJS Line, extended with an Update method */
+/** Three.js Line, extended with an Update method */
 class SCLine extends Line {
   constructor(
     bufferGeo: THREE.BufferGeometry,
@@ -19,7 +19,7 @@ class SCLine extends Line {
 }
 
 /**
- * Sandcastle's own Raycaster; WebXR-friendly syntactic sugar over threeJS's Raycaster
+ * Sandcastle's own Raycaster; WebXR-friendly syntactic sugar over Three.js's Raycaster
  * @extends Raycaster
  */
 export class SCRaycaster extends Raycaster {
@@ -36,15 +36,15 @@ export class SCRaycaster extends Raycaster {
   /**
    * Construct a Sandcastle Raycaster.
    * @param originObject - object to raycast from
-   * @param target - object(s) to raycast to. Can be a mesh, a mesh array or a Box3.
-   * @param [direction] - The normalized direction vector that gives direction to the ray.
+   * @param target - object(s) to raycast to. Can be a Mesh, a Mesh array or a Box3.
+   * @param [direction] - The normalized direction vector that gives direction to the ray. Default value is new Vector3(0,0,-1).
    * @param [isRecursive] -  If true, it also checks all descendants. Otherwise it only checks intersection with the object. Default is true.
    * @param [near] - All results returned are further away than near. Near can't be negative. Default value is 0.1.
    * @param [far] - All results returned are closer than far. Far can't be lower than near. Default value is 10.
    */
   constructor(
     originObject: THREE.Mesh | THREE.Group,
-    target: THREE.Mesh | Array<THREE.Mesh> | THREE.Box3, // due to original polymorphism in THREE.Raycaster(), see below
+    target: THREE.Mesh | Array<THREE.Mesh> | THREE.Box3,
     direction: THREE.Vector3 = new Vector3(0, 0, -1),
     isRecursive: boolean = true,
     near: number = 0.1,
@@ -67,7 +67,7 @@ export class SCRaycaster extends Raycaster {
     this._isTargetBox3 = this._target.hasOwnProperty("isBox3");
   }
 
-  /** get intersections of origin object with target object or array.
+  /** Get intersections of origin object with target object or array.
    * Usually run within the update loop or as the result of an event.
    * Will return a bool if intersects against a Box3, and an array if intersecting against scene objects.
    * */
@@ -84,17 +84,16 @@ export class SCRaycaster extends Raycaster {
   }
 
   /**
-   * a helper method for visualizing raycaster rays
+   * A helper method for visualizing raycaster rays
    * @param color - visualizing ray color
    * @param onlyWhenHit - whether ray should be visualized only when a raycast hits the target or always
    */
-  visualize(color = "0xffffff", onlyWhenHit = false): void {
+  visualize(color = 0xffffff, onlyWhenHit = false): void {
     const lineGeo = new BufferGeometry().setFromPoints([
       new Vector3(0, 0, 0),
       new Vector3(0, 0, -1),
     ]);
-    const colorValue = parseInt(color.replace("#", "0x"), 16);
-    const lineMat = new LineBasicMaterial({ color: colorValue });
+    const lineMat = new LineBasicMaterial({ color });
     const _visualizedRaycast = new SCLine(lineGeo, lineMat);
     _visualizedRaycast.name = "line";
     if (onlyWhenHit) {

@@ -1,4 +1,4 @@
-// lovely clouds courtesy of @dghez from https://github.com/dghez/THREEJS_Procedural-clouds/
+// lovely clouds courtesy of @dghez from https://github.com/dghez/Three.js_Procedural-clouds/
 // tutorial https://tympanus.net/codrops/2020/01/28/how-to-create-procedural-clouds-using-three-js-sprites/
 
 import {
