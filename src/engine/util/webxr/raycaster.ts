@@ -18,9 +18,13 @@ class SCLine extends Line {
   Update(): void {}
 }
 
-export interface SCRaycaster {
+/**
+ * Sandcastle's own Raycaster; WebXR-friendly syntactic sugar over threeJS's Raycaster
+ * @extends Raycaster
+ */
+export class SCRaycaster extends Raycaster {
   _originObject: THREE.Mesh | THREE.Group;
-  _target: any;
+  _target: THREE.Mesh | Array<THREE.Mesh> | THREE.Box3;
   _direction: THREE.Vector3;
   _isRecursive: boolean;
   _near: number;
@@ -29,16 +33,8 @@ export interface SCRaycaster {
   _isTargetArray: boolean;
   _isTargetBox3: boolean;
   _tempMatrix: THREE.Matrix4;
-}
-
-/**
- * Sandcastle's own Raycaster
- * @extends Raycaster
- *
- */
-export class SCRaycaster extends Raycaster implements SCRaycaster {
   /**
-   * Create a Sandcastle Raycaster.
+   * Construct a Sandcastle Raycaster.
    * @param originObject - object to raycast from
    * @param target - object(s) to raycast to. Can be a mesh, a mesh array or a Box3.
    * @param [direction] - The normalized direction vector that gives direction to the ray.
@@ -48,7 +44,7 @@ export class SCRaycaster extends Raycaster implements SCRaycaster {
    */
   constructor(
     originObject: THREE.Mesh | THREE.Group,
-    target: any, // due to original polymorphism in THREE.Raycaster(), see below
+    target: THREE.Mesh | Array<THREE.Mesh> | THREE.Box3, // due to original polymorphism in THREE.Raycaster(), see below
     direction: THREE.Vector3 = new Vector3(0, 0, -1),
     isRecursive: boolean = true,
     near: number = 0.1,
@@ -81,10 +77,10 @@ export class SCRaycaster extends Raycaster implements SCRaycaster {
     this.ray.direction.set(0, 0, -1).applyMatrix4(this._tempMatrix);
 
     return this._isTargetBox3
-      ? this.ray.intersectsBox(this._target)
+      ? this.ray.intersectsBox(this._target as THREE.Box3)
       : this._isTargetArray
-      ? this.intersectObjects(this._target, this._isRecursive)
-      : this.intersectObject(this._target, this._isRecursive);
+      ? this.intersectObjects(this._target as [THREE.Mesh], this._isRecursive)
+      : this.intersectObject(this._target as THREE.Mesh, this._isRecursive);
   }
 
   /**

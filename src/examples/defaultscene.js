@@ -1,5 +1,4 @@
 // default scene loaded in src/engine/engine.js
-
 import {
   Scene,
   TorusBufferGeometry,
@@ -9,7 +8,6 @@ import {
   MeshStandardMaterial,
   Color,
 } from "three";
-import { SCRaycaster } from "../engine/util/webxr/raycaster.ts";
 
 const scene = new Scene();
 
@@ -36,7 +34,6 @@ ringsData.forEach((ringData, i) => {
   };
   scene.add(ring);
 });
-
 const light = new DirectionalLight(0xffffff, 3.5);
 light.position.set(0, 13, 3);
 scene.add(light);
