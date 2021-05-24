@@ -9,6 +9,8 @@ import {
   MeshStandardMaterial,
   Color,
 } from "three";
+import { SCRaycaster } from "../engine/util/webxr/raycaster.ts";
+
 const scene = new Scene();
 
 const ringsData = [

@@ -5,11 +5,11 @@
     "typeRoots": ["node_modules/@types/"],
     "noImplicitAny": true,
     "module": "es6",
-    "target": "es5",
+    "target": "es6",
     "jsx": "react",
     "moduleResolution": "node",
     "types": ["three"]
   },
-  "include": ["src/**"],
+  "files": ["./src/engine/util/webxr/raycaster.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
