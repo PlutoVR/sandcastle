@@ -56,11 +56,12 @@ scene.init = () => {
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new TextureLoader().load(WaterNormalsTexture, function (
-      texture
-    ) {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-    }),
+    waterNormals: new TextureLoader().load(
+      WaterNormalsTexture,
+      function (texture) {
+        texture.wrapS = texture.wrapT = RepeatWrapping;
+      }
+    ),
     alpha: 1.0,
     sunDirection: light.position.clone().normalize(),
     sunColor: 0xffffff,
@@ -72,7 +73,7 @@ scene.init = () => {
   water.position.y = -3;
   scene.add(water);
 
-  // Atmosphere / day-night cycle. Custom XRCubeCamera component that handles XR rendering, soon merged to threeJS:
+  // Atmosphere / day-night cycle. Custom XRCubeCamera component that handles XR rendering, soon merged to Three.js:
   const sky = new Sky();
   const uniforms = sky.material.uniforms;
   uniforms["turbidity"].value = 10;

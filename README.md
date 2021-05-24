@@ -5,7 +5,7 @@
 
 ## Features
 
-- Built on vanilla [threeJS](http://threejs.org/)
+- Built on vanilla [Three.js](http://Three.js.org/)
 
 - Made for WebXR (ergonomic XR [session & state management](https://github.com/plutovr/sandcastle/wiki#webxr-general-1) & easy [XR input event handling](https://github.com/plutovr/sandcastle/wiki#webxr-input-1))
 
