@@ -10,6 +10,6 @@
     "moduleResolution": "node",
     "types": ["three"]
   },
-  "files": ["./src/engine/util/webxr/raycaster.ts"],
+  "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
