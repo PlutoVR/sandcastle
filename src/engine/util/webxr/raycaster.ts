@@ -64,7 +64,7 @@ export class SCRaycaster extends Raycaster {
     this._far = far;
     this._visualizedRaycast = undefined;
     this._isTargetArray = Array.isArray(this._target); // cache check because it will impact every frame
-    this._isTargetBox3 = this._target.hasOwnProperty("isBox3");
+    this._isTargetBox3 = "isBox3" in this._target;
   }
 
   /** Get intersections of origin object with target object or array.
