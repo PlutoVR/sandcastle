@@ -22,7 +22,7 @@
     "inquirer": "^7.2.0",
     "loader-utils": "^2.0.0",
     "speak-tts": "^2.0.8",
-    "three": "^0.122.0"
+    "three": "^0.137.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
